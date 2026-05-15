@@ -1,15 +1,28 @@
+import { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import { MailOutlined, PhoneOutlined, EnvironmentOutlined, SendOutlined } from '@ant-design/icons';
+import { MailOutlined, EnvironmentOutlined, SendOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { getApiBaseUrl } from '../utils/apiBase';
+import axios from 'axios';
 
 const Contact = () => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
-    message.success(t('contact.success_msg'));
-    form.resetFields();
+  const onFinish = async (values) => {
+    setLoading(true);
+    try {
+      const apiUrl = getApiBaseUrl();
+      await axios.post(`${apiUrl}/contact`, values);
+      message.success(t('contact.success_msg'));
+      form.resetFields();
+    } catch (error) {
+      console.error('Contact Error:', error);
+      message.error(t('checkout.error'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,6 +120,7 @@ const Contact = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
+                  loading={loading}
                   className="bg-slate-900 hover:bg-pink-600 text-white font-bold h-14 px-8 rounded-xl w-full md:w-auto flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/30 hover:-translate-y-1 border-none"
                 >
                   {t('contact.send_btn')} <SendOutlined />

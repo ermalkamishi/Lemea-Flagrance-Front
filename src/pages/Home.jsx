@@ -141,7 +141,7 @@ const Home = () => {
     const keyMap = {
       'Parfume': 'perfumes',
       'Body Mist': 'body_spray',
-      'Për meshkuj': 'men',
+      'P\u00ebr meshkuj': 'men',
       'Rhode Lipgloss': 'lipgloss'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');

@@ -232,7 +232,7 @@ const resources = {
           "popular": "Më të njohurat",
           "perfumes": "Parfume",
           "body_spray": "Body Mist",
-          "men": "Për meshkuj",
+          "men": "P\u00ebr meshkuj",
           "lipgloss": "Rhode Lipgloss"
         },
         "no_products": "Nuk u gjetën produkte në këtë kategori."
@@ -254,7 +254,7 @@ const resources = {
           "all": "Të gjitha",
           "perfumes": "Parfume",
           "body_spray": "Body Mist",
-          "men": "Për meshkuj",
+          "men": "P\u00ebr meshkuj",
           "lipgloss": "Rhode Lipgloss"
         },
         "sorting": {
