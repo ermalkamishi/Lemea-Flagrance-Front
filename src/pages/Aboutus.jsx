@@ -1,5 +1,6 @@
 import { HeartOutlined, StarOutlined, SafetyCertificateOutlined, SmileOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import AboutImg from '../assets/Victoria_Secret_LoveSpell_About.jpeg';
 
 const Aboutus = () => {
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ const Aboutus = () => {
         </div>
         <div className="md:w-1/2 h-80 md:h-[32rem] bg-white relative">
           {/* Këtu mund të vendosësh një foto të bukur të produkteve */}
-          <img src="../src/assets/Victoria_Secret_LoveSpell_About.jpeg" alt="About" className="w-full h-full object-contain p-4" />
+          <img src={AboutImg} alt="About" className="w-full h-full object-contain p-4" />
         </div>
       </div>
     </div>
