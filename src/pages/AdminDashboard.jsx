@@ -802,10 +802,16 @@ const AdminDashboard = () => {
           destroyOnHidden
         >
           <Form form={categoryForm} layout="vertical" onFinish={handleCategorySubmit} style={{ paddingTop: 16 }}>
-            <Form.Item name="name" label={t('admin.cat_name')} rules={[{ required: true, message: t('admin.name_req') }]}>
+            <Form.Item name="name" label={`${t('admin.cat_name')} (SQ)`} rules={[{ required: true, message: t('admin.name_req') }]}>
               <Input style={{ height: 44, borderRadius: 10 }} placeholder="..." />
             </Form.Item>
-            <Form.Item name="description" label={t('product_details.tabs.description')}>
+            <Form.Item name="name_mk" label={`${t('admin.cat_name')} (MK)`}>
+              <Input style={{ height: 44, borderRadius: 10 }} placeholder="..." />
+            </Form.Item>
+            <Form.Item name="description" label={`${t('product_details.tabs.description')} (SQ)`}>
+              <Input.TextArea rows={3} style={{ borderRadius: 10 }} placeholder="..." />
+            </Form.Item>
+            <Form.Item name="description_mk" label={`${t('product_details.tabs.description')} (MK)`}>
               <Input.TextArea rows={3} style={{ borderRadius: 10 }} placeholder="..." />
             </Form.Item>
           </Form>

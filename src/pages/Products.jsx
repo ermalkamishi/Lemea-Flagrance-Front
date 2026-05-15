@@ -58,10 +58,14 @@ const Products = () => {
 
   const getCategoryLabel = (catName) => {
     if (!catName || catName === t('products.categories.all')) return catName;
+    const catObj = categories.find(c => c.name === catName);
+    if (currentLang === 'mk' && catObj && catObj.name_mk) {
+      return catObj.name_mk;
+    }
     const keyMap = {
       'Parfume': 'perfumes',
       'Body Mist': 'body_spray',
-      'P\u00ebr meshkuj': 'men',
+      'Për meshkuj': 'men',
       'Rhode Lipgloss': 'lipgloss'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
