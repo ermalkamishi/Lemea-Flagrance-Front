@@ -34,6 +34,7 @@ const statusTagColor = (status) => {
 
 // ─── Sidebar ────────────────────────────────────────────────────────────────
 function AdminSidebar({ activeTab, menuItems, onMenuSelect, onShopNavigate }) {
+  const { t } = useTranslation();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'linear-gradient(180deg, #fff 0%, #fff 80%, #fff0f6 100%)' }}>
       {/* Logo */}
