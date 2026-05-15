@@ -170,12 +170,14 @@ const AdminDashboard = () => {
     if (product) {
       form.setFieldsValue({
         name: product.name,
+        name_mk: product.name_mk,
         price: Number(product.price),
         oldPrice: product.oldPrice ? Number(product.oldPrice) : undefined,
         quantity: product.stockQuantity,
         category: product.category,
         brand: product.brand,
         description: product.description,
+        description_mk: product.description_mk,
       });
     } else {
       form.resetFields();
@@ -204,6 +206,8 @@ const AdminDashboard = () => {
       if (values.category) formData.append('category', values.category);
       if (values.brand) formData.append('brand', values.brand);
       if (values.description) formData.append('description', values.description);
+      if (values.name_mk) formData.append('name_mk', values.name_mk);
+      if (values.description_mk) formData.append('description_mk', values.description_mk);
 
       // Image goes to Cloudinary via NestJS
       if (fileList.length > 0 && fileList[0].originFileObj) {
@@ -697,8 +701,12 @@ const AdminDashboard = () => {
         >
           <Form form={form} layout="vertical" onFinish={handleProductSubmit} style={{ paddingTop: 16 }}>
 
-            <Form.Item name="name" label={t('admin.product_name')} rules={[{ required: true, message: t('admin.name_req') }]}>
+            <Form.Item name="name" label={`${t('admin.product_name')} (SQ)`} rules={[{ required: true, message: t('admin.name_req') }]}>
               <Input style={{ height: 44, borderRadius: 10 }} placeholder="p.sh. Lattafa Khamrah" />
+            </Form.Item>
+
+            <Form.Item name="name_mk" label={`${t('admin.product_name')} (MK)`}>
+              <Input style={{ height: 44, borderRadius: 10 }} placeholder="Петар Пан" />
             </Form.Item>
 
             <Form.Item name="brand" label={t('product_details.specs.brand')}>
@@ -738,7 +746,11 @@ const AdminDashboard = () => {
               </Col>
             </Row>
 
-            <Form.Item name="description" label={t('product_details.tabs.description')}>
+            <Form.Item name="description" label={`${t('product_details.tabs.description')} (SQ)`}>
+              <Input.TextArea rows={3} style={{ borderRadius: 10 }} placeholder="..." />
+            </Form.Item>
+
+            <Form.Item name="description_mk" label={`${t('product_details.tabs.description')} (MK)`}>
               <Input.TextArea rows={3} style={{ borderRadius: 10 }} placeholder="..." />
             </Form.Item>
 

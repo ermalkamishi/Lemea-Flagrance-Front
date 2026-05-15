@@ -15,7 +15,8 @@ import { getApiBaseUrl } from '../utils/apiBase';
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
   const allProducts = useSelector(state => state.products.items) || [];
   const productsStatus = useSelector((state) => state.products.status);
   const productsError = useSelector((state) => state.products.error);
@@ -152,15 +153,21 @@ const Home = () => {
   const categoryOptions = categories.map(c => c.name);
 
   const filteredProducts = useMemo(() => {
-    return allProducts.filter(p => p.category === activeCategory);
+    return allProducts.filter(p => p.category === activeCategory && p.inStock && (p.stockQuantity > 0 || p.stockQuantity === undefined));
   }, [allProducts, activeCategory]);
 
   const topProducts = useMemo(() => {
-    return [...allProducts].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
+    return allProducts
+      .filter(p => p.inStock && (p.stockQuantity > 0 || p.stockQuantity === undefined))
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 8);
   }, [allProducts]);
 
   const newProducts = useMemo(() => {
-    return [...allProducts].reverse().slice(0, 4);
+    return allProducts
+      .filter(p => p.inStock && (p.stockQuantity > 0 || p.stockQuantity === undefined))
+      .reverse()
+      .slice(0, 4);
   }, [allProducts]);
 
   return (
@@ -229,7 +236,7 @@ const Home = () => {
                       {product.category}
                     </span>
                     <h3 className="text-gray-800 font-semibold text-sm line-clamp-2 mb-2">
-                      {product.name}
+                      {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
                     </h3>
                   </div>
 
@@ -254,6 +261,16 @@ const Home = () => {
               {t('home.no_products')}
             </div>
           )}
+        </div>
+
+        {/* Butoni Shiko Të Gjitha */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={() => navigate(`/produktet?category=${encodeURIComponent(activeCategory)}`)}
+            className="px-10 py-3 rounded-full border-2 border-pink-500 text-pink-500 font-bold hover:bg-pink-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-pink-200 active:scale-95 cursor-pointer"
+          >
+            {t('hero.view_all', 'Shiko Të Gjitha')}
+          </button>
         </div>
       </div>
 
@@ -290,7 +307,7 @@ const Home = () => {
               <div className="flex items-center gap-2 text-yellow-300 font-bold text-sm mb-4 uppercase tracking-wider">
               </div>
               <h2 className="text-3xl lg:text-4xl font-extrabold text-white mb-2 leading-tight">
-                {dealOfTheDayProduct?.name || 'Lattafa Khamrah'} <br /> {dealOfTheDayProduct?.category || 'Eau de Parfum'}
+                {(currentLang === 'mk' && dealOfTheDayProduct?.name_mk) ? dealOfTheDayProduct.name_mk : (dealOfTheDayProduct?.name || 'Lattafa Khamrah')} <br /> {dealOfTheDayProduct?.category || 'Eau de Parfum'}
               </h2>
               <div className="flex items-end justify-center lg:justify-start gap-3 my-4">
                 <span className="text-4xl font-black text-white">
@@ -420,16 +437,16 @@ const Home = () => {
           <Carousel autoplay autoplaySpeed={4500} effect="scrollx" dotPosition="bottom">
             {heroSlides.map((slide) => (
               <div key={slide.id} className="outline-none">
-                <div className={`w-full p-8 py-12 lg:p-12 bg-gradient-to-br ${slide.bgGradient} flex flex-col lg:flex-row items-center justify-between gap-10 min-h-[350px] lg:min-h-[450px]`}>
+                <div className={`w-full p-6 py-8 lg:p-12 bg-gradient-to-br ${slide.bgGradient} flex flex-col lg:flex-row items-center justify-between gap-10 min-h-[320px] lg:min-h-[450px]`}>
                   <div className="w-full lg:w-1/2 z-10 flex flex-col items-start text-white">
                     <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1 lg:px-4 lg:py-1.5 rounded-full mb-4 lg:mb-6">
                       <span className="text-xs lg:text-sm font-bold tracking-wider uppercase text-white">{slide.tag}</span>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 lg:mb-4 leading-tight">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 lg:mb-4 leading-tight">
                       {slide.title1} <br className="hidden sm:block" />
                       <span className={`${slide.title2Color} block sm:inline mt-1 sm:mt-0`}>{slide.title2}</span>
                     </h1>
-                    <p className="text-base lg:text-lg text-white/90 mb-6 lg:mb-8 max-w-md">{slide.desc}</p>
+                    <p className="text-sm lg:text-lg text-white/90 mb-6 lg:mb-8 max-w-md leading-relaxed">{slide.desc}</p>
                     <button
                       onClick={() => navigate('/produktet')}
                       className={`${slide.btnColor} font-bold text-base lg:text-lg px-6 py-3 lg:px-8 lg:py-3 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto text-center cursor-pointer`}

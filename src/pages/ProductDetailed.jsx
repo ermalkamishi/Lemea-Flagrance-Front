@@ -21,7 +21,8 @@ const ProductDetailed = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
   const items = useSelector((state) => state.products.items);
   const allProducts = useMemo(() => items ?? [], [items]);
 
@@ -84,6 +85,13 @@ const ProductDetailed = () => {
       setQuantity(1);
     });
   }, [product?.id, product?.image]);
+
+  const similarProducts = useMemo(() => {
+    if (!product) return [];
+    return allProducts
+      .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
+      .slice(0, 4);
+  }, [allProducts, product]);
 
   const stockMax = useMemo(() => {
     if (!product) return 99;
@@ -182,7 +190,9 @@ const ProductDetailed = () => {
                 <Tag className="mb-4 rounded-lg border-none bg-pink-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-pink-600">
                   {product.brand}
                 </Tag>
-                <h1 className="mb-4 text-3xl font-extrabold leading-tight text-slate-900 md:text-5xl">{product.name}</h1>
+                <h1 className="mb-4 text-3xl font-extrabold leading-tight text-slate-900 md:text-5xl">
+                  {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
+                </h1>
 
                 <div className="mb-6 flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-1 rounded-lg bg-yellow-50 px-3 py-1">
@@ -221,7 +231,9 @@ const ProductDetailed = () => {
                   </p>
                 </div>
 
-                <p className="mb-8 text-base leading-relaxed text-gray-600">{product.description || t('product_details.default_desc')}</p>
+                <p className="mb-8 text-base leading-relaxed text-gray-600">
+                  {currentLang === 'mk' && product.description_mk ? product.description_mk : (product.description || t('product_details.default_desc'))}
+                </p>
 
                 <div className="mb-10 flex flex-col gap-4 sm:flex-row">
                   <div className="flex h-[60px] w-full items-center rounded-2xl border-2 border-gray-200 bg-white p-1 sm:w-[160px]">
@@ -314,10 +326,20 @@ const ProductDetailed = () => {
                           <th className="py-4 font-medium text-gray-500">{t('product_details.specs.category')}</th>
                           <td className="py-4 font-bold text-gray-800">{product.category}</td>
                         </tr>
-                        <tr className="border-b border-gray-100">
-                          <th className="py-4 font-medium text-gray-500">{t('product_details.specs.quantity')}</th>
-                          <td className="py-4 font-bold text-gray-800">{t('product_details.specs.default_quantity')}</td>
-                        </tr>
+                        {(() => {
+                          const cat = product.category;
+                          const showQty = cat === 'Parfume' || cat === 'P\u00ebr meshkuj' || cat === 'Për meshkuj' || cat === 'Body Mist';
+                          const qtyVal = (cat === 'Body Mist') ? '250 ml' : '100 ml';
+                          
+                          if (!showQty) return null;
+                          
+                          return (
+                            <tr className="border-b border-gray-100">
+                              <th className="py-4 font-medium text-gray-500">{t('product_details.specs.quantity')}</th>
+                              <td className="py-4 font-bold text-gray-800">{qtyVal}</td>
+                            </tr>
+                          );
+                        })()}
                         <tr>
                           <th className="py-4 font-medium text-gray-500">{t('product_details.specs.package')}</th>
                           <td className="py-4 font-bold text-gray-800">{t('product_details.specs.luxury_box')}</td>
@@ -330,6 +352,60 @@ const ProductDetailed = () => {
             ]}
           />
         </div>
+
+        {/* Seksioni i Produkteve të Ngjashme */}
+        {similarProducts.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-black text-slate-900 mb-8 font-serif px-4">
+              {t('product_details.similar_products', 'Produkte të Ngjashme')}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 px-2 sm:px-0">
+              {similarProducts.map((p) => (
+                <div 
+                  key={p.id}
+                  onClick={() => {
+                    navigate(`/produktet/${p.id}`);
+                    window.scrollTo(0, 0);
+                  }}
+                  className="bg-white rounded-3xl p-3 border border-gray-100 hover:shadow-xl hover:shadow-pink-100 transition-all duration-500 cursor-pointer group flex flex-col h-full"
+                >
+                  <div className="relative aspect-[4/5] rounded-2xl overflow-hidden mb-3 bg-gray-50">
+                    <img 
+                      src={getImageUrl(p.image)} 
+                      alt={p.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <div className="flex-grow flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-pink-500 font-bold uppercase tracking-widest mb-1 block">
+                        {p.category}
+                      </span>
+                      <h3 className="text-slate-800 font-bold text-xs sm:text-sm line-clamp-2 mb-2 leading-tight">
+                        {currentLang === 'mk' && p.name_mk ? p.name_mk : p.name}
+                      </h3>
+                    </div>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-slate-900 font-extrabold text-sm sm:text-base">
+                        {toNumber(p.price, 0).toLocaleString()} {t('common.currency')}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          dispatch(addToCart({ ...p, quantity: 1 }));
+                          message.success(`${p.name} ${t('cart.added_msg')}`);
+                        }}
+                        className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-pink-500 transition-all active:scale-90"
+                      >
+                        <ShoppingCartOutlined />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Sticky Mobile Bottom Bar */}

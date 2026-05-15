@@ -13,7 +13,8 @@ const Products = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
   const allProducts = useSelector(state => state.products.items) || [];
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState([]);
@@ -23,10 +24,15 @@ const Products = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const search = params.get('search');
-    if (search) {
-      setSearchTerm(search);
+    const catParam = params.get('category');
+    
+    if (search) setSearchTerm(search);
+    if (catParam) {
+      setCategory(catParam);
+    } else {
+      setCategory(t('products.categories.all'));
     }
-  }, [location.search]);
+  }, [location.search, t]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -48,9 +54,7 @@ const Products = () => {
   const [priceRange, setPriceRange] = useState([0, 40000]);
   const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
 
-  useEffect(() => {
-    setCategory(t('products.categories.all'));
-  }, [t]);
+
 
   const getCategoryLabel = (catName) => {
     if (!catName || catName === t('products.categories.all')) return catName;
@@ -394,7 +398,7 @@ const Products = () => {
                     className="font-bold text-gray-800 text-sm sm:text-lg mb-1 sm:mb-2 line-clamp-2 cursor-pointer hover:text-pink-600 transition-colors leading-snug"
                     onClick={() => handleProductClick(product.id)}
                   >
-                    {product.name}
+                    {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
                   </h3>
 
                   <div className="mt-auto pt-2 sm:pt-4 flex items-end justify-between">

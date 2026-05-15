@@ -301,7 +301,8 @@ const resources = {
         "desc_p1": "Ky produkt është një zgjedhje e shkëlqyer për të gjithë ata që vlerësojnë cilësinë dhe elegancën. Formula e pasur me përbërës të zgjedhur garanton një aromë që zgjat dhe lë një përshtypje të paharrueshme.",
         "main_notes": "Notat Kryesore:",
         "notes_list": "Ekstrakte lulesh, dru i rrallë, dhe një prekje vanilje.",
-        "desc_p2": "Krijuar nga mjeshtrit më të mirë të parfumeve, ofron një balancë perfekte midis traditës dhe modernes. Paketimi i tij luksoz e bën gjithashtu një zgjedhje ideale për dhuratë."
+        "desc_p2": "Krijuar nga mjeshtrit më të mirë të parfumeve, ofron një balancë perfekte midis traditës dhe modernes. Paketimi i tij luksoz e bën gjithashtu një zgjedhje ideale për dhuratë.",
+        "similar_products": "Produkte të Ngjashme"
       },
       "auth": {
         "login_title": "Mirësevini",
@@ -718,7 +719,8 @@ const resources = {
         "desc_p1": "Овој производ е одличен избор за сите оние кои го ценат квалитетот и елеганцијата. Богатата формула со избрани состојки гарантира мирис кој трае и остава незаборавен впечаток.",
         "main_notes": "Главни ноти:",
         "notes_list": "Екстракти од цвеќе, ретко дрво и допир на ванила.",
-        "desc_p2": "Создаден од најдобрите мајстори за парфеми, нуди совршен баланс помеѓу традицијата и модерното. Неговото луксузно пакување го прави и идеален избор за подарок."
+        "desc_p2": "Создаден од најдобрите мајстори за парфеми, нуди совршен баланс помеѓу традицијата и модерното. Неговото луксузно пакување го прави и идеален избор за подарок.",
+        "similar_products": "Слични Производи"
       },
       "auth": {
         "login_title": "Добредојдовте",
