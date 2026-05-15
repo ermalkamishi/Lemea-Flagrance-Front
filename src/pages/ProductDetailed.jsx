@@ -28,6 +28,7 @@ const ProductDetailed = () => {
 
   const [product, setProduct] = useState(null);
   const [loadStatus, setLoadStatus] = useState('idle');
+  const [categories, setCategories] = useState([]);
   const [mainImage, setMainImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
@@ -36,6 +37,12 @@ const ProductDetailed = () => {
 
   useEffect(() => {
     let cancelled = false;
+
+    // Fetch categories for translations
+    fetch(`${getApiBaseUrl()}/categories`)
+      .then(res => res.json())
+      .then(data => { if (!cancelled) setCategories(data); })
+      .catch(console.error);
 
     queueMicrotask(() => {
       if (cancelled) return;
@@ -71,10 +78,32 @@ const ProductDetailed = () => {
       })();
     });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [id, fromStore]);
+
+  const getCategoryLabel = (catName) => {
+    if (!catName) return '';
+    const catObj = categories.find(c => c.name === catName);
+    if (currentLang === 'mk' && catObj && catObj.name_mk) {
+      return catObj.name_mk;
+    }
+    const keyMap = {
+      'Parfume': 'perfumes',
+      'Body Mist': 'body_spray',
+      'Për meshkuj': 'men',
+      'Rhode Lipgloss': 'lipgloss'
+    };
+    const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
+    const translated = t(`home.categories.${key}`);
+    return translated !== `home.categories.${key}` ? translated : catName;
+  };
+
+  const similarProducts = useMemo(() => {
+    if (!product) return [];
+    return allProducts
+      .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
+      .slice(0, 4);
+  }, [allProducts, product]);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -85,13 +114,6 @@ const ProductDetailed = () => {
       setQuantity(1);
     });
   }, [product?.id, product?.image]);
-
-  const similarProducts = useMemo(() => {
-    if (!product) return [];
-    return allProducts
-      .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
-      .slice(0, 4);
-  }, [allProducts, product]);
 
   const stockMax = useMemo(() => {
     if (!product) return 99;
@@ -144,10 +166,10 @@ const ProductDetailed = () => {
             <Breadcrumb.Item>
               <Link to="/">{t('product_details.breadcrumb.home')}</Link>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>
-              <Link to="/produktet">{t('product_details.breadcrumb.products')}</Link>
+            <Breadcrumb.Item className="cursor-pointer text-gray-500 hover:text-pink-500" onClick={() => navigate('/produktet')}>
+              {t('checkout.back_products')}
             </Breadcrumb.Item>
-            <Breadcrumb.Item>{product.category}</Breadcrumb.Item>
+            <Breadcrumb.Item>{getCategoryLabel(product.category)}</Breadcrumb.Item>
             <Breadcrumb.Item className="font-semibold text-gray-800">{product.name}</Breadcrumb.Item>
           </Breadcrumb>
         </div>
@@ -379,7 +401,7 @@ const ProductDetailed = () => {
                   <div className="flex-grow flex flex-col justify-between">
                     <div>
                       <span className="text-[10px] text-pink-500 font-bold uppercase tracking-widest mb-1 block">
-                        {p.category}
+                        {getCategoryLabel(p.category)}
                       </span>
                       <h3 className="text-slate-800 font-bold text-xs sm:text-sm line-clamp-2 mb-2 leading-tight">
                         {currentLang === 'mk' && p.name_mk ? p.name_mk : p.name}
