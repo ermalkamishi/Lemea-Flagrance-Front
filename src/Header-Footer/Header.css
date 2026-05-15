@@ -1,0 +1,90 @@
+/* Customizations for Ant Design Drawer to fit our theme */
+.mobile-drawer .ant-drawer-header {
+  border-bottom: 1px solid #fce7f3; /* pink-100 */
+}
+
+.mobile-drawer .ant-drawer-close {
+  color: #9ca3af; /* gray-400 */
+}
+
+.mobile-drawer .ant-drawer-close:hover {
+  color: #ec4899; /* pink-500 */
+}
+
+/* Opsionale: Shton një animacion të butë kur Header shfaqet */
+header {
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Customizations for Ant Design Drawer */
+.mobile-drawer .ant-drawer-header {
+  border-bottom: 1px solid #fce7f3; /* pink-100 */
+}
+
+.mobile-drawer .ant-drawer-close {
+  color: #9ca3af; /* gray-400 */
+}
+
+.mobile-drawer .ant-drawer-close:hover {
+  color: #ec4899; /* pink-500 */
+}
+
+/* ------------------------------------- */
+/* Stilimi i Search Bar-it (Input)       */
+/* ------------------------------------- */
+
+.header-search .ant-input-affix-wrapper {
+  border-radius: 9999px; /* E bën totalisht të rrumbullakët në anë */
+  border-color: #fce7f3; /* pink-100 */
+  padding-left: 12px;
+  padding-right: 12px;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+}
+
+.header-search .ant-input-affix-wrapper:hover {
+  border-color: #f472b6 !important; /* pink-400 */
+  background-color: #ffffff;
+}
+
+.header-search .ant-input-affix-wrapper-focused,
+.header-search .ant-input-affix-wrapper:focus {
+  border-color: #ec4899 !important; /* pink-500 */
+  box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.15) !important;
+  background-color: #ffffff;
+}
+
+/* Ngjyra e ikonës x për të fshirë kërkimin */
+.header-search .ant-input-clear-icon {
+  color: #9ca3af;
+}
+.header-search .ant-input-clear-icon:hover {
+  color: #ec4899;
+}
+
+/* Opsionale: Shton një animacion të butë kur Header shfaqet */
+header {
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

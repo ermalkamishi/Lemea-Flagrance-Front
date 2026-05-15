@@ -1,0 +1,36 @@
+/* --- SHTO KËTË NË HOME.CSS --- */
+
+/* Fshehim shiritin e scroll-it për listën e vogël brenda banerit */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Rregullimi i Carousel - Heqim hapësirën e bardhë poshtë banerit */
+.ant-carousel .slick-slider {
+  margin-bottom: 0 !important;
+}
+
+/* Bëjmë që pikat të qëndrojnë MBI sfondin me ngjyrë, jo poshtë tij */
+.ant-carousel .slick-dots {
+  position: absolute !important;
+  bottom: 20px !important; 
+  margin: 0 !important;
+  z-index: 20;
+}
+
+.ant-carousel .slick-dots li button {
+  height: 6px !important;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  transition: all 0.3s ease;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  background-color: white !important;
+  width: 24px !important;
+}
