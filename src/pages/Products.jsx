@@ -398,6 +398,10 @@ const Products = () => {
                 {/* Info */}
                 <div className="p-3 sm:p-6 flex flex-col flex-grow">
                   <span className="text-[10px] sm:text-xs font-bold text-pink-500 uppercase tracking-widest mb-1 sm:mb-2 block">{getCategoryLabel(product.category)}</span>
+                  <h3
+                    className="font-bold text-gray-800 text-sm sm:text-lg mb-1 sm:mb-2 line-clamp-2 cursor-pointer hover:text-pink-600 transition-colors leading-snug"
+                    onClick={() => handleProductClick(product.id)}
+                  >
                     {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
                   </h3>
 
