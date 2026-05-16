@@ -153,12 +153,12 @@ const Checkout = () => {
                   rules={[
                     { required: true, message: t('checkout.required_field') },
                     { 
-                      pattern: /^(?:\+389|0)?7[0125678]\d{6}$/, 
-                      message: t('checkout.invalid_phone', 'Ju lutem shënoni një numër valid mobil (p.sh. 07XXXXXXXX)') 
+                      pattern: /^(?:(?:\+389|0)?7[0125678]\d{6}|(?:\+383|0)?4[3-9]\d{6})$/, 
+                      message: t('checkout.invalid_phone', 'Ju lutem shënoni një numër valid mobil MK ose KS (p.sh. 07XXXXXXXX ose 04XXXXXXXX)') 
                     }
                   ]}
                 >
-                  <Input placeholder="+389 7X XXX XXX" className="rounded-xl px-4 py-3 bg-gray-50 border-gray-200 hover:border-pink-300 focus:border-pink-500 text-lg" />
+                  <Input placeholder="+389 7X XXX XXX / +383 4X XXX XXX" className="rounded-xl px-4 py-3 bg-gray-50 border-gray-200 hover:border-pink-300 focus:border-pink-500 text-lg" />
                 </Form.Item>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
@@ -171,37 +171,66 @@ const Checkout = () => {
                         (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                       }
                       options={[
-                        { value: 'Skopje', label: t('cities.Skopje') },
-                        { value: 'Bitola', label: t('cities.Bitola') },
-                        { value: 'Kumanovo', label: t('cities.Kumanovo') },
-                        { value: 'Prilep', label: t('cities.Prilep') },
-                        { value: 'Tetovo', label: t('cities.Tetovo') },
-                        { value: 'Veles', label: t('cities.Veles') },
-                        { value: 'Štip', label: t('cities.Stip') },
-                        { value: 'Ohrid', label: t('cities.Ohrid') },
-                        { value: 'Gostivar', label: t('cities.Gostivar') },
-                        { value: 'Strumica', label: t('cities.Strumica') },
-                        { value: 'Kavadarci', label: t('cities.Kavadarci') },
-                        { value: 'Kočani', label: t('cities.Kocani') },
-                        { value: 'Kičevo', label: t('cities.Kicevo') },
-                        { value: 'Struga', label: t('cities.Struga') },
-                        { value: 'Radoviš', label: t('cities.Radovis') },
-                        { value: 'Gevgelija', label: t('cities.Gevgelija') },
-                        { value: 'Debar', label: t('cities.Debar') },
-                        { value: 'Kriva Palanka', label: t('cities.Kriva Palanka') },
-                        { value: 'Sveti Nikole', label: t('cities.Sveti Nikole') },
-                        { value: 'Negotino', label: t('cities.Negotino') },
-                        { value: 'Delčevo', label: t('cities.Delcevo') },
-                        { value: 'Vinica', label: t('cities.Vinica') },
-                        { value: 'Berovo', label: t('cities.Berovo') },
-                        { value: 'Probištip', label: t('cities.Probistip') },
-                        { value: 'Valandovo', label: t('cities.Valandovo') },
-                        { value: 'Kruševo', label: t('cities.Krusevo') },
-                        { value: 'Demir Hisar', label: t('cities.Demir Hisar') },
-                        { value: 'Demir Kapija', label: t('cities.Demir Kapija') },
-                        { value: 'Pehčevo', label: t('cities.Pehcevo') },
-                        { value: 'Makedonski Brod', label: t('cities.Makedonski Brod') },
-                        { value: 'Makedonska Kamenica', label: t('cities.Makedonska Kamenica') },
+                        { label: '🇲🇰 Maqedonia e Veriut', options: [
+                          { value: 'Skopje', label: 'Shkup (Skopje)' },
+                          { value: 'Bitola', label: 'Manastir (Bitola)' },
+                          { value: 'Kumanovo', label: 'Kumanovë (Kumanovo)' },
+                          { value: 'Prilep', label: 'Prillep (Prilep)' },
+                          { value: 'Tetovo', label: 'Tetovë (Tetovo)' },
+                          { value: 'Veles', label: 'Veles' },
+                          { value: 'Štip', label: 'Shtip (Štip)' },
+                          { value: 'Ohrid', label: 'Ohër (Ohrid)' },
+                          { value: 'Gostivar', label: 'Gostivar' },
+                          { value: 'Strumica', label: 'Strumicë (Strumica)' },
+                          { value: 'Kavadarci', label: 'Kavadarci' },
+                          { value: 'Kočani', label: 'Koçan (Kočani)' },
+                          { value: 'Kičevo', label: 'Kërçovë (Kičevo)' },
+                          { value: 'Struga', label: 'Strugë (Struga)' },
+                          { value: 'Radoviš', label: 'Radovish (Radoviš)' },
+                          { value: 'Gevgelija', label: 'Gevgeli (Gevgelija)' },
+                          { value: 'Debar', label: 'Dibër (Debar)' },
+                          { value: 'Kriva Palanka', label: 'Kriva Pallankë' },
+                          { value: 'Sveti Nikole', label: 'Shën Nikollë' },
+                          { value: 'Negotino', label: 'Negotinë (Negotino)' },
+                          { value: 'Delčevo', label: 'Delçevë (Delčevo)' },
+                          { value: 'Vinica', label: 'Vinicë (Vinica)' },
+                          { value: 'Berovo', label: 'Berovë (Berovo)' },
+                          { value: 'Probištip', label: 'Probistip' },
+                          { value: 'Valandovo', label: 'Valandovë (Valandovo)' },
+                          { value: 'Kruševo', label: 'Krushevë (Kruševo)' },
+                          { value: 'Demir Hisar', label: 'Demir Hisar' },
+                          { value: 'Demir Kapija', label: 'Demir Kapija' },
+                          { value: 'Pehčevo', label: 'Pehçevë (Pehčevo)' },
+                          { value: 'Makedonski Brod', label: 'Makedonski Brod' },
+                          { value: 'Makedonska Kamenica', label: 'Kamenicë Maqedonase' },
+                        ]},
+                        { label: '🇽🇰 Kosovë', options: [
+                          { value: 'Prishtinë', label: 'Prishtinë' },
+                          { value: 'Prizren', label: 'Prizren' },
+                          { value: 'Pejë', label: 'Pejë' },
+                          { value: 'Gjakovë', label: 'Gjakovë' },
+                          { value: 'Mitrovicë', label: 'Mitrovicë' },
+                          { value: 'Gjilan', label: 'Gjilan' },
+                          { value: 'Ferizaj', label: 'Ferizaj' },
+                          { value: 'Vushtrri', label: 'Vushtrri' },
+                          { value: 'Podujeva', label: 'Podujeva' },
+                          { value: 'Suharekë', label: 'Suharekë' },
+                          { value: 'Rahovec', label: 'Rahovec' },
+                          { value: 'Malishevë', label: 'Malishevë' },
+                          { value: 'Skenderaj', label: 'Skenderaj' },
+                          { value: 'Klinë', label: 'Klinë' },
+                          { value: 'Istog', label: 'Istog' },
+                          { value: 'Deçan', label: 'Deçan' },
+                          { value: 'Dragash', label: 'Dragash' },
+                          { value: 'Kamenicë', label: 'Kamenicë' },
+                          { value: 'Viti', label: 'Viti' },
+                          { value: 'Kaçanik', label: 'Kaçanik' },
+                          { value: 'Shtime', label: 'Shtime' },
+                          { value: 'Lipjan', label: 'Lipjan' },
+                          { value: 'Obiliq', label: 'Obiliq' },
+                          { value: 'Fushë Kosovë', label: 'Fushë Kosovë' },
+                          { value: 'Drenas', label: 'Drenas' },
+                        ]},
                       ]}
                     />
                   </Form.Item>
