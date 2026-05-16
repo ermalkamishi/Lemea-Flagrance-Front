@@ -152,7 +152,10 @@ const Checkout = () => {
                   name="phone" 
                   rules={[
                     { required: true, message: t('checkout.required_field') },
-                    { pattern: /^\+389\s?[0-9]{2}\s?[0-9]{3}\s?[0-9]{3}$|^07[0-9]\s?[0-9]{3}\s?[0-9]{3}$/, message: t('checkout.invalid_phone') }
+                    { 
+                      pattern: /^(?:\+389|0)?7[0125678]\d{6}$/, 
+                      message: t('checkout.invalid_phone', 'Ju lutem shënoni një numër valid mobil (p.sh. 07XXXXXXXX)') 
+                    }
                   ]}
                 >
                   <Input placeholder="+389 7X XXX XXX" className="rounded-xl px-4 py-3 bg-gray-50 border-gray-200 hover:border-pink-300 focus:border-pink-500 text-lg" />
