@@ -849,6 +849,13 @@ i18n
   .init({
     resources,
     fallbackLng: 'sq',
+    lng: localStorage.getItem('i18nextLng') || 'sq',
+    detection: {
+      order: ['localStorage', 'navigator'],
+      lookupLocalStorage: 'i18nextLng',
+      caches: ['localStorage'],
+    },
+    supportedLngs: ['sq', 'mk'],
     interpolation: {
       escapeValue: false
     }

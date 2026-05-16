@@ -33,7 +33,9 @@ const Header = () => {
     i18n.changeLanguage(lng);
   };
 
-  const currentLang = (i18n.language || 'sq').split('-')[0].toUpperCase();
+  const supportedLangs = ['SQ', 'MK'];
+  const rawLang = (i18n.language || 'sq').split('-')[0].toUpperCase();
+  const currentLang = supportedLangs.includes(rawLang) ? rawLang : 'SQ';
 
   const langMenuItems = [
     {
