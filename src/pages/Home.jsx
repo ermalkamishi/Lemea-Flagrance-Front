@@ -237,7 +237,7 @@ const Home = () => {
                 <div className="flex-grow flex flex-col justify-between">
                   <div>
                     <span className="text-xs text-gray-400 uppercase tracking-wider mb-1 block">
-                      {product.category}
+                      {getCategoryLabel(product.category)}
                     </span>
                     <h3 className="text-gray-800 font-semibold text-sm line-clamp-2 mb-2">
                       {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
@@ -311,7 +311,7 @@ const Home = () => {
               <div className="flex items-center gap-2 text-yellow-300 font-bold text-sm mb-4 uppercase tracking-wider">
               </div>
               <h2 className="text-3xl lg:text-4xl font-extrabold text-white mb-2 leading-tight">
-                {(currentLang === 'mk' && dealOfTheDayProduct?.name_mk) ? dealOfTheDayProduct.name_mk : (dealOfTheDayProduct?.name || 'Lattafa Khamrah')} <br /> {dealOfTheDayProduct?.category || 'Eau de Parfum'}
+                {(currentLang === 'mk' && dealOfTheDayProduct?.name_mk) ? dealOfTheDayProduct.name_mk : (dealOfTheDayProduct?.name || 'Lattafa Khamrah')} <br /> {getCategoryLabel(dealOfTheDayProduct?.category) || 'Eau de Parfum'}
               </h2>
               <div className="flex items-end justify-center lg:justify-start gap-3 my-4">
                 <span className="text-4xl font-black text-white">
@@ -418,8 +418,8 @@ const Home = () => {
                 <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="mt-auto">
-                <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider block mb-1">{product.category}</span>
-                <h3 className="text-gray-800 font-semibold text-sm sm:text-base line-clamp-1 mb-2">{product.name}</h3>
+                <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider block mb-1">{getCategoryLabel(product.category)}</span>
+                <h3 className="text-gray-800 font-semibold text-sm sm:text-base line-clamp-1 mb-2">{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</h3>
                 <div className="flex items-center justify-between">
                   <span className="text-pink-600 font-bold text-lg">{toNumber(product.price, 0).toLocaleString()} {t('common.currency')}</span>
                   <div
@@ -441,19 +441,19 @@ const Home = () => {
           <Carousel autoplay autoplaySpeed={4500} effect="scrollx" dotPosition="bottom">
             {heroSlides.map((slide) => (
               <div key={slide.id} className="outline-none">
-                <div className={`w-full p-6 py-8 lg:p-12 bg-gradient-to-br ${slide.bgGradient} flex flex-col lg:flex-row items-center justify-between gap-10 min-h-[320px] lg:min-h-[450px]`}>
+                <div className={`w-full p-5 py-6 sm:p-6 sm:py-8 lg:p-12 bg-gradient-to-br ${slide.bgGradient} flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[450px]`}>
                   <div className="w-full lg:w-1/2 z-10 flex flex-col items-start text-white">
-                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1 lg:px-4 lg:py-1.5 rounded-full mb-4 lg:mb-6">
-                      <span className="text-xs lg:text-sm font-bold tracking-wider uppercase text-white">{slide.tag}</span>
+                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1 lg:px-4 lg:py-1.5 rounded-full mb-3 lg:mb-6">
+                      <span className="text-[10px] sm:text-xs lg:text-sm font-bold tracking-wider uppercase text-white">{slide.tag}</span>
                     </div>
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 lg:mb-4 leading-tight">
+                    <h1 className="text-2xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-2 sm:mb-3 lg:mb-4 leading-tight">
                       {slide.title1} <br className="hidden sm:block" />
                       <span className={`${slide.title2Color} block sm:inline mt-1 sm:mt-0`}>{slide.title2}</span>
                     </h1>
-                    <p className="text-sm lg:text-lg text-white/90 mb-6 lg:mb-8 max-w-md leading-relaxed">{slide.desc}</p>
+                    <p className="text-xs sm:text-sm lg:text-lg text-white/90 mb-4 sm:mb-6 lg:mb-8 max-w-md leading-relaxed">{slide.desc}</p>
                     <button
                       onClick={() => navigate('/produktet')}
-                      className={`${slide.btnColor} font-bold text-base lg:text-lg px-6 py-3 lg:px-8 lg:py-3 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto text-center cursor-pointer`}
+                      className={`${slide.btnColor} font-bold text-sm sm:text-base lg:text-lg px-5 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-3 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto text-center cursor-pointer`}
                     >
                       {slide.btnText}
                     </button>
@@ -519,7 +519,7 @@ const Home = () => {
                     {t('home.new_collection.badge')}
                   </span>
                 </div>
-                <h3 className="text-gray-800 font-semibold text-sm text-center line-clamp-1">{product.name}</h3>
+                <h3 className="text-gray-800 font-semibold text-sm text-center line-clamp-1">{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</h3>
                 <p className="text-gray-500 text-center text-sm font-medium mt-1">{toNumber(product.price, 0).toLocaleString()} {t('common.currency')}</p>
               </div>
             ))}
