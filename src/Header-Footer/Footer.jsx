@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { InstagramOutlined, TikTokOutlined } from '@ant-design/icons';
+import { FacebookOutlined, InstagramOutlined, TikTokOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import './Footer.css';
 
@@ -40,6 +40,14 @@ const Footer = () => {
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-white transition-all duration-300 hover:bg-pink-500"
               >
                 <TikTokOutlined />
+              </a>
+              <a
+                href="https://www.facebook.com/profile.php?id=61575000181053"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-white transition-all duration-300 hover:bg-pink-500"
+              >
+                <FacebookOutlined />
               </a>
             </div>
           </div>
