@@ -19,8 +19,10 @@ const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.items);
   const { subtotal, discount, total, count } = useSelector(selectCartTotals);
   const { user } = useSelector((state) => state.auth);
+  const { status: orderStatus, currentOrder, error: orderError } = useSelector((state) => state.orders);
 
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isSummaryExpanded, setIsSummaryExpanded] = useState(false);
 
   // Pre-fill form with logged-in user's data
   useEffect(() => {
