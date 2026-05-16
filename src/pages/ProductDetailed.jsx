@@ -227,29 +227,6 @@ const ProductDetailed = () => {
                 </h1>
 
                 <div className="mb-6 flex flex-wrap items-center gap-4">
-                  <div
-                    className="flex items-center gap-1 rounded-lg bg-yellow-50 px-3 py-1 cursor-pointer hover:bg-yellow-100 transition-colors"
-                    onClick={() => {
-                      const tabsEl = document.getElementById('product-tabs');
-                      if (tabsEl) {
-                        tabsEl.scrollIntoView({ behavior: 'smooth' });
-                        // We might need to trigger tab change if we want to be fancy
-                      }
-                    }}
-                  >
-                    <Rate disabled defaultValue={toNumber(product.rating, 5)} allowHalf className="text-sm text-yellow-400" />
-                    <span className="ml-1 font-bold text-yellow-700">{toNumber(product.rating, 5)}</span>
-                  </div>
-                  <span
-                    className="cursor-pointer text-sm text-gray-400 underline transition-colors hover:text-pink-500"
-                    onClick={() => {
-                      const tabsEl = document.getElementById('product-tabs');
-                      if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                  >
-                    ({productReviews.length || product.reviewsCount || 0} {t('product_details.reviews')})
-                  </span>
-                  <span className="text-gray-300">|</span>
                   <span
                     className={
                       product.inStock
