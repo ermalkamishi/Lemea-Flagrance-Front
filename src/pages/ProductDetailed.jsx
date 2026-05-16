@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Button, Tag, Rate, Breadcrumb, Tabs, message, Spin } from 'antd';
+import { Button, Tag, Rate, Breadcrumb, Tabs, message, Spin, Form, Input } from 'antd';
 import {
   ShoppingCartOutlined,
   HeartOutlined,
@@ -32,6 +32,9 @@ const ProductDetailed = () => {
   const [mainImage, setMainImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
+  const [productReviews, setProductReviews] = useState([]);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewForm] = Form.useForm();
 
   const fromStore = useMemo(() => allProducts.find((p) => p.id === id), [allProducts, id]);
 
@@ -68,6 +71,13 @@ const ProductDetailed = () => {
           if (!cancelled) {
             setProduct(data);
             setLoadStatus('succeeded');
+          }
+
+          // Fetch product specific reviews
+          const revRes = await fetch(`${getApiBaseUrl()}/reviews/product/${id}`);
+          if (revRes.ok) {
+            const revData = await revRes.json();
+            if (!cancelled) setProductReviews(revData);
           }
         } catch {
           if (!cancelled) {
@@ -217,12 +227,27 @@ const ProductDetailed = () => {
                 </h1>
 
                 <div className="mb-6 flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-1 rounded-lg bg-yellow-50 px-3 py-1">
+                  <div
+                    className="flex items-center gap-1 rounded-lg bg-yellow-50 px-3 py-1 cursor-pointer hover:bg-yellow-100 transition-colors"
+                    onClick={() => {
+                      const tabsEl = document.getElementById('product-tabs');
+                      if (tabsEl) {
+                        tabsEl.scrollIntoView({ behavior: 'smooth' });
+                        // We might need to trigger tab change if we want to be fancy
+                      }
+                    }}
+                  >
                     <Rate disabled defaultValue={toNumber(product.rating, 5)} allowHalf className="text-sm text-yellow-400" />
                     <span className="ml-1 font-bold text-yellow-700">{toNumber(product.rating, 5)}</span>
                   </div>
-                  <span className="cursor-pointer text-sm text-gray-400 underline transition-colors hover:text-pink-500">
-                    ({product.reviewsCount || 0} {t('product_details.reviews')})
+                  <span
+                    className="cursor-pointer text-sm text-gray-400 underline transition-colors hover:text-pink-500"
+                    onClick={() => {
+                      const tabsEl = document.getElementById('product-tabs');
+                      if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    ({productReviews.length || product.reviewsCount || 0} {t('product_details.reviews')})
                   </span>
                   <span className="text-gray-300">|</span>
                   <span
@@ -315,7 +340,7 @@ const ProductDetailed = () => {
           </div>
         </div>
 
-        <div className="mt-12 rounded-[40px] border border-gray-100 bg-white p-6 shadow-sm md:p-10">
+        <div id="product-tabs" className="mt-12 rounded-[40px] border border-gray-100 bg-white p-6 shadow-sm md:p-10">
           <Tabs
             defaultActiveKey="1"
             size="large"
@@ -368,6 +393,97 @@ const ProductDetailed = () => {
                         </tr>
                       </tbody>
                     </table>
+                  </div>
+                ),
+              },
+              {
+                key: '3',
+                label: <span className="px-4 text-lg font-bold">Vlerësimet ({productReviews.length})</span>,
+                children: (
+                  <div className="py-6">
+                    <div className="grid gap-12 lg:grid-cols-2">
+                      {/* List e vlerësimeve */}
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-6">Mendimet e klientëve</h3>
+                        {productReviews.length === 0 ? (
+                          <div className="bg-gray-50 rounded-2xl p-8 text-center text-gray-400">
+                            Nuk ka vlerësime për këtë produkt ende. Bëhu i pari!
+                          </div>
+                        ) : (
+                          <div className="space-y-6">
+                            {productReviews.map((rev) => (
+                              <div key={rev.id} className="border-b border-gray-100 pb-6">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="font-bold text-gray-800">{rev.name}</span>
+                                  <span className="text-xs text-gray-400">{new Date(rev.createdAt).toLocaleDateString()}</span>
+                                </div>
+                                <Rate disabled defaultValue={rev.rating} className="text-xs text-yellow-400 mb-2" />
+                                <p className="text-gray-600 italic">"{rev.comment}"</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Forma e vlerësimit */}
+                      <div className="bg-pink-50/30 rounded-3xl p-8 border border-pink-100/50">
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">Shto vlerësimin tuaj</h3>
+                        <p className="text-gray-500 text-sm mb-6 font-medium">Ndaj eksperiencën tënde me këtë parfum.</p>
+                        
+                        <Form
+                          form={reviewForm}
+                          layout="vertical"
+                          onFinish={async (values) => {
+                            setIsSubmittingReview(true);
+                            try {
+                              const res = await fetch(`${getApiBaseUrl()}/reviews`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  ...values,
+                                  productId: product.id
+                                })
+                              });
+                              if (res.ok) {
+                                message.success('Faleminderit! Vlerësimi juaj u dërgua me sukses.');
+                                reviewForm.resetFields();
+                                // Refresh reviews
+                                const revRes = await fetch(`${getApiBaseUrl()}/reviews/product/${product.id}`);
+                                if (revRes.ok) {
+                                  const revData = await revRes.json();
+                                  setProductReviews(revData);
+                                }
+                              }
+                            } catch {
+                              message.error('Ndodhi një gabim. Provoni përsëri.');
+                            } finally {
+                              setIsSubmittingReview(false);
+                            }
+                          }}
+                        >
+                          <Form.Item name="name" label="Emri juaj" rules={[{ required: true, message: 'Ju lutem shkruani emrin' }]}>
+                            <Input placeholder="p.sh. Agon Berisha" className="rounded-xl h-11" />
+                          </Form.Item>
+                          
+                          <Form.Item name="rating" label="Vlerësimi" rules={[{ required: true, message: 'Ju lutem jepni një vlerësim' }]}>
+                            <Rate className="text-2xl text-yellow-400" />
+                          </Form.Item>
+                          
+                          <Form.Item name="comment" label="Komenti juaj">
+                            <Input.TextArea rows={4} placeholder="Shkruani mendimin tuaj këtu..." className="rounded-xl" />
+                          </Form.Item>
+                          
+                          <Button 
+                            type="primary" 
+                            htmlType="submit" 
+                            loading={isSubmittingReview}
+                            className="bg-slate-900 border-none h-12 rounded-xl font-bold w-full mt-4"
+                          >
+                            Dërgo Vlerësimin
+                          </Button>
+                        </Form>
+                      </div>
+                    </div>
                   </div>
                 ),
               },
