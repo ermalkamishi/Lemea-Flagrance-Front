@@ -3,7 +3,7 @@ import { Form, Input, Radio, Button, Select, Divider, message } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SafetyCertificateOutlined, CheckCircleFilled, RocketOutlined } from '@ant-design/icons';
+import { SafetyCertificateOutlined, CheckCircleFilled, RocketOutlined, StarFilled } from '@ant-design/icons';
 import { submitOrder, resetOrderStatus } from '../redux/ordersSlice';
 import { clearCart, selectCartTotals } from '../redux/cartSlice';
 import { getImageUrl } from '../utils/imageUtils';
@@ -80,19 +80,18 @@ const Checkout = () => {
           <p className="text-xl text-gray-500 mb-10 leading-relaxed">
             {t('checkout.success_msg')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-5 justify-center mt-4">
             <Button
-              type="primary"
-              className="bg-slate-900 hover:bg-pink-500 text-white border-none h-16 px-12 rounded-2xl font-bold text-xl shadow-xl hover:shadow-pink-500/30 hover:-translate-y-1 transition-all duration-300"
+              className="!bg-gradient-to-r !from-slate-900 !to-slate-800 !hover:from-pink-600 !hover:to-rose-500 !text-white !border-none !h-16 !px-10 !rounded-2xl !font-bold !text-lg !shadow-xl !hover:shadow-pink-500/30 !hover:-translate-y-1 !transition-all !duration-300 flex items-center justify-center gap-3"
               onClick={() => navigate('/')}
             >
-              {t('checkout.back_home')}
+              <RocketOutlined className="text-xl" /> {t('checkout.back_home')}
             </Button>
             <Button
-              className="bg-white border-2 border-pink-500 text-pink-600 h-16 px-12 rounded-2xl font-bold text-xl shadow-sm hover:bg-pink-50 hover:border-pink-600 transition-all duration-300"
+              className="!bg-white !border-2 !border-pink-500 !text-pink-600 !h-16 !px-10 !rounded-2xl !font-bold !text-lg !shadow-md !hover:shadow-lg !hover:bg-pink-50 !hover:border-pink-600 !transition-all !duration-300 flex items-center justify-center gap-3"
               onClick={() => navigate('/vleresim')}
             >
-              {t('review_page.title')}
+              <StarFilled className="text-xl" /> {t('review_page.title')}
             </Button>
           </div>
         </div>
