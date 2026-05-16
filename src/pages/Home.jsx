@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Carousel, Alert } from 'antd';
+import { Carousel, Alert, Rate } from 'antd';
 import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -419,7 +419,11 @@ const Home = () => {
               </div>
               <div className="mt-auto">
                 <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider block mb-1">{getCategoryLabel(product.category)}</span>
-                <h3 className="text-gray-800 font-semibold text-sm sm:text-base line-clamp-1 mb-2">{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</h3>
+                <h3 className="text-gray-800 font-semibold text-sm sm:text-base line-clamp-1 mb-1">{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</h3>
+                <div className="flex items-center gap-1 mb-2">
+                  <Rate disabled defaultValue={toNumber(product.rating, 5)} allowHalf style={{ fontSize: 10 }} />
+                  <span className="text-[10px] text-gray-400">({product.reviewsCount || 0})</span>
+                </div>
                 <div className="flex items-center justify-between">
                   <span className="text-pink-600 font-bold text-lg">{toNumber(product.price, 0).toLocaleString()} {t('common.currency')}</span>
                   <div

@@ -178,6 +178,8 @@ const AdminDashboard = () => {
         brand: product.brand,
         description: product.description,
         description_mk: product.description_mk,
+        rating: product.rating ? Number(product.rating) : 0,
+        reviewsCount: product.reviewsCount ? Number(product.reviewsCount) : 0,
       });
     } else {
       form.resetFields();
@@ -208,6 +210,8 @@ const AdminDashboard = () => {
       if (values.description) formData.append('description', values.description);
       if (values.name_mk) formData.append('name_mk', values.name_mk);
       if (values.description_mk) formData.append('description_mk', values.description_mk);
+      if (values.rating !== undefined && values.rating !== null) formData.append('rating', values.rating);
+      if (values.reviewsCount !== undefined && values.reviewsCount !== null) formData.append('reviewsCount', values.reviewsCount);
 
       // Image goes to Cloudinary via NestJS
       if (fileList.length > 0 && fileList[0].originFileObj) {
@@ -742,6 +746,19 @@ const AdminDashboard = () => {
                     optionFilterProp="label"
                     options={categories.map((cat) => ({ value: cat.name, label: cat.name }))}
                   />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={12}>
+              <Col xs={24} sm={12}>
+                <Form.Item name="rating" label="Rating (vlerësimi)">
+                  <InputNumber style={{ width: '100%', borderRadius: 10 }} min={0} max={5} step={0.1} placeholder="p.sh. 4.7" />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Form.Item name="reviewsCount" label="Reviews Count (numri i vlerësimeve)">
+                  <InputNumber style={{ width: '100%', borderRadius: 10 }} min={0} placeholder="p.sh. 124" />
                 </Form.Item>
               </Col>
             </Row>

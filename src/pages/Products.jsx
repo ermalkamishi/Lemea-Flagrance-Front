@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton } from 'antd';
+import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton, Rate } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { addToCart } from '../redux/cartSlice';
@@ -398,12 +398,13 @@ const Products = () => {
                 {/* Info */}
                 <div className="p-3 sm:p-6 flex flex-col flex-grow">
                   <span className="text-[10px] sm:text-xs font-bold text-pink-500 uppercase tracking-widest mb-1 sm:mb-2 block">{getCategoryLabel(product.category)}</span>
-                  <h3
-                    className="font-bold text-gray-800 text-sm sm:text-lg mb-1 sm:mb-2 line-clamp-2 cursor-pointer hover:text-pink-600 transition-colors leading-snug"
-                    onClick={() => handleProductClick(product.id)}
-                  >
                     {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
                   </h3>
+
+                  <div className="flex items-center gap-2 mb-3">
+                    <Rate disabled defaultValue={toNumber(product.rating, 5)} allowHalf style={{ fontSize: 12 }} />
+                    <span className="text-[10px] text-gray-400">({product.reviewsCount || 0})</span>
+                  </div>
 
                   <div className="mt-auto pt-2 sm:pt-4 flex items-end justify-between">
                     <div>
