@@ -434,7 +434,7 @@ const ProductDetailed = () => {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 p-4 backdrop-blur-lg border-t border-gray-100 md:hidden animate-in slide-in-from-bottom duration-500">
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-400 font-bold uppercase tracking-tight">{t('common.price')}</span>
+            <h4 className="font-bold text-gray-800 mb-0 text-xs uppercase tracking-widest">{t('products.price')}</h4>
             <span className="text-xl font-black text-slate-900 leading-none">{priceNum.toLocaleString()} {t('common.currency')}</span>
           </div>
           <button

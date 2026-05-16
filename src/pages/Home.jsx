@@ -392,7 +392,7 @@ const Home = () => {
       </div>
 
       {/* 3. SEKSIONI: TOP PRODUKTET */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
         <div className="flex justify-between items-end mb-6">
           <div>
             <h2 className="text-2xl md:text-3xl font-serif font-bold text-gray-800">
@@ -436,7 +436,7 @@ const Home = () => {
       </div>
 
       {/* Hero Carousel */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-16">
         <div className="relative rounded-[40px] overflow-hidden shadow-2xl">
           <Carousel autoplay autoplaySpeed={4500} effect="scrollx" dotPosition="bottom">
             {heroSlides.map((slide) => (

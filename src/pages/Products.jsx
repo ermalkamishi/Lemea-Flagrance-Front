@@ -228,7 +228,7 @@ const Products = () => {
             </AntButton>
           }
         >
-          <div className="space-y-8 pb-10">
+          <div className="pt-6 space-y-8 pb-32">
             <div>
               <h4 className="font-bold text-gray-800 mb-4 text-sm uppercase tracking-widest">{t('products.search')}</h4>
               <Input

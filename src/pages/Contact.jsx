@@ -40,28 +40,28 @@ const Contact = () => {
 
           {/* Majtas - Informacioni i Kontaktit */}
           <div className="w-full lg:w-1/3 space-y-8">
-            <div className="bg-pink-50 rounded-3xl p-8 flex flex-col gap-8 h-full relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-pink-200/50 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+            <div className="bg-pink-50 rounded-[40px] p-10 md:p-12 flex flex-col gap-10 h-full relative overflow-hidden shadow-sm border border-pink-100">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-pink-200/40 rounded-full blur-3xl transform translate-x-1/4 -translate-y-1/4"></div>
 
-              <h2 className="text-2xl font-bold text-slate-900 z-10 relative">{t('contact.info_title')}</h2>
+              <h2 className="text-3xl md:text-4xl font-black text-slate-900 z-10 relative mb-2">{t('contact.info_title')}</h2>
 
-              <div className="flex items-start gap-4 z-10 relative">
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 text-pink-500 shadow-sm">
-                  <EnvironmentOutlined className="text-xl" />
+              <div className="flex items-center gap-6 z-10 relative group">
+                <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 text-pink-500 shadow-md transition-transform duration-300 group-hover:scale-110">
+                  <EnvironmentOutlined className="text-2xl" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 mb-1">{t('contact.address_label')}</h3>
-                  <p className="text-gray-600">{t('contact.address_val')}</p>
+                  <h3 className="font-extrabold text-slate-900 text-lg mb-1">{t('contact.address_label')}</h3>
+                  <p className="text-gray-600 font-medium text-base leading-relaxed">{t('contact.address_val')}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 z-10 relative">
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 text-pink-500 shadow-sm">
-                  <MailOutlined className="text-xl" />
+              <div className="flex items-center gap-6 z-10 relative group">
+                <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 text-pink-500 shadow-md transition-transform duration-300 group-hover:scale-110">
+                  <MailOutlined className="text-2xl" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 mb-1">{t('contact.email_label')}</h3>
-                  <p className="text-gray-600">lemea.fragrance@gmail.com</p>
+                  <h3 className="font-extrabold text-slate-900 text-lg mb-1">{t('contact.email_label')}</h3>
+                  <p className="text-gray-600 font-medium text-base leading-relaxed break-all">lemea.fragrance@gmail.com</p>
                 </div>
               </div>
 
