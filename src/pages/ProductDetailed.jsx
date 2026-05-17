@@ -250,9 +250,6 @@ const ProductDetailed = () => {
                       </div>
                     )}
                   </div>
-                  <p className="mt-3 flex items-center gap-1 text-sm text-gray-500">
-                    <TruckOutlined /> {t('product_details.free_shipping')}
-                  </p>
                 </div>
 
                 <p className="mb-8 text-base leading-relaxed text-gray-600">
@@ -283,8 +280,8 @@ const ProductDetailed = () => {
                     onClick={handleAddToCart}
                     disabled={!product.inStock || product.stockQuantity === 0}
                     className={`flex h-[60px] flex-1 items-center justify-center gap-3 rounded-2xl text-lg font-bold transition-all duration-300 ${product.inStock && product.stockQuantity > 0
-                        ? '-translate-y-0 bg-slate-900 text-white hover:-translate-y-1 hover:bg-pink-600 hover:shadow-lg hover:shadow-pink-500/30'
-                        : 'cursor-not-allowed bg-gray-200 text-gray-400'
+                      ? '-translate-y-0 bg-slate-900 text-white hover:-translate-y-1 hover:bg-pink-600 hover:shadow-lg hover:shadow-pink-500/30'
+                      : 'cursor-not-allowed bg-gray-200 text-gray-400'
                       }`}
                   >
                     <ShoppingCartOutlined className="text-2xl" />
@@ -354,9 +351,9 @@ const ProductDetailed = () => {
                           const cat = product.category;
                           const showQty = cat === 'Parfume' || cat === 'P\u00ebr meshkuj' || cat === 'Për meshkuj' || cat === 'Body Mist';
                           const qtyVal = (cat === 'Body Mist') ? '250 ml' : '100 ml';
-                          
+
                           if (!showQty) return null;
-                          
+
                           return (
                             <tr className="border-b border-gray-100">
                               <th className="py-4 font-medium text-gray-500">{t('product_details.specs.quantity')}</th>
@@ -406,7 +403,7 @@ const ProductDetailed = () => {
                       <div className="bg-pink-50/30 rounded-3xl p-8 border border-pink-100/50">
                         <h3 className="text-xl font-bold text-gray-800 mb-2">Shto vlerësimin tuaj</h3>
                         <p className="text-gray-500 text-sm mb-6 font-medium">Ndaj eksperiencën tënde me këtë parfum.</p>
-                        
+
                         <Form
                           form={reviewForm}
                           layout="vertical"
@@ -441,18 +438,18 @@ const ProductDetailed = () => {
                           <Form.Item name="name" label="Emri juaj" rules={[{ required: true, message: 'Ju lutem shkruani emrin' }]}>
                             <Input placeholder="p.sh. Agon Berisha" className="rounded-xl h-11" />
                           </Form.Item>
-                          
+
                           <Form.Item name="rating" label="Vlerësimi" rules={[{ required: true, message: 'Ju lutem jepni një vlerësim' }]}>
                             <Rate className="text-2xl text-yellow-400" />
                           </Form.Item>
-                          
+
                           <Form.Item name="comment" label="Komenti juaj">
                             <Input.TextArea rows={4} placeholder="Shkruani mendimin tuaj këtu..." className="rounded-xl" />
                           </Form.Item>
-                          
-                          <Button 
-                            type="primary" 
-                            htmlType="submit" 
+
+                          <Button
+                            type="primary"
+                            htmlType="submit"
                             loading={isSubmittingReview}
                             className="bg-slate-900 border-none h-12 rounded-xl font-bold w-full mt-4"
                           >
@@ -476,7 +473,7 @@ const ProductDetailed = () => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 px-2 sm:px-0">
               {similarProducts.map((p) => (
-                <div 
+                <div
                   key={p.id}
                   onClick={() => {
                     navigate(`/produktet/${p.id}`);
@@ -485,9 +482,9 @@ const ProductDetailed = () => {
                   className="bg-white rounded-3xl p-3 border border-gray-100 hover:shadow-xl hover:shadow-pink-100 transition-all duration-500 cursor-pointer group flex flex-col h-full"
                 >
                   <div className="relative aspect-[4/5] rounded-2xl overflow-hidden mb-3 bg-gray-50">
-                    <img 
-                      src={getImageUrl(p.image)} 
-                      alt={p.name} 
+                    <img
+                      src={getImageUrl(p.image)}
+                      alt={p.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
@@ -535,8 +532,8 @@ const ProductDetailed = () => {
             onClick={handleAddToCart}
             disabled={!product.inStock || product.stockQuantity === 0}
             className={`flex flex-1 h-12 items-center justify-center gap-2 rounded-xl text-base font-bold shadow-lg transition-all ${product.inStock && product.stockQuantity > 0
-                ? 'bg-pink-500 text-white shadow-pink-200'
-                : 'bg-gray-200 text-gray-400'
+              ? 'bg-pink-500 text-white shadow-pink-200'
+              : 'bg-gray-200 text-gray-400'
               }`}
           >
             <ShoppingCartOutlined className="text-xl" />
