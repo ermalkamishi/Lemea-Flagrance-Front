@@ -10,6 +10,21 @@ import { getImageUrl } from '../utils/imageUtils';
 import { GiftOutlined } from '@ant-design/icons';
 import { toNumber } from '../utils/numberUtils';
 
+const MACEDONIA_CITIES = [
+  'Skopje', 'Bitola', 'Kumanovo', 'Prilep', 'Tetovo', 'Veles', 'Štip', 'Ohrid', 
+  'Gostivar', 'Strumica', 'Kavadarci', 'Kočani', 'Kičevo', 'Struga', 'Radoviš', 
+  'Gevgelija', 'Debar', 'Kriva Palanka', 'Sveti Nikole', 'Negotino', 'Delčevo', 
+  'Vinica', 'Berovo', 'Probištip', 'Valandovo', 'Kruševo', 'Demir Hisar', 
+  'Demir Kapija', 'Pehčevo', 'Makedonski Brod', 'Makedonska Kamenica'
+];
+
+const KOSOVA_CITIES = [
+  'Prishtinë', 'Prizren', 'Pejë', 'Gjakovë', 'Mitrovicë', 'Gjilan', 'Ferizaj', 
+  'Vushtrri', 'Podujeva', 'Suharekë', 'Rahovec', 'Malishevë', 'Skenderaj', 
+  'Klinë', 'Istog', 'Deçan', 'Dragash', 'Kamenicë', 'Viti', 'Kaçanik', 
+  'Shtime', 'Lipjan', 'Obiliq', 'Fushë Kosovë', 'Drenas'
+];
+
 const Checkout = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -23,6 +38,26 @@ const Checkout = () => {
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSummaryExpanded, setIsSummaryExpanded] = useState(false);
+
+  // Watch selected city to calculate dynamic delivery fee
+  const selectedCity = Form.useWatch('city', form);
+
+  let shippingFee = 0;
+  let shippingFeeLabel = null;
+
+  if (selectedCity) {
+    if (MACEDONIA_CITIES.includes(selectedCity)) {
+      shippingFee = 150;
+      shippingFeeLabel = <span className="font-bold text-slate-900 text-lg">150 {t('common.currency')}</span>;
+    } else if (KOSOVA_CITIES.includes(selectedCity)) {
+      shippingFee = 300; // 5 Euros represented as 300 Denars in the system
+      shippingFeeLabel = <span className="font-bold text-slate-900 text-lg">300 {t('common.currency')} (5 €)</span>;
+    } else {
+      shippingFeeLabel = <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-100 px-2.5 py-1 rounded-md">{t('checkout.free')}</span>;
+    }
+  } else {
+    shippingFeeLabel = <span className="text-gray-400 text-sm italic">{t('checkout.select_city_shipping', 'Zgjidhni qytetin për transport')}</span>;
+  }
 
   // Pre-fill form with logged-in user's data
   useEffect(() => {
@@ -49,6 +84,15 @@ const Checkout = () => {
 
 
   const onFinish = (values) => {
+    let finalShippingFee = 0;
+    if (values.city) {
+      if (MACEDONIA_CITIES.includes(values.city)) {
+        finalShippingFee = 150;
+      } else if (KOSOVA_CITIES.includes(values.city)) {
+        finalShippingFee = 300;
+      }
+    }
+
     const orderPayload = {
       userId: user?.id || user?.sub || null,
       firstName: values.firstName,
@@ -57,7 +101,7 @@ const Checkout = () => {
       city: values.city,
       address: values.address,
       paymentMethod: 'cod',
-      totalAmount: total,
+      totalAmount: total + finalShippingFee,
       items: cartItems.map((item) => ({
         productId: item.id,
         name: item.name,
@@ -323,13 +367,22 @@ const Checkout = () => {
               )}
               <div className="flex justify-between text-gray-600 text-lg">
                 <span className="font-medium">{t('checkout.shipping_cost')}</span>
-                <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-100 px-2.5 py-1 rounded-md">{t('checkout.free')}</span>
+                {shippingFeeLabel}
               </div>
             </div>
 
             <div className="flex justify-between items-end">
               <span className="text-xl font-bold text-slate-900">{t('checkout.total')}</span>
-              <span className="text-4xl font-black text-pink-600 tracking-tight">{total.toLocaleString()} <span className="text-2xl">{t('common.currency')}</span></span>
+              <div className="text-right">
+                <span className="text-4xl font-black text-pink-600 tracking-tight">
+                  {(total + shippingFee).toLocaleString()} <span className="text-2xl">{t('common.currency')}</span>
+                </span>
+                {selectedCity && KOSOVA_CITIES.includes(selectedCity) && (
+                  <div className="text-xs text-gray-500 font-bold mt-1">
+                    (Përafërsisht {Math.round((total + shippingFee) / 61.5)} €)
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
