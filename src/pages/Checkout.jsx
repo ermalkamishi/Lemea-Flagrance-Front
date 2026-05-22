@@ -290,7 +290,7 @@ const Checkout = () => {
                 <Divider className="my-10 border-gray-100" />
 
                 <h2 className="text-2xl font-extrabold text-slate-900 mb-8 flex items-center gap-4">
-                  <span className="w-10 h-10 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-lg shadow-sm border border-pink-200">2</span>
+                  <span className="w-10 h-10 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-lg shadow-sm border border-pink-200">1</span>
                   {t('checkout.payment')}
                 </h2>
 
