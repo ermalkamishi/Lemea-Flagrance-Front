@@ -157,7 +157,7 @@ const Header = () => {
               {user ? (
                 <div className="flex items-center gap-2">
                   {user.role === 'admin' && (
-                    <Link to="/admin" className="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-bold hover:bg-pink-500 transition-all uppercase tracking-widest">
+                    <Link to="/admin" className="hidden lg:inline-block px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-bold hover:bg-pink-500 transition-all uppercase tracking-widest">
                       {t('nav.admin')}
                     </Link>
                   )}
@@ -165,7 +165,7 @@ const Header = () => {
                     <Avatar size="small" icon={<UserOutlined />} className="bg-pink-100 text-pink-500 group-hover:bg-pink-500 group-hover:text-white transition-all" />
                     <span className="hidden lg:block text-sm font-medium text-gray-700 group-hover:text-pink-500 transition-colors">{t('nav.profile')}, {user.firstName}</span>
                   </Link>
-                  <div className="p-2 rounded-full hover:bg-pink-50 transition-colors duration-200 cursor-pointer" onClick={() => dispatch(logout())}>
+                  <div className="hidden lg:block p-2 rounded-full hover:bg-pink-50 transition-colors duration-200 cursor-pointer" onClick={() => dispatch(logout())}>
                     <span className="text-xs text-pink-500 font-bold ml-1">{t('nav.logout')}</span>
                   </div>
                 </div>
