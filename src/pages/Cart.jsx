@@ -10,13 +10,12 @@ import { toNumber } from '../utils/numberUtils';
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, total, count } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, total, count } = useSelector(selectCartTotals);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-
-
+  const isPromoActive = new Date().getTime() < new Date('2026-06-04T23:59:59+02:00').getTime();
   if (cartItems.length === 0) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 bg-slate-50 font-sans">
@@ -48,6 +47,32 @@ const Cart = () => {
             {cartItems.length}
           </span>
         </div>
+
+        {/* Promo Mini Banner - only while offer is active */}
+        {isPromoActive && (
+          <div className="mb-8 relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-rose-500 to-violet-600 rounded-[24px] blur opacity-15 group-hover:opacity-30 transition duration-1000"></div>
+            <div className="relative bg-slate-900 border border-slate-800 text-white rounded-[20px] p-5 flex flex-col sm:flex-row items-center justify-between gap-4 overflow-hidden shadow-lg">
+              <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 bg-pink-500 rounded-full blur-2xl opacity-10 pointer-events-none"></div>
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white text-xl shadow-md border border-pink-400/25">
+                  <GiftOutlined />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-white text-base tracking-wide font-serif">
+                    {t('promo_banner.title_line1')} {t('promo_banner.title_line2')}
+                  </h4>
+                  <p className="text-slate-400 text-xs mt-0.5 max-w-xl">
+                    {t('promo_banner.desc')}
+                  </p>
+                </div>
+              </div>
+              <Tag className="font-extrabold border-none bg-pink-500 text-white px-3 py-1 rounded-lg text-xs uppercase animate-pulse flex-shrink-0 relative z-10">
+                5 DITË VETËM
+              </Tag>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           
@@ -134,12 +159,20 @@ const Cart = () => {
                   <span className="font-medium">{t('cart.subtotal')}</span>
                   <span className="font-bold text-slate-900">{subtotal.toLocaleString()} {t('common.currency')}</span>
                 </div>
-                {discount > 0 && (
+                {perfumeMistDiscount > 0 && (
                   <div className="flex justify-between text-pink-600 text-lg animate-pulse">
                     <span className="font-medium flex items-center gap-2">
-                      <GiftOutlined /> {t('common.discount', 'Zbritja (3 për 999)')}
+                      <GiftOutlined /> {t('common.perfume_mist_discount', 'Parfum + Body Mist Falas')}
                     </span>
-                    <span className="font-bold">-{discount.toLocaleString()} {t('common.currency')}</span>
+                    <span className="font-bold">-{perfumeMistDiscount.toLocaleString()} {t('common.currency')}</span>
+                  </div>
+                )}
+                {groupsOf3Discount > 0 && (
+                  <div className="flex justify-between text-pink-600 text-lg animate-pulse">
+                    <span className="font-medium flex items-center gap-2">
+                      <GiftOutlined /> {t('common.mist_bundle_discount', 'Ofertë: 3 Body Mist')}
+                    </span>
+                    <span className="font-bold">-{groupsOf3Discount.toLocaleString()} {t('common.currency')}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-gray-600 text-lg">

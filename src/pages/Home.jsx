@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Carousel, Alert, Rate } from 'antd';
-import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined, GiftOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { addToCart } from '../redux/cartSlice';
@@ -89,6 +89,8 @@ const Home = () => {
 
   const [activeCategory, setActiveCategory] = useState('');
   const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 10, seconds: 19 });
+  const [promoTimeLeft, setPromoTimeLeft] = useState({ days: 5, hours: 0, minutes: 0, seconds: 0 });
+  const [isPromoActive, setIsPromoActive] = useState(new Date().getTime() < new Date('2026-06-04T23:59:59+02:00').getTime());
   const [reviews, setReviews] = useState([]);
   const [categories, setCategories] = useState([]);
   const apiUrl = getApiBaseUrl();
@@ -135,6 +137,32 @@ const Home = () => {
       });
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const target = new Date('2026-06-04T23:59:59+02:00').getTime();
+
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const difference = target - now;
+
+      if (difference <= 0) {
+        setPromoTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setIsPromoActive(false);
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setPromoTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const getCategoryLabel = (catName) => {
@@ -190,8 +218,63 @@ const Home = () => {
           />
         </div>
       )}
+      {/* Ofertë e Re: Bli një dhe merr një falas! */}
+      {isPromoActive && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+          <div className="relative bg-slate-900 border border-slate-800 text-white rounded-[32px] p-8 lg:p-12 overflow-hidden shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8 group">
+            {/* Abstract glowing backgrounds */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-pink-500 rounded-full blur-3xl opacity-20 pointer-events-none group-hover:opacity-30 transition-opacity duration-700"></div>
+            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-violet-600 rounded-full blur-3xl opacity-20 pointer-events-none group-hover:opacity-30 transition-opacity duration-700"></div>
+
+            <div className="relative z-10 max-w-2xl text-center lg:text-left flex-1">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold px-4 py-2 rounded-full text-xs uppercase tracking-widest mb-6 shadow-md shadow-pink-500/10 border border-pink-400/20 animate-pulse">
+                <GiftOutlined /> {t('promo_banner.badge')}
+              </div>
+
+              <h2 className="text-3xl sm:text-5xl font-black mb-4 leading-tight font-serif tracking-wide">
+                {t('promo_banner.title_line1')} <br className="hidden sm:inline" />
+                <span className="bg-gradient-to-r from-pink-400 via-rose-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-sm block sm:inline mt-1 sm:mt-0">
+                  {t('promo_banner.title_line2')}
+                </span>
+              </h2>
+            </div>
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 flex-shrink-0 w-full lg:w-auto">
+              {/* Live Timer */}
+              <div className="flex gap-3 sm:gap-4 justify-center">
+                {[
+                  { label: t('promo_banner.days'), val: promoTimeLeft.days },
+                  { label: t('promo_banner.hours'), val: promoTimeLeft.hours },
+                  { label: t('promo_banner.mins'), val: promoTimeLeft.minutes },
+                  { label: t('promo_banner.secs'), val: promoTimeLeft.seconds }
+                ].map((card, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-slate-800/60 backdrop-blur-md rounded-2xl p-3 sm:p-4 text-center min-w-[70px] sm:min-w-[85px] border border-slate-700/50 shadow-xl hover:border-pink-500/30 transition-all duration-300"
+                  >
+                    <span className="text-2xl sm:text-4xl font-black text-pink-400 font-sans block mb-1 drop-shadow-[0_0_8px_rgba(236,72,153,0.35)]">
+                      {String(card.val).padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      {card.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => navigate('/produktet')}
+                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-4 rounded-2xl font-black text-lg shadow-xl shadow-pink-500/20 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5 border border-pink-400/20 cursor-pointer"
+              >
+                {t('promo_banner.cta')} <ArrowRightOutlined />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Seksioni i Filtrave dhe Produkteve */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <h2 className="text-3xl font-serif font-bold text-gray-800 mb-6 text-center ">
           {t('hero.popular')}
         </h2>
@@ -561,10 +644,10 @@ const Home = () => {
                 { name: t('home.reviews.rev2_name'), product: "Asad Lattafa Black", comment: t('home.reviews.rev2_text'), rating: 5 },
                 { name: t('home.reviews.rev3_name'), product: "Sara D.", comment: t('home.reviews.rev3_text'), rating: 4 }
               ];
-              
+
               // Combine real reviews with placeholders to always have 3
               const displayReviews = [...reviews, ...placeholders].slice(0, 3);
-              
+
               return displayReviews.map((review, idx) => (
                 <div key={idx} className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-pink-100 transition-all duration-300 relative h-full flex flex-col">
                   <svg className="absolute top-6 right-6 w-12 h-12 text-pink-100 rotate-180" fill="currentColor" viewBox="0 0 24 24">

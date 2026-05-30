@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 // Helper to load cart from localStorage
 const loadCartFromStorage = () => {
@@ -70,31 +70,67 @@ const cartSlice = createSlice({
 export const { addToCart, setCartItemQuantity, removeFromCart, clearCart } = cartSlice.actions;
 
 // Selector for totals with discount logic
-export const selectCartTotals = (state) => {
-  const items = state.cart.items;
-  
-  // 1. Calculate raw subtotal
-  const subtotal = items.reduce((acc, item) => {
-    const price = typeof item.price === 'number' ? item.price : 0;
-    return acc + price * item.quantity;
-  }, 0);
+const selectCartItems = (state) => state.cart.items;
 
-  // 2. Offer Logic: 3 Body Mists for 999 Den
-  // One mist is 499 Den. 3 would be 1497. Discount = 1497 - 999 = 498 per group of 3.
-  const mistItems = items.filter(item => item.category === 'Body Mist');
-  const totalMistQty = mistItems.reduce((acc, item) => acc + item.quantity, 0);
-  
-  const numGroupsOf3 = Math.floor(totalMistQty / 3);
-  const discount = numGroupsOf3 * 498;
+export const selectCartTotals = createSelector(
+  [selectCartItems],
+  (items) => {
+    // 1. Calculate raw subtotal
+    const subtotal = items.reduce((acc, item) => {
+      const price = typeof item.price === 'number' ? item.price : 0;
+      return acc + price * item.quantity;
+    }, 0);
 
-  const total = subtotal - discount;
+    // 2. Perfume + Body Mist Offer pairing logic
+    // Perfumes are in categories 'Parfume' or 'Për meshkuj'
+    const perfumeItems = items.filter(item => item.category === 'Parfume' || item.category === 'Për meshkuj');
+    const perfumeQty = perfumeItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  return {
-    subtotal,
-    discount,
-    total,
-    count: items.reduce((acc, item) => acc + item.quantity, 0)
-  };
-};
+    const mistItems = items.filter(item => item.category === 'Body Mist');
+    
+    // Create an array of all individual body mist prices in the cart
+    let allMistPrices = [];
+    mistItems.forEach(item => {
+      const price = typeof item.price === 'number' ? item.price : 0;
+      for (let i = 0; i < item.quantity; i++) {
+        allMistPrices.push(price);
+      }
+    });
+
+    // Sort mists by price ascending (cheapest first) to apply discount to them
+    allMistPrices.sort((a, b) => a - b);
+
+    // Check if the promotion is still active (ends June 4, 2026, 23:59:59+02:00)
+    const PROMO_END_TIME = new Date('2026-06-04T23:59:59+02:00').getTime();
+    const isPromoActive = new Date().getTime() < PROMO_END_TIME;
+
+    // Count how many body mists can be free (only if promo is active!)
+    const freeMistsCount = isPromoActive ? Math.min(perfumeQty, allMistPrices.length) : 0;
+    
+    // Calculate perfume + mist discount (sum of the cheapest free mists)
+    let perfumeMistDiscount = 0;
+    for (let i = 0; i < freeMistsCount; i++) {
+      perfumeMistDiscount += allMistPrices[i];
+    }
+
+    // 3. Offer Logic: 3 Body Mists for 999 Den (for the remaining non-free body mists!)
+    // One mist is 499 Den. 3 would be 1497. Discount = 1497 - 999 = 498 per group of 3.
+    const remainingMistsCount = allMistPrices.length - freeMistsCount;
+    const numGroupsOf3 = Math.floor(remainingMistsCount / 3);
+    const groupsOf3Discount = numGroupsOf3 * 498;
+
+    const discount = perfumeMistDiscount + groupsOf3Discount;
+    const total = subtotal - discount;
+
+    return {
+      subtotal,
+      discount,
+      perfumeMistDiscount,
+      groupsOf3Discount,
+      total,
+      count: items.reduce((acc, item) => acc + item.quantity, 0)
+    };
+  }
+);
 
 export default cartSlice.reducer;

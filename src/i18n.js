@@ -25,7 +25,20 @@ const resources = {
         "backend_error_desc": "Kontrolloni lidhjen me internetin ose që backend-i të jetë i ndezur.",
         "offer": "OFERTË SPECIALE",
         "limited_edition": "Ofertë Limituar",
-        "discount": "Zbritja (3 për 999)"
+        "discount": "Zbritja (3 për 999)",
+        "perfume_mist_discount": "Parfum + Body Mist Falas",
+        "mist_bundle_discount": "Ofertë: 3 Body Mist"
+      },
+      "promo_banner": {
+        "badge": "OFERTË E LIMITUAR - 5 DITË VETËM",
+        "title_line1": "Bli Parfum,",
+        "title_line2": "Merr Body Mist FALAS!",
+        "desc": "Zgjidhni çdo parfum (për femra ose meshkuj) dhe përfitoni një Body Mist Victoria's Secret plotësisht falas! Zbritja aplikohet automatikisht në shportë.",
+        "days": "Ditë",
+        "hours": "Orë",
+        "mins": "Minuta",
+        "secs": "Sekonda",
+        "cta": "Zgjidh Tani"
       },
       "hero": {
         "tag": "Ofertë Speciale",
@@ -445,7 +458,20 @@ const resources = {
         "backend_error_desc": "Проверете ја вашата интернет врска или дали бекендот е вклучен.",
         "offer": "СПЕЦИЈАЛНА ПОНУДА",
         "limited_edition": "Лимитирана Понуда",
-        "discount": "Попуст (3 за 999)"
+        "discount": "Попуст (3 за 999)",
+        "perfume_mist_discount": "Парфем + Body Mist Гратис",
+        "mist_bundle_discount": "Понуда: 3 Body Mist"
+      },
+      "promo_banner": {
+        "badge": "ЛИМИТИРАНА ПОНУДА - САМО 5 ДЕНА",
+        "title_line1": "Купи Парфем,",
+        "title_line2": "Добиј Body Mist ГРАТИС!",
+        "desc": "Изберете кој било парфем (женски или машки) и добијте Victoria's Secret Body Mist целосно бесплатно! Попустот автоматски се пресметува во кошничката.",
+        "days": "Дена",
+        "hours": "Часа",
+        "mins": "Минути",
+        "secs": "Секунди",
+        "cta": "Избери Сега"
       },
       "hero": {
         "tag": "Специјална Понуда",

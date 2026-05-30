@@ -32,7 +32,7 @@ const Checkout = () => {
   const { t } = useTranslation();
 
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, total, count } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, total, count } = useSelector(selectCartTotals);
   const { user } = useSelector((state) => state.auth);
   const { status: orderStatus, currentOrder, error: orderError } = useSelector((state) => state.orders);
 
@@ -175,6 +175,27 @@ const Checkout = () => {
 
           {/* Forma */}
           <div className="lg:col-span-7 xl:col-span-8">
+            {/* Promo Alert Banner */}
+            <div className="mb-6 bg-slate-900 border border-slate-800 text-white rounded-[24px] p-5 relative overflow-hidden shadow-md flex items-center justify-between gap-4">
+              <div className="absolute top-0 right-0 -mr-12 -mt-12 w-32 h-32 bg-pink-500 rounded-full blur-2xl opacity-10 pointer-events-none"></div>
+              <div className="flex items-center gap-3.5 relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white text-lg border border-pink-400/20">
+                  <GiftOutlined />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-white text-sm tracking-wide font-serif">
+                    {t('promo_banner.title_line1')} {t('promo_banner.title_line2')}
+                  </h4>
+                  <p className="text-slate-400 text-[11px] mt-0.5 max-w-md">
+                    {t('promo_banner.desc')}
+                  </p>
+                </div>
+              </div>
+              <span className="hidden sm:inline-block bg-pink-500/20 text-pink-400 border border-pink-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse flex-shrink-0 relative z-10">
+                Ofertë Aktive
+              </span>
+            </div>
+
             <div className="bg-white p-8 md:p-10 rounded-[40px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h2 className="text-2xl font-extrabold text-slate-900 mb-8 flex items-center gap-4">
                 <span className="w-10 h-10 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-lg shadow-sm border border-pink-200">1</span>
@@ -361,12 +382,20 @@ const Checkout = () => {
                   <span className="font-medium">{t('checkout.subtotal')}</span>
                   <span className="font-bold text-slate-900">{subtotal.toLocaleString()} {t('common.currency')}</span>
                 </div>
-                {discount > 0 && (
-                  <div className="flex justify-between text-pink-600 text-lg">
+                {perfumeMistDiscount > 0 && (
+                  <div className="flex justify-between text-pink-600 text-lg animate-pulse">
                     <span className="font-medium flex items-center gap-2">
-                      <GiftOutlined /> {t('common.discount', 'Zbritja (3 për 999)')}
+                      <GiftOutlined /> {t('common.perfume_mist_discount', 'Parfum + Body Mist Falas')}
                     </span>
-                    <span className="font-bold">-{discount.toLocaleString()} {t('common.currency')}</span>
+                    <span className="font-bold">-{perfumeMistDiscount.toLocaleString()} {t('common.currency')}</span>
+                  </div>
+                )}
+                {groupsOf3Discount > 0 && (
+                  <div className="flex justify-between text-pink-600 text-lg animate-pulse">
+                    <span className="font-medium flex items-center gap-2">
+                      <GiftOutlined /> {t('common.mist_bundle_discount', 'Ofertë: 3 Body Mist')}
+                    </span>
+                    <span className="font-bold">-{groupsOf3Discount.toLocaleString()} {t('common.currency')}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-gray-600 text-lg">

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { addToCart } from '../redux/cartSlice';
 import { getImageUrl } from '../utils/imageUtils';
 import { toNumber } from '../utils/numberUtils';
-import { SearchOutlined, FilterOutlined, ShoppingCartOutlined, FireOutlined, GiftOutlined, CheckCircleFilled } from '@ant-design/icons';
+import { SearchOutlined, FilterOutlined, ShoppingCartOutlined, FireOutlined, GiftOutlined, CheckCircleFilled, ArrowRightOutlined } from '@ant-design/icons';
 import { getApiBaseUrl } from '../utils/apiBase';
 
 const Products = () => {
@@ -25,7 +25,7 @@ const Products = () => {
     const params = new URLSearchParams(location.search);
     const search = params.get('search');
     const catParam = params.get('category');
-    
+
     if (search) setSearchTerm(search);
     if (catParam) {
       setCategory(catParam);
@@ -54,7 +54,34 @@ const Products = () => {
   const [priceRange, setPriceRange] = useState([0, 40000]);
   const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
 
+  const [promoTimeLeft, setPromoTimeLeft] = useState({ days: 5, hours: 0, minutes: 0, seconds: 0 });
+  const [isPromoActive, setIsPromoActive] = useState(new Date().getTime() < new Date('2026-06-04T23:59:59+02:00').getTime());
 
+  useEffect(() => {
+    const target = new Date('2026-06-04T23:59:59+02:00').getTime();
+
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const difference = target - now;
+
+      if (difference <= 0) {
+        setPromoTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setIsPromoActive(false);
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setPromoTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getCategoryLabel = (catName) => {
     if (!catName || catName === t('products.categories.all')) return catName;
@@ -323,44 +350,60 @@ const Products = () => {
             </h2>
           </div>
 
-          {/* Offer Banner */}
-          <div className="mb-10 group relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-rose-500 to-orange-400 rounded-[35px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-xl flex flex-col md:flex-row items-center p-2">
-              <div className="bg-gradient-to-br from-pink-600 to-rose-500 p-8 md:p-10 text-white w-full md:w-3/5 rounded-[28px] relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10">
-                  <ShoppingCartOutlined className="text-[120px] -rotate-12" />
+          {/* Dynamic Promotional Banner */}
+          {isPromoActive && (
+            <div className="mb-10 group relative">
+              <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-rose-500 to-violet-600 rounded-[35px] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative bg-slate-900 border border-slate-800 text-white rounded-[32px] overflow-hidden shadow-xl flex flex-col md:flex-row items-center p-8 md:p-10 justify-between gap-6">
+                {/* Abstract glowing background decorations */}
+                <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-pink-500 rounded-full blur-3xl opacity-15 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-violet-600 rounded-full blur-3xl opacity-15 pointer-events-none"></div>
+
+                <div className="relative z-10 max-w-lg flex-1">
+                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold px-3 py-1.5 rounded-full text-[10px] sm:text-xs uppercase tracking-widest mb-4 animate-pulse">
+                    <GiftOutlined /> {t('promo_banner.badge')}
+                  </div>
+                  <h3 className="text-2xl sm:text-4xl font-serif font-black mb-3 leading-tight tracking-wide">
+                    {t('promo_banner.title_line1')} <br />
+                    <span className="bg-gradient-to-r from-pink-400 via-rose-400 to-yellow-300 bg-clip-text text-transparent block mt-0.5">
+                      {t('promo_banner.title_line2')}
+                    </span>
+                  </h3>
                 </div>
-                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-1.5 rounded-full mb-6 animate-bounce">
-                  <span className="text-xs font-bold tracking-widest uppercase">{t('common.offer', 'OFERTË SPECIALE')}</span>
-                </div>
-                <h3 className="text-3xl md:text-5xl font-black mb-4 leading-tight">
-                  {t('home.hero_slides.offer_title1', '3 Body Mist')} <br />
-                  <span className="text-yellow-300">{t('home.hero_slides.offer_title2', 'Vetëm 999 Den')}</span>
-                </h3>
-                <p className="text-white/90 text-lg font-medium max-w-sm mb-0">
-                  {t('products.offer_text', 'Kombino 3 Body Mist-et tuaja të preferuara dhe përfito zbritjen automatikisht në shportë.')}
-                </p>
-              </div>
-              <div className="w-full md:w-2/5 p-8 flex flex-col items-center justify-center text-center">
-                <div className="mb-4">
-                  <div className="flex -space-x-4 mb-4">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="w-16 h-16 rounded-full bg-gray-50 border-4 border-white shadow-lg overflow-hidden flex items-center justify-center">
-                        <GiftOutlined className="text-2xl text-pink-500" />
+
+                <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 flex-shrink-0 w-full md:w-auto">
+                  {/* Live Countdown Cards */}
+                  <div className="flex gap-2.5 justify-center">
+                    {[
+                      { label: t('promo_banner.days'), val: promoTimeLeft.days },
+                      { label: t('promo_banner.hours'), val: promoTimeLeft.hours },
+                      { label: t('promo_banner.mins'), val: promoTimeLeft.minutes },
+                      { label: t('promo_banner.secs'), val: promoTimeLeft.seconds }
+                    ].map((card, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-slate-800/75 backdrop-blur-md rounded-xl p-2.5 text-center min-w-[58px] sm:min-w-[70px] border border-slate-700/40 shadow-md hover:border-pink-500/20 transition-all duration-300"
+                      >
+                        <span className="text-xl sm:text-2xl font-black text-pink-400 font-sans block mb-0.5 drop-shadow-[0_0_6px_rgba(236,72,153,0.3)]">
+                          {String(card.val).padStart(2, '0')}
+                        </span>
+                        <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                          {card.label}
+                        </span>
                       </div>
                     ))}
                   </div>
+
+                  <button
+                    onClick={() => setCategory(t('products.categories.all'))}
+                    className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-4 rounded-xl font-bold text-base shadow-lg shadow-pink-500/10 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5 cursor-pointer"
+                  >
+                    {t('promo_banner.cta')} <ArrowRightOutlined />
+                  </button>
                 </div>
-                <button
-                  onClick={() => setCategory('Body Mist')}
-                  className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-pink-600 transition-all duration-300 shadow-xl hover:shadow-pink-500/20 active:scale-95"
-                >
-                  {t('products.choose_now', 'Zgjidh Tani')}
-                </button>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {filteredProducts.slice(0, visibleCount).map((product) => (
