@@ -94,7 +94,7 @@ const resources = {
         "summary": "Përmbledhja",
         "subtotal": "Nëntotali",
         "shipping": "Transporti",
-        "free": "Falas",
+        "free": "150 Den ose 310(5 Euro)",
         "total": "Total",
         "checkout_btn": "Vazhdo te Pagesa",
         "secure_shopping": "Blerje e garantuar 100% e sigurt",
