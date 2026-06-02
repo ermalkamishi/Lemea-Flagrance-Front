@@ -51,7 +51,7 @@ const Products = () => {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('trending');
   const [visibleCount, setVisibleCount] = useState(9);
-  const [priceRange, setPriceRange] = useState([0, 40000]);
+  const [priceRange, setPriceRange] = useState([0, 4000]);
   const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
 
   const [promoTimeLeft, setPromoTimeLeft] = useState({ days: 5, hours: 0, minutes: 0, seconds: 0 });
