@@ -18,7 +18,7 @@
 /* Bëjmë që pikat të qëndrojnë MBI sfondin me ngjyrë, jo poshtë tij */
 .ant-carousel .slick-dots {
   position: absolute !important;
-  bottom: 20px !important; 
+  bottom: 20px !important;
   margin: 0 !important;
   z-index: 20;
 }
