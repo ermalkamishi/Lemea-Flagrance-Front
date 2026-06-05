@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromCart, setCartItemQuantity, selectCartTotals } from '../redux/cartSlice'; 
+import { removeFromCart, setCartItemQuantity, selectCartTotals } from '../redux/cartSlice';
 import { Button, message, Tag } from 'antd';
 import { DeleteOutlined, ShoppingCartOutlined, ArrowRightOutlined, SafetyCertificateOutlined, MinusOutlined, PlusOutlined, GiftOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
@@ -15,20 +15,20 @@ const Cart = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const isPromoActive = new Date().getTime() < new Date('2026-06-04T23:59:59+02:00').getTime();
+  const isPromoActive = new Date().getTime() < new Date('2026-06-10T23:59:59+09:00').getTime();
   if (cartItems.length === 0) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 bg-slate-50 font-sans">
         <div className="w-48 h-48 bg-pink-50 rounded-full flex items-center justify-center mb-8 shadow-inner border border-pink-100">
-           <ShoppingCartOutlined className="text-[80px] text-pink-300" />
+          <ShoppingCartOutlined className="text-[80px] text-pink-300" />
         </div>
         <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 font-serif">{t('cart.empty_title')}</h2>
         <p className="text-gray-500 mb-10 max-w-md text-center text-lg leading-relaxed">
           {t('cart.empty_desc')}
         </p>
-        <Button 
-          size="large" 
-          className="bg-slate-900 text-white hover:bg-pink-500 border-none rounded-xl h-14 px-10 font-bold text-lg transition-all duration-300 shadow-xl hover:shadow-pink-500/30 hover:-translate-y-1" 
+        <Button
+          size="large"
+          className="bg-slate-900 text-white hover:bg-pink-500 border-none rounded-xl h-14 px-10 font-bold text-lg transition-all duration-300 shadow-xl hover:shadow-pink-500/30 hover:-translate-y-1"
           onClick={() => navigate('/produktet')}
         >
           {t('cart.start_shopping')} <ArrowRightOutlined />
@@ -40,7 +40,7 @@ const Cart = () => {
   return (
     <div className="bg-slate-50 min-h-screen py-12 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="mb-10 flex items-center gap-4">
           <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 font-serif">{t('cart.title')}</h1>
           <span className="bg-pink-100 text-pink-600 font-bold px-4 py-1.5 rounded-full text-lg shadow-sm border border-pink-200">
@@ -75,18 +75,18 @@ const Cart = () => {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          
+
           {/* Lista e Produkteve */}
           <div className="lg:col-span-2 space-y-6">
             {cartItems.map((item) => {
               return (
                 <div key={item.id} className="flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(236,72,153,0.1)] transition-all duration-300">
-                  
+
                   {/* Imazhi */}
                   <div className="w-full sm:w-32 h-32 flex-shrink-0 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 cursor-pointer relative group" onClick={() => navigate(`/produktet/${item.id}`)}>
                     <img src={getImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                   </div>
-                  
+
                   {/* Info */}
                   <div className="flex-grow w-full flex flex-col h-full justify-center">
                     <div className="flex justify-between items-start mb-3">
@@ -94,7 +94,7 @@ const Cart = () => {
                         <span className="text-xs font-extrabold text-pink-500 uppercase tracking-widest">{item.brand || item.category || t('cart.product')}</span>
                         <h3 className="font-bold text-xl text-slate-900 line-clamp-2 cursor-pointer hover:text-pink-600 transition-colors mt-1" onClick={() => navigate(`/produktet/${item.id}`)}>{item.name}</h3>
                       </div>
-                      <button 
+                      <button
                         onClick={() => { dispatch(removeFromCart(item.id)); message.success(t('cart.remove_msg')); }}
                         className="w-11 h-11 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors flex-shrink-0 ml-4 shadow-sm"
                         title={t('cart.remove_msg')}
@@ -102,12 +102,12 @@ const Cart = () => {
                         <DeleteOutlined className="text-xl" />
                       </button>
                     </div>
-                    
+
                     <div className="flex items-end justify-between mt-auto pt-2">
                       <div className="text-slate-900 font-extrabold text-2xl tracking-tight">
                         {toNumber(item.price, 0).toLocaleString()} <span className="text-base font-bold ml-0.5">{t('common.currency')}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-1 rounded-xl border border-gray-200 bg-gray-50 px-2 py-1 sm:px-3">
                         <button
                           type="button"
@@ -153,7 +153,7 @@ const Cart = () => {
           <div className="lg:col-span-1">
             <div className="bg-white p-8 rounded-[30px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sticky top-28">
               <h2 className="text-2xl font-extrabold text-slate-900 mb-8 font-serif">{t('cart.summary')}</h2>
-              
+
               <div className="space-y-5 mb-8">
                 <div className="flex justify-between text-gray-600 text-lg">
                   <span className="font-medium">{t('cart.subtotal')}</span>
@@ -180,22 +180,22 @@ const Cart = () => {
                   <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-50 px-2 py-1 rounded-md">{t('cart.free')}</span>
                 </div>
               </div>
-              
+
               <div className="flex justify-between items-end border-t border-gray-100 pt-8 mb-8">
                 <span className="text-xl font-bold text-slate-900">{t('cart.total')}</span>
                 <span className="text-4xl font-black text-pink-600 tracking-tight">{total.toLocaleString()} <span className="text-2xl">{t('common.currency')}</span></span>
               </div>
-              
-              <Button 
-                type="primary" 
-                size="large" 
-                block 
+
+              <Button
+                type="primary"
+                size="large"
+                block
                 className="bg-slate-900 hover:bg-pink-500 text-white h-16 rounded-2xl text-xl font-bold shadow-xl hover:shadow-pink-500/30 hover:-translate-y-1 transition-all duration-300 border-none flex items-center justify-center gap-3"
                 onClick={() => navigate('/pagesa')}
               >
                 {t('cart.checkout_btn')} <ArrowRightOutlined className="text-2xl" />
               </Button>
-              
+
               <div className="mt-8 flex items-center justify-center gap-2 text-gray-500 font-medium bg-gray-50 py-3 rounded-xl border border-gray-100">
                 <SafetyCertificateOutlined className="text-xl text-emerald-500" />
                 <span>{t('cart.secure_shopping')}</span>

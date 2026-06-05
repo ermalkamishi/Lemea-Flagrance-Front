@@ -90,7 +90,7 @@ const Home = () => {
   const [activeCategory, setActiveCategory] = useState('');
   const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 10, seconds: 19 });
   const [promoTimeLeft, setPromoTimeLeft] = useState({ days: 5, hours: 0, minutes: 0, seconds: 0 });
-  const [isPromoActive, setIsPromoActive] = useState(new Date().getTime() < new Date('2026-06-04T23:59:59+02:00').getTime());
+  const [isPromoActive, setIsPromoActive] = useState(new Date().getTime() < new Date('2026-06-09T23:59:59+02:00').getTime());
   const [reviews, setReviews] = useState([]);
   const [categories, setCategories] = useState([]);
   const apiUrl = getApiBaseUrl();
@@ -140,7 +140,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const target = new Date('2026-06-04T23:59:59+02:00').getTime();
+    const target = new Date('2026-06-10T23:59:59+09:00').getTime();
 
     const updateTimer = () => {
       const now = new Date().getTime();
