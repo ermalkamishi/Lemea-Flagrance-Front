@@ -280,7 +280,7 @@ const ProductDetailed = () => {
                     onClick={handleAddToCart}
                     disabled={!product.inStock || product.stockQuantity === 0}
                     className={`flex h-[60px] flex-1 items-center justify-center gap-3 rounded-2xl text-lg font-bold transition-all duration-300 ${product.inStock && product.stockQuantity > 0
-                      ? '-translate-y-0 bg-slate-900 text-white hover:-translate-y-1 hover:bg-pink-600 hover:shadow-lg hover:shadow-pink-500/30'
+                      ? '-translate-y-0 bg-slate-900 text-white hover:-translate-y-1 hover:bg-pink-600 hover:shadow-lg hover:shadow-pink-500/30 cursor-pointer'
                       : 'cursor-not-allowed bg-gray-200 text-gray-400'
                       }`}
                   >

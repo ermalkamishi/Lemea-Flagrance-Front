@@ -51,7 +51,7 @@ const Products = () => {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('trending');
   const [visibleCount, setVisibleCount] = useState(9);
-  const [priceRange, setPriceRange] = useState([500, 4000]);
+  const [priceRange, setPriceRange] = useState([0, 4000]);
   const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
 
   const [promoTimeLeft, setPromoTimeLeft] = useState({ days: 5, hours: 0, minutes: 0, seconds: 0 });
@@ -198,7 +198,7 @@ const Products = () => {
               <h4 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wider">{t('products.price')}</h4>
               <Slider
                 range
-                min={500}
+                min={0}
                 max={4000}
                 step={100}
                 value={priceRange}
@@ -247,7 +247,7 @@ const Products = () => {
             <AntButton type="text" onClick={() => {
               setSearchTerm('');
               setCategory(t('products.categories.all'));
-              setPriceRange([500, 4000]);
+              setPriceRange([0, 4000]);
               setSortBy('trending');
               setInStockOnly(false);
             }} className="text-pink-500 font-bold">
@@ -288,7 +288,7 @@ const Products = () => {
               <div className="px-2">
                 <Slider
                   range
-                  min={500}
+                  min={0}
                   max={4000}
                   step={100}
                   value={priceRange}
@@ -487,7 +487,7 @@ const Products = () => {
               <h3 className="text-2xl font-bold text-gray-800 mb-3">{t('products.no_products')}</h3>
               <p className="text-gray-500 text-lg max-w-md mx-auto">{t('products.subtitle')}</p>
               <button
-                onClick={() => { setSearchTerm(''); setCategory(t('products.categories.all')); setPriceRange([500, 4000]); setInStockOnly(false); }}
+                onClick={() => { setSearchTerm(''); setCategory(t('products.categories.all')); setPriceRange([0, 4000]); setInStockOnly(false); }}
                 className="mt-8 bg-pink-50 text-pink-600 font-bold px-8 py-3 rounded-xl hover:bg-pink-100 transition-colors"
               >
                 {t('products.clear_filters')}
