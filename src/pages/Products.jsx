@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton, Rate } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,34 +55,6 @@ const Products = () => {
   const [priceRange, setPriceRange] = useState([0, 4000]);
   const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
 
-  const [promoTimeLeft, setPromoTimeLeft] = useState({ days: 5, hours: 0, minutes: 0, seconds: 0 });
-  const [isPromoActive, setIsPromoActive] = useState(new Date().getTime() < new Date('2026-06-10T23:59:59+09:00').getTime());
-
-  useEffect(() => {
-    const target = new Date('2026-06-10T23:59:59+09:00').getTime();
-
-    const updateTimer = () => {
-      const now = new Date().getTime();
-      const difference = target - now;
-
-      if (difference <= 0) {
-        setPromoTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        setIsPromoActive(false);
-        return;
-      }
-
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      setPromoTimeLeft({ days, hours, minutes, seconds });
-    };
-
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const getCategoryLabel = (catName) => {
     if (!catName || catName === t('products.categories.all')) return catName;
@@ -127,6 +100,15 @@ const Products = () => {
   };
 
   return (
+    <>
+      <Helmet>
+        <title>Produktet Tona | Lemea Fragrance</title>
+        <meta name="description" content="Shfleto koleksionin tonë të parfumeve origjinale, body mist dhe lipgloss. Lattafa, Victoria Secret dhe më shumë. Dorgësa e shpejtë në Maqedoni dhe Kosovë." />
+        <meta property="og:title" content="Produktet Tona | Lemea Fragrance" />
+        <meta property="og:description" content="Shfleto koleksionin tonë të parfumeve, body mist dhe lipgloss. Filtroji sipas kategorisë dhe çmimit." />
+        <meta property="og:url" content="https://www.lemeafragrance.shop/produktet" />
+        <link rel="canonical" href="https://www.lemeafragrance.shop/produktet" />
+      </Helmet>
     <div className="bg-slate-50 min-h-screen pb-20 pt-8 font-sans">
       {/* Header Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
@@ -350,60 +332,6 @@ const Products = () => {
             </h2>
           </div>
 
-          {/* Dynamic Promotional Banner */}
-          {isPromoActive && (
-            <div className="mb-10 group relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-rose-500 to-violet-600 rounded-[35px] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative bg-slate-900 border border-slate-800 text-white rounded-[32px] overflow-hidden shadow-xl flex flex-col md:flex-row items-center p-8 md:p-10 justify-between gap-6">
-                {/* Abstract glowing background decorations */}
-                <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-pink-500 rounded-full blur-3xl opacity-15 pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-violet-600 rounded-full blur-3xl opacity-15 pointer-events-none"></div>
-
-                <div className="relative z-10 max-w-lg flex-1">
-                  <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold px-3 py-1.5 rounded-full text-[10px] sm:text-xs uppercase tracking-widest mb-4 animate-pulse">
-                    <GiftOutlined /> {t('promo_banner.badge')}
-                  </div>
-                  <h3 className="text-2xl sm:text-4xl font-serif font-black mb-3 leading-tight tracking-wide">
-                    {t('promo_banner.title_line1')} <br />
-                    <span className="bg-gradient-to-r from-pink-400 via-rose-400 to-yellow-300 bg-clip-text text-transparent block mt-0.5">
-                      {t('promo_banner.title_line2')}
-                    </span>
-                  </h3>
-                </div>
-
-                <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 flex-shrink-0 w-full md:w-auto">
-                  {/* Live Countdown Cards */}
-                  <div className="flex gap-2.5 justify-center">
-                    {[
-                      { label: t('promo_banner.days'), val: promoTimeLeft.days },
-                      { label: t('promo_banner.hours'), val: promoTimeLeft.hours },
-                      { label: t('promo_banner.mins'), val: promoTimeLeft.minutes },
-                      { label: t('promo_banner.secs'), val: promoTimeLeft.seconds }
-                    ].map((card, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-slate-800/75 backdrop-blur-md rounded-xl p-2.5 text-center min-w-[58px] sm:min-w-[70px] border border-slate-700/40 shadow-md hover:border-pink-500/20 transition-all duration-300"
-                      >
-                        <span className="text-xl sm:text-2xl font-black text-pink-400 font-sans block mb-0.5 drop-shadow-[0_0_6px_rgba(236,72,153,0.3)]">
-                          {String(card.val).padStart(2, '0')}
-                        </span>
-                        <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                          {card.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => setCategory(t('products.categories.all'))}
-                    className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-4 rounded-xl font-bold text-base shadow-lg shadow-pink-500/10 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5 cursor-pointer"
-                  >
-                    {t('promo_banner.cta')} <ArrowRightOutlined />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {filteredProducts.slice(0, visibleCount).map((product) => (
@@ -508,6 +436,7 @@ const Products = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +8,14 @@ const PrivacyPolicy = () => {
   const { t } = useTranslation();
 
   return (
+    <>
+      <Helmet>
+        <title>Politika e Privatësisë | Lemea Fragrance</title>
+        <meta name="description" content="Lexo politikën tonë të privatësisë dhe mëso se si i mbrojmë të dhënat tuaja personale gjatë blerjeve në Lemea Fragrance." />
+        <meta property="og:title" content="Politika e Privatësisë | Lemea Fragrance" />
+        <meta property="og:url" content="https://www.lemeafragrance.shop/privacypolicy" />
+        <link rel="canonical" href="https://www.lemeafragrance.shop/privacypolicy" />
+      </Helmet>
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12">
         <header className="mb-12 border-b border-gray-100 pb-8">
@@ -62,6 +71,7 @@ const PrivacyPolicy = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

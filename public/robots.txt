@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /profili
+Disallow: /pagesa
+Disallow: /cart
+
+Sitemap: https://www.lemeaflagrance.shop/sitemap.xml

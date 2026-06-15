@@ -1,5 +1,6 @@
 import { HeartOutlined, StarOutlined, SafetyCertificateOutlined, SmileOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import AboutImg from '../assets/Victoria_Secret_LoveSpell_About.jpeg';
 
 const Aboutus = () => {
@@ -12,6 +13,15 @@ const Aboutus = () => {
   ];
 
   return (
+    <>
+      <Helmet>
+        <title>Rreth Nesh | Lemea Fragrance</title>
+        <meta name="description" content="Mëso më shumë rreth Lemea Fragrance — misioni ynë, vlerat tona dhe angazhimi ynë ndaj cilësisë dhe autenticitetit të parfumeve." />
+        <meta property="og:title" content="Rreth Nesh | Lemea Fragrance" />
+        <meta property="og:description" content="Mëso më shumë rreth Lemea Fragrance — misioni ynë, vlerat tona dhe angazhimi ynë ndaj cilësisë dhe autenticitetit." />
+        <meta property="og:url" content="https://www.lemeafragrance.shop/rreth-nesh" />
+        <link rel="canonical" href="https://www.lemeafragrance.shop/rreth-nesh" />
+      </Helmet>
     <div className="bg-slate-50 min-h-screen py-16 px-4">
       {/* Hero Section */}
       <div className="max-w-5xl mx-auto text-center mb-16 md:mb-20">
@@ -51,6 +61,7 @@ const Aboutus = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

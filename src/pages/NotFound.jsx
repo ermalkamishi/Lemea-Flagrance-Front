@@ -3,11 +3,17 @@ import { Link } from 'react-router-dom';
 import { HomeOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import './NotFound.css';
 
 const NotFound = () => {
   const { t } = useTranslation();
   return (
+    <>
+      <Helmet>
+        <title>404 – Faqja nuk u gjet | Lemea Fragrance</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <div className="min-h-[70vh] flex flex-col items-center justify-center bg-slate-50 px-4">
       <div className="text-center max-w-lg mx-auto">
         
@@ -38,6 +44,7 @@ const NotFound = () => {
         
       </div>
     </div>
+    </>
   );
 };
 

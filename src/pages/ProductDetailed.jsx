@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button, Tag, Rate, Breadcrumb, Tabs, message, Spin, Form, Input } from 'antd';
 import {
@@ -170,6 +171,40 @@ const ProductDetailed = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 pt-4 font-sans">
+      <Helmet>
+        <title>{product.name}{product.brand ? ` – ${product.brand}` : ''} | Lemea Fragrance</title>
+        <meta
+          name="description"
+          content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — bli online në Lemea Fragrance. Çmimi: ${priceNum.toLocaleString()} Den. Dërrgesa e shpejtë në Maqedoni dhe Kosovë.`}
+        />
+        <meta property="og:title" content={`${product.name} | Lemea Fragrance`} />
+        <meta
+          property="og:description"
+          content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — çmimi: ${priceNum.toLocaleString()} Den.`}
+        />
+        <meta property="og:image" content={product.image ? `https://lemeafragrance.shop/api/images/${product.image}` : 'https://www.lemeafragrance.shop/og-image.jpg'} />
+        <meta property="og:url" content={`https://www.lemeafragrance.shop/produktet/${product.id}`} />
+        <link rel="canonical" href={`https://www.lemeafragrance.shop/produktet/${product.id}`} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "image": product.image ? `https://lemeafragrance.shop/api/images/${product.image}` : undefined,
+          "description": product.description || `${product.name} ${product.brand ? `nga ${product.brand}` : ''}.`,
+          "brand": product.brand ? { "@type": "Brand", "name": product.brand } : undefined,
+          "sku": product.id,
+          "offers": {
+            "@type": "Offer",
+            "url": `https://www.lemeafragrance.shop/produktet/${product.id}`,
+            "priceCurrency": "MKD",
+            "price": priceNum,
+            "availability": product.inStock && product.stockQuantity !== 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+            "seller": { "@type": "Organization", "name": "Lemea Fragrance" }
+          }
+        })}</script>
+      </Helmet>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-4 py-4">
           <Breadcrumb separator=">">
