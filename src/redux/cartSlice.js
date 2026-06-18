@@ -75,15 +75,34 @@ const selectCartItems = (state) => state.cart.items;
 export const selectCartTotals = createSelector(
   [selectCartItems],
   (items) => {
-    // 1. Calculate raw subtotal
-    const subtotal = items.reduce((acc, item) => {
-      const price = typeof item.price === 'number' ? item.price : 0;
-      return acc + price * item.quantity;
-    }, 0);
+    // Check if the 5-day promotion is active
+    // We import the config to check the dates. But since this is Redux, 
+    // it's safer to just check here inline to avoid circular dependencies.
+    const PROMO_START = new Date('2026-06-18T00:00:00+02:00').getTime();
+    const PROMO_END = new Date('2026-06-23T23:59:59+02:00').getTime();
+    const now = Date.now();
+    const isPromoActive = now >= PROMO_START && now <= PROMO_END;
+    const PERFUME_PROMO_PRICE = 1399;
+
+    let subtotal = 0;
+    let totalPromoSavings = 0;
+
+    // 1. Calculate raw subtotal with promo override
+    items.forEach((item) => {
+      let price = typeof item.price === 'number' ? item.price : 0;
+      
+      // Override price if promo is active and category is correct
+      if (isPromoActive && (item.category === 'Parfume' || item.category === 'Për meshkuj' || item.category === 'P\u00ebr meshkuj')) {
+         if (price > PERFUME_PROMO_PRICE) {
+           totalPromoSavings += (price - PERFUME_PROMO_PRICE) * item.quantity;
+           price = PERFUME_PROMO_PRICE;
+         }
+      }
+      subtotal += price * item.quantity;
+    });
 
     // 2. Perfume + Body Mist Offer pairing logic
-    // Perfumes are in categories 'Parfume' or 'Për meshkuj'
-    const perfumeItems = items.filter(item => item.category === 'Parfume' || item.category === 'Për meshkuj');
+    const perfumeItems = items.filter(item => item.category === 'Parfume' || item.category === 'Për meshkuj' || item.category === 'P\u00ebr meshkuj');
     const perfumeQty = perfumeItems.reduce((acc, item) => acc + item.quantity, 0);
 
     const mistItems = items.filter(item => item.category === 'Body Mist');
@@ -100,12 +119,12 @@ export const selectCartTotals = createSelector(
     // Sort mists by price ascending (cheapest first) to apply discount to them
     allMistPrices.sort((a, b) => a - b);
 
-    // Check if the promotion is still active (ends June 4, 2026, 23:59:59+02:00)
-    const PROMO_END_TIME = new Date('2026-06-04T23:59:59+02:00').getTime();
-    const isPromoActive = new Date().getTime() < PROMO_END_TIME;
+    // Old promo end date (June 4)
+    const OLD_PROMO_END_TIME = new Date('2026-06-04T23:59:59+02:00').getTime();
+    const isOldPromoActive = now < OLD_PROMO_END_TIME;
 
     // Count how many body mists can be free (only if promo is active!)
-    const freeMistsCount = isPromoActive ? Math.min(perfumeQty, allMistPrices.length) : 0;
+    const freeMistsCount = isOldPromoActive ? Math.min(perfumeQty, allMistPrices.length) : 0;
     
     // Calculate perfume + mist discount (sum of the cheapest free mists)
     let perfumeMistDiscount = 0;
@@ -114,10 +133,9 @@ export const selectCartTotals = createSelector(
     }
 
     // 3. Offer Logic: 3 Body Mists for 999 Den (for the remaining non-free body mists!)
-    // One mist is 499 Den. 3 would be 1497. Discount = 1497 - 999 = 498 per group of 3.
     const remainingMistsCount = allMistPrices.length - freeMistsCount;
     const numGroupsOf3 = Math.floor(remainingMistsCount / 3);
-    const groupsOf3Discount = numGroupsOf3 * 498;
+    const groupsOf3Discount = numGroupsOf3 * 498; // 1497 - 999 = 498
 
     const discount = perfumeMistDiscount + groupsOf3Discount;
     const total = subtotal - discount;
@@ -127,6 +145,7 @@ export const selectCartTotals = createSelector(
       discount,
       perfumeMistDiscount,
       groupsOf3Discount,
+      totalPromoSavings, // We'll display this in the Cart/Checkout
       total,
       count: items.reduce((acc, item) => acc + item.quantity, 0)
     };

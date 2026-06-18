@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import PromoBanner from '../components/PromoBanner';
 import { useNavigate } from 'react-router-dom';
 import { Carousel, Alert, Rate } from 'antd';
 import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined, GiftOutlined } from '@ant-design/icons';
@@ -333,6 +334,11 @@ const Home = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* PROMO BANNER 5 DITË - Seksioni i dytë */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <PromoBanner />
       </div>
 
       {/* 2. BANERI "OFERTA E DITËS" */}

@@ -7,6 +7,7 @@ import { SafetyCertificateOutlined, CheckCircleFilled, RocketOutlined, StarFille
 import { submitOrder, resetOrderStatus } from '../redux/ordersSlice';
 import { clearCart, selectCartTotals } from '../redux/cartSlice';
 import { getImageUrl } from '../utils/imageUtils';
+import PromoBanner from '../components/PromoBanner';
 import { GiftOutlined } from '@ant-design/icons';
 import { toNumber } from '../utils/numberUtils';
 
@@ -32,7 +33,7 @@ const Checkout = () => {
   const { t } = useTranslation();
 
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, total, count } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, totalPromoSavings, total, count } = useSelector(selectCartTotals);
   const { user } = useSelector((state) => state.auth);
   const { status: orderStatus, currentOrder, error: orderError } = useSelector((state) => state.orders);
 
@@ -322,6 +323,10 @@ const Checkout = () => {
 
           {/* Përmbledhja */}
           <div className="lg:col-span-5 xl:col-span-4">
+            <div className="mb-6">
+               <PromoBanner compact />
+            </div>
+            
             <div className="bg-white p-6 md:p-8 rounded-[40px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sticky top-28">
               <div className="flex items-center justify-between lg:block">
                 <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-0 lg:mb-8 font-serif">{t('checkout.summary')}</h2>
@@ -360,8 +365,16 @@ const Checkout = () => {
               <div className="space-y-4 mb-8 bg-gray-50 p-6 rounded-2xl border border-gray-100">
                 <div className="flex justify-between text-gray-600 text-lg">
                   <span className="font-medium">{t('checkout.subtotal')}</span>
-                  <span className="font-bold text-slate-900">{subtotal.toLocaleString()} {t('common.currency')}</span>
+                  <span className="font-bold text-slate-900">{(subtotal + (totalPromoSavings || 0)).toLocaleString()} {t('common.currency')}</span>
                 </div>
+                {totalPromoSavings > 0 && (
+                  <div className="flex justify-between text-pink-600 text-lg animate-pulse">
+                    <span className="font-medium flex items-center gap-2">
+                      <GiftOutlined /> {t('common.promo_perfume_discount', 'Ofertë Parfum')}
+                    </span>
+                    <span className="font-bold">-{totalPromoSavings.toLocaleString()} {t('common.currency')}</span>
+                  </div>
+                )}
                 {perfumeMistDiscount > 0 && (
                   <div className="flex justify-between text-pink-600 text-lg animate-pulse">
                     <span className="font-medium flex items-center gap-2">

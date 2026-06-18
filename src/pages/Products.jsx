@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import PromoBanner from '../components/PromoBanner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton, Rate } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -120,6 +121,9 @@ const Products = () => {
           <FireOutlined className="text-[150px] absolute -right-10 opacity-20 rotate-12" />
           <div className="w-64 h-64 bg-white/10 rounded-full absolute -top-20 -left-20 blur-3xl pointer-events-none"></div>
         </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+        <PromoBanner />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8">

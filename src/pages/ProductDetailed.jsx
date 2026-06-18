@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import PromoBanner from '../components/PromoBanner';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button, Tag, Rate, Breadcrumb, Tabs, message, Spin, Form, Input } from 'antd';
 import {
@@ -498,6 +499,10 @@ const ProductDetailed = () => {
               },
             ]}
           />
+        </div>
+
+        <div className="mt-8">
+          <PromoBanner compact />
         </div>
 
         {/* Seksioni i Produkteve të Ngjashme */}
