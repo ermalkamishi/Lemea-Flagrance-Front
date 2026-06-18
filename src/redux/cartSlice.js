@@ -87,12 +87,23 @@ export const selectCartTotals = createSelector(
     let subtotal = 0;
     let totalPromoSavings = 0;
 
+    // Helper to check if an item is a perfume
+    const isPerfume = (category) => {
+      if (!category) return false;
+      const cat = category.toLowerCase();
+      // Exclude blushes, lipglosses, lip care, makeup, and body mists
+      return !cat.includes('body mist') && 
+             !cat.includes('lipgloss') && 
+             !cat.includes('blush') && 
+             !cat.includes('lip care');
+    };
+
     // 1. Calculate raw subtotal with promo override
     items.forEach((item) => {
       let price = typeof item.price === 'number' ? item.price : 0;
       
-      // Override price if promo is active and category is correct
-      if (isPromoActive && (item.category === 'Parfume' || item.category === 'Për meshkuj' || item.category === 'P\u00ebr meshkuj')) {
+      // Override price if promo is active and it's a perfume
+      if (isPromoActive && isPerfume(item.category)) {
          if (price > PERFUME_PROMO_PRICE) {
            totalPromoSavings += (price - PERFUME_PROMO_PRICE) * item.quantity;
            price = PERFUME_PROMO_PRICE;
@@ -102,7 +113,7 @@ export const selectCartTotals = createSelector(
     });
 
     // 2. Perfume + Body Mist Offer pairing logic
-    const perfumeItems = items.filter(item => item.category === 'Parfume' || item.category === 'Për meshkuj' || item.category === 'P\u00ebr meshkuj');
+    const perfumeItems = items.filter(item => isPerfume(item.category));
     const perfumeQty = perfumeItems.reduce((acc, item) => acc + item.quantity, 0);
 
     const mistItems = items.filter(item => item.category === 'Body Mist');
