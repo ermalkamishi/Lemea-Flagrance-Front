@@ -148,14 +148,39 @@ export const selectCartTotals = createSelector(
     const numGroupsOf3 = Math.floor(remainingMistsCount / 3);
     const groupsOf3Discount = numGroupsOf3 * 498; // 1497 - 999 = 498
 
-    const discount = perfumeMistDiscount + groupsOf3Discount;
-    const total = subtotal - discount;
+    // 4. Special Combo Offer: Victoria's Secret (499 Den) + Sol De Janeiro (699 Den) = 999 Den (Save 199 Den per pair!)
+    let vsQty = 0;
+    let sdjQty = 0;
+
+    items.forEach((item) => {
+      const brand = (item.brand || '').toLowerCase();
+      const name = (item.name || '').toLowerCase();
+      const cat = (item.category || '').toLowerCase();
+      const qty = item.quantity || 1;
+      const isMist = cat.includes('mist') || cat.includes('body');
+
+      const isVS = (brand.includes('victoria') || name.includes('victoria') || name.includes('vs ')) && isMist;
+      const isSDJ = (brand.includes('sol') || name.includes('sol de janeiro')) && isMist;
+
+      if (isVS) vsQty += qty;
+      if (isSDJ) sdjQty += qty;
+    });
+
+    const comboPairs = Math.min(vsQty, sdjQty);
+    const comboBundleDiscount = comboPairs * 199; // 1198 - 999 = 199 Den discount per pair
+
+    const discount = perfumeMistDiscount + groupsOf3Discount + comboBundleDiscount;
+    const total = Math.max(0, subtotal - discount);
 
     return {
       subtotal,
       discount,
       perfumeMistDiscount,
       groupsOf3Discount,
+      comboBundleDiscount,
+      comboPairs,
+      vsQty,
+      sdjQty,
       totalPromoSavings, // We'll display this in the Cart/Checkout
       total,
       count: items.reduce((acc, item) => acc + item.quantity, 0)

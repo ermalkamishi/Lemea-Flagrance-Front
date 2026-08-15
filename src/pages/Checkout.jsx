@@ -33,7 +33,7 @@ const Checkout = () => {
   const { t } = useTranslation();
 
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, totalPromoSavings, total, count } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, totalPromoSavings, total, count } = useSelector(selectCartTotals);
   const { user } = useSelector((state) => state.auth);
   const { status: orderStatus, currentOrder, error: orderError } = useSelector((state) => state.orders);
 
@@ -373,6 +373,14 @@ const Checkout = () => {
                       <GiftOutlined /> {t('common.promo_perfume_discount', 'Ofertë Parfum')}
                     </span>
                     <span className="font-bold">-{totalPromoSavings.toLocaleString()} {t('common.currency')}</span>
+                  </div>
+                )}
+                {comboBundleDiscount > 0 && (
+                  <div className="flex justify-between text-pink-600 text-lg font-extrabold animate-pulse">
+                    <span className="font-medium flex items-center gap-2">
+                      <GiftOutlined /> Ofertë Combo (VS + SDJ)
+                    </span>
+                    <span className="font-bold">-{comboBundleDiscount.toLocaleString()} {t('common.currency')}</span>
                   </div>
                 )}
                 {perfumeMistDiscount > 0 && (

@@ -11,7 +11,7 @@ import PromoBanner from '../components/PromoBanner';
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, totalPromoSavings, total, count } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, vsQty, sdjQty, totalPromoSavings, total, count } = useSelector(selectCartTotals);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -132,6 +132,24 @@ const Cart = () => {
             <div className="bg-white p-8 rounded-[30px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sticky top-28">
               <h2 className="text-2xl font-extrabold text-slate-900 mb-8 font-serif">{t('cart.summary')}</h2>
 
+              {/* Combo Promo Nudge Box */}
+              {(vsQty > 0 && sdjQty === 0) && (
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-amber-900 text-xs sm:text-sm font-semibold">
+                  <GiftOutlined className="text-xl text-amber-500 flex-shrink-0" />
+                  <div>
+                    <strong>Ofertë Combo!</strong> Shto edhe 1 <u>Sol De Janeiro Body Mist</u> për t'i marrë të dyja për vetëm 999 Den (Kurse 199 Den)!
+                  </div>
+                </div>
+              )}
+              {(sdjQty > 0 && vsQty === 0) && (
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-amber-900 text-xs sm:text-sm font-semibold">
+                  <GiftOutlined className="text-xl text-amber-500 flex-shrink-0" />
+                  <div>
+                    <strong>Ofertë Combo!</strong> Shto edhe 1 <u>Victoria's Secret Body Mist</u> për t'i marrë të dyja për vetëm 999 Den (Kurse 199 Den)!
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-5 mb-8">
                 <div className="flex justify-between text-gray-600 text-lg">
                   <span className="font-medium">{t('cart.subtotal')}</span>
@@ -143,6 +161,14 @@ const Cart = () => {
                       <GiftOutlined /> {t('common.promo_perfume_discount', 'Ofertë Parfum')}
                     </span>
                     <span className="font-bold">-{totalPromoSavings.toLocaleString()} {t('common.currency')}</span>
+                  </div>
+                )}
+                {comboBundleDiscount > 0 && (
+                  <div className="flex justify-between text-pink-600 text-lg font-extrabold animate-pulse">
+                    <span className="font-medium flex items-center gap-2">
+                      <GiftOutlined /> Ofertë Combo (VS + SDJ)
+                    </span>
+                    <span className="font-bold">-{comboBundleDiscount.toLocaleString()} {t('common.currency')}</span>
                   </div>
                 )}
                 {perfumeMistDiscount > 0 && (

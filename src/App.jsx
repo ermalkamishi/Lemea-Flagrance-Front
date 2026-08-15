@@ -37,9 +37,12 @@ const AutoScrollToTop = () => {
   return null;
 };
 
-function App() {
+function AppContent() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  const isAdminPath = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,44 +65,43 @@ function App() {
   };
 
   return (
-    <Router>
+    <div className="flex flex-col min-h-screen bg-slate-50 font-sans relative">
       <AutoScrollToTop />
+      
+      {!isAdminPath && <Header />}
+      
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/produktet" element={<Products />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/rreth-nesh" element={<Aboutus />} />
+          <Route path="/kontakti" element={<Contact />} />
+          <Route path="/produktet/:id" element={<ProductDetailed />} /> 
+          <Route path="/pagesa" element={<Checkout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profili" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="/termsofservice" element={<TermsOfService />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+          <Route path="/vleresim" element={<ReviewPage />} />
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
 
-      <div className="flex flex-col min-h-screen bg-slate-50 font-sans relative">
-        
-        <Header />
-        
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/produktet" element={<Products />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/rreth-nesh" element={<Aboutus />} />
-            <Route path="/kontakti" element={<Contact />} />
-            <Route path="/produktet/:id" element={<ProductDetailed />} /> 
-            <Route path="/pagesa" element={<Checkout />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/profili" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/termsofservice" element={<TermsOfService />} />
-            <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-            <Route path="/vleresim" element={<ReviewPage />} />
-            <Route path="/admin" element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
+      {!isAdminPath && <Footer />}
 
-        <Footer />
-
-        {/* BUTONI GLOBALE FLUTURUES - Punon në çdo faqe! */}
+      {/* BUTONI GLOBALE FLUTURUES - Punon në çdo faqe përveç admin! */}
+      {!isAdminPath && (
         <button
           type="button"
           aria-label="Scroll to top"
@@ -110,8 +112,16 @@ function App() {
         >
           <UpOutlined className="text-xl" />
         </button>
-        
-      </div>
+      )}
+      
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

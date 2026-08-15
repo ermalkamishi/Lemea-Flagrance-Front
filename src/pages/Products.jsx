@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import ComboPromoBanner from '../components/ComboPromoBanner';
 import PromoBanner from '../components/PromoBanner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton, Rate } from 'antd';
@@ -8,7 +9,8 @@ import { useTranslation } from 'react-i18next';
 import { addToCart } from '../redux/cartSlice';
 import { getImageUrl } from '../utils/imageUtils';
 import { toNumber } from '../utils/numberUtils';
-import { SearchOutlined, FilterOutlined, ShoppingCartOutlined, FireOutlined, GiftOutlined, CheckCircleFilled, ArrowRightOutlined } from '@ant-design/icons';
+import { getProductRatingInfo } from '../utils/reviewUtils';
+import { SearchOutlined, FilterOutlined, ShoppingCartOutlined, FireOutlined, GiftOutlined, CheckCircleFilled, ArrowRightOutlined, CloseCircleFilled } from '@ant-design/icons';
 import { getApiBaseUrl } from '../utils/apiBase';
 
 const Products = () => {
@@ -20,6 +22,7 @@ const Products = () => {
   const allProducts = useSelector(state => state.products.items) || [];
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState([]);
+  const [isComboFilterActive, setIsComboFilterActive] = useState(false);
 
   const apiUrl = getApiBaseUrl();
 
@@ -27,7 +30,11 @@ const Products = () => {
     const params = new URLSearchParams(location.search);
     const search = params.get('search');
     const catParam = params.get('category');
+    const comboParam = params.get('combo');
 
+    if (comboParam === 'vs_sdj') {
+      setIsComboFilterActive(true);
+    }
     if (search) setSearchTerm(search);
     if (catParam) {
       setCategory(catParam);
@@ -77,6 +84,17 @@ const Products = () => {
   const filteredProducts = useMemo(() => {
     let result = [...allProducts];
 
+    if (isComboFilterActive) {
+      result = result.filter(p => {
+        const b = (p.brand || '').toLowerCase();
+        const n = (p.name || '').toLowerCase();
+        const c = (p.category || '').toLowerCase();
+        const isVS = b.includes('victoria') || n.includes('victoria') || n.includes('vs ');
+        const isSDJ = b.includes('sol') || n.includes('sol de janeiro');
+        return (isVS || isSDJ) && (c.includes('mist') || c.includes('body'));
+      });
+    }
+
     if (searchTerm) result = result.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     if (category !== t('products.categories.all')) {
@@ -94,7 +112,7 @@ const Products = () => {
     if (sortBy === 'trending') result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
     return result;
-  }, [searchTerm, category, inStockOnly, sortBy, priceRange, allProducts, t]);
+  }, [searchTerm, category, inStockOnly, sortBy, priceRange, allProducts, isComboFilterActive, t]);
 
   const handleProductClick = (id) => {
     navigate(`/produktet/${id}`);
@@ -110,18 +128,13 @@ const Products = () => {
         <meta property="og:url" content="https://www.lemeafragrance.shop/produktet" />
         <link rel="canonical" href="https://www.lemeafragrance.shop/produktet" />
       </Helmet>
-    <div className="bg-slate-50 min-h-screen pb-20 pt-8 font-sans">
-      {/* Header Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 rounded-3xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
-          <div className="relative z-10 max-w-lg">
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 font-serif">{t('products.title')}</h1>
-            <p className="text-pink-50 text-lg opacity-90 leading-relaxed">{t('products.subtitle')}</p>
-          </div>
-          <FireOutlined className="text-[150px] absolute -right-10 opacity-20 rotate-12" />
-          <div className="w-64 h-64 bg-white/10 rounded-full absolute -top-20 -left-20 blur-3xl pointer-events-none"></div>
-        </div>
+    <div className="bg-slate-50 min-h-screen pb-20 pt-6 font-sans">
+      
+      {/* New Interactive White-Background Combo Promotion Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ComboPromoBanner onBannerClick={() => setIsComboFilterActive(true)} />
       </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <PromoBanner />
       </div>
@@ -330,6 +343,20 @@ const Products = () => {
 
         {/* Lista e Produkteve */}
         <div className="w-full lg:w-3/4">
+          {isComboFilterActive && (
+            <div className="mb-4 inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white px-4 py-2 rounded-full text-xs font-black shadow-md">
+              <GiftOutlined className="text-sm" />
+              <span>{currentLang === 'mk' ? 'Филтрирано: VS + Sol De Janeiro Combo' : 'Filtruar: VS + Sol De Janeiro Combo (999 Den)'}</span>
+              <button
+                type="button"
+                onClick={() => setIsComboFilterActive(false)}
+                className="ml-2 hover:text-pink-200 transition-colors cursor-pointer"
+                title="Hiq filtrin"
+              >
+                <CloseCircleFilled className="text-base" />
+              </button>
+            </div>
+          )}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
               {t('products.all_products')} <span className="text-pink-500 text-lg font-medium ml-2 bg-pink-50 px-3 py-1 rounded-full">{filteredProducts.length}</span>
@@ -380,10 +407,16 @@ const Products = () => {
                     {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
                   </h3>
 
-                  <div className="flex items-center gap-2 mb-3">
-                    <Rate disabled defaultValue={toNumber(product.rating, 5)} allowHalf style={{ fontSize: 12 }} />
-                    <span className="text-[10px] text-gray-400">({product.reviewsCount || 0})</span>
-                  </div>
+                  {(() => {
+                    const { rating, count } = getProductRatingInfo(product);
+                    return (
+                      <div className="flex items-center gap-1.5 mb-3">
+                        <Rate disabled value={rating} allowHalf style={{ fontSize: 13, color: '#f59e0b' }} />
+                        <span className="text-[11px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">{rating.toFixed(1)}</span>
+                        <span className="text-[10px] text-gray-400 font-medium">({count})</span>
+                      </div>
+                    );
+                  })()}
 
                   <div className="mt-auto pt-2 sm:pt-4 flex items-end justify-between">
                     <div>
