@@ -70,7 +70,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16 md:h-20">
 
           {/* Menuja për Celular & Logo */}
           <div className="flex items-center md:hidden">
@@ -193,6 +193,19 @@ const Header = () => {
         </div>
       </div>
 
+      {/* Mobile Sticky Search Bar (Always visible under header on mobile for best UX) */}
+      <div className="block md:hidden px-4 pb-3 pt-1 border-t border-gray-100/70 bg-white/95">
+        <Input
+          placeholder={t('nav.search_placeholder', 'Kërko produkte, marka...')}
+          prefix={<SearchOutlined className="text-pink-500 text-base mr-1.5" />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onPressEnter={handleSearch}
+          allowClear
+          className="rounded-2xl border-pink-200/80 bg-slate-50 hover:bg-white focus:bg-white text-sm shadow-inner py-2"
+        />
+      </div>
+
       {/* Menuja anësore për Celular */}
       <Drawer
         title={<span className="font-serif text-xl font-bold text-gray-800">Lemea</span>}
@@ -202,19 +215,7 @@ const Header = () => {
         width={280}
         className="mobile-drawer"
       >
-        <div className="flex flex-col h-full">
-          {/* Shiriti i Kërkimit për Celular */}
-          <div className="mb-6 header-search">
-            <Input
-              placeholder={t('nav.search_placeholder')}
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onPressEnter={handleSearch}
-              allowClear
-              size="large"
-            />
-          </div>
+        <div className="flex flex-col h-full pt-2">
 
           {/* Linket e Navigimit */}
           <div className="flex flex-col space-y-2">

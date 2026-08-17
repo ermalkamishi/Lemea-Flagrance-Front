@@ -264,31 +264,9 @@ const ProductDetailed = () => {
                 <Tag className="mb-4 rounded-lg border-none bg-pink-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-pink-600">
                   {product.brand}
                 </Tag>
-                <h1 className="mb-2 text-3xl font-extrabold leading-tight text-slate-900 md:text-5xl">
+                <h1 className="mb-4 text-3xl font-extrabold leading-tight text-slate-900 md:text-5xl">
                   {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
                 </h1>
-
-                {(() => {
-                  const { rating, count } = getProductRatingInfo(product);
-                  const activeReviewsCount = productReviews.length > 0 ? productReviews.length : count;
-                  return (
-                    <div className="mb-5 flex flex-wrap items-center gap-3">
-                      <Rate disabled value={rating} allowHalf style={{ fontSize: 16, color: '#f59e0b' }} />
-                      <span className="rounded-lg bg-amber-50 px-2 py-0.5 text-xs font-extrabold text-amber-700">{rating.toFixed(1)} ★</span>
-                      <a
-                        href="#product-tabs"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          const el = document.getElementById('product-tabs');
-                          if (el) el.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                        className="text-sm font-semibold text-gray-500 underline decoration-gray-300 underline-offset-4 hover:text-pink-600 transition-colors"
-                      >
-                        ({activeReviewsCount} vlerësime)
-                      </a>
-                    </div>
-                  );
-                })()}
 
                 <div className="mb-6 flex flex-wrap items-center gap-4">
                   <span
@@ -413,8 +391,15 @@ const ProductDetailed = () => {
                         </tr>
                         {(() => {
                           const cat = product.category;
+                          const brand = (product.brand || '').toLowerCase();
+                          const name = (product.name || '').toLowerCase();
                           const showQty = cat === 'Parfume' || cat === 'P\u00ebr meshkuj' || cat === 'Për meshkuj' || cat === 'Body Mist';
-                          const qtyVal = (cat === 'Body Mist') ? '250 ml' : '100 ml';
+                          
+                          let qtyVal = '100 ml';
+                          if (cat === 'Body Mist') {
+                            const isSDJ = brand.includes('sol') || name.includes('sol de janeiro') || name.includes('cheirosa');
+                            qtyVal = isSDJ ? '90 ml' : '250 ml';
+                          }
 
                           if (!showQty) return null;
 
@@ -431,94 +416,6 @@ const ProductDetailed = () => {
                         </tr>
                       </tbody>
                     </table>
-                  </div>
-                ),
-              },
-              {
-                key: '3',
-                label: <span className="px-4 text-lg font-bold">Vlerësimet ({activeReviews.length})</span>,
-                children: (
-                  <div className="py-6">
-                    <div className="grid gap-12 lg:grid-cols-2">
-                      {/* Lista e vlerësimeve */}
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-800 mb-6">Mendimet e klientëve</h3>
-                        <div className="space-y-6">
-                          {activeReviews.map((rev) => (
-                            <div key={rev.id} className="border-b border-gray-100 pb-6">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="font-bold text-gray-800">{rev.name}</span>
-                                <span className="text-xs text-gray-400">
-                                  {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('sq-AL') : 'Sot'}
-                                </span>
-                              </div>
-                              <Rate disabled value={rev.rating} allowHalf className="text-xs text-yellow-400 mb-2" />
-                              <p className="text-gray-600 italic">"{rev.comment}"</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Forma e vlerësimit */}
-                      <div className="bg-pink-50/30 rounded-3xl p-8 border border-pink-100/50">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">Shto vlerësimin tuaj</h3>
-                        <p className="text-gray-500 text-sm mb-6 font-medium">Ndaj eksperiencën tënde me këtë parfum.</p>
-
-                        <Form
-                          form={reviewForm}
-                          layout="vertical"
-                          onFinish={async (values) => {
-                            setIsSubmittingReview(true);
-                            try {
-                              const res = await fetch(`${getApiBaseUrl()}/reviews`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                  ...values,
-                                  productId: product.id
-                                })
-                              });
-                              if (res.ok) {
-                                message.success('Faleminderit! Vlerësimi juaj u dërgua me sukses.');
-                                reviewForm.resetFields();
-                                // Refresh reviews from backend
-                                const revRes = await fetch(`${getApiBaseUrl()}/reviews/product/${product.id}`);
-                                if (revRes.ok) {
-                                  const revData = await revRes.json();
-                                  setProductReviews(revData);
-                                }
-                                dispatch(fetchProducts());
-                              }
-                            } catch {
-                              message.error('Ndodhi një gabim. Provoni përsëri.');
-                            } finally {
-                              setIsSubmittingReview(false);
-                            }
-                          }}
-                        >
-                          <Form.Item name="name" label="Emri juaj" rules={[{ required: true, message: 'Ju lutem shkruani emrin' }]}>
-                            <Input placeholder="p.sh. Agon Berisha" className="rounded-xl h-11" />
-                          </Form.Item>
-
-                          <Form.Item name="rating" label="Vlerësimi" rules={[{ required: true, message: 'Ju lutem jepni një vlerësim' }]}>
-                            <Rate className="text-2xl text-yellow-400" />
-                          </Form.Item>
-
-                          <Form.Item name="comment" label="Komenti juaj">
-                            <Input.TextArea rows={4} placeholder="Shkruani mendimin tuaj këtu..." className="rounded-xl" />
-                          </Form.Item>
-
-                          <Button
-                            type="primary"
-                            htmlType="submit"
-                            loading={isSubmittingReview}
-                            className="bg-slate-900 border-none h-12 rounded-xl font-bold w-full mt-4"
-                          >
-                            Dërgo Vlerësimin
-                          </Button>
-                        </Form>
-                      </div>
-                    </div>
                   </div>
                 ),
               },

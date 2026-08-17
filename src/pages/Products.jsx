@@ -95,7 +95,35 @@ const Products = () => {
       });
     }
 
-    if (searchTerm) result = result.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
+      result = result.filter((p) => {
+        const name = (p.name || '').toLowerCase();
+        const nameMk = (p.name_mk || '').toLowerCase();
+        const brand = (p.brand || '').toLowerCase();
+        const cat = (p.category || '').toLowerCase();
+        const desc = (p.description || '').toLowerCase();
+        const descMk = (p.description_mk || '').toLowerCase();
+
+        const matchesDirect = (
+          name.includes(term) ||
+          nameMk.includes(term) ||
+          brand.includes(term) ||
+          cat.includes(term) ||
+          desc.includes(term) ||
+          descMk.includes(term)
+        );
+
+        let matchesAlias = false;
+        if (term === 'vs') {
+          matchesAlias = brand.includes('victoria') || name.includes('victoria');
+        } else if (term === 'sdj') {
+          matchesAlias = brand.includes('sol') || name.includes('sol');
+        }
+
+        return matchesDirect || matchesAlias;
+      });
+    }
 
     if (category !== t('products.categories.all')) {
       result = result.filter(p => p.category === category);
