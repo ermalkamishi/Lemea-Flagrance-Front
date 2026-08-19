@@ -146,6 +146,8 @@ const Products = () => {
     navigate(`/produktet/${id}`);
   };
 
+  const isSearching = Boolean(searchTerm && searchTerm.trim());
+
   return (
     <>
       <Helmet>
@@ -158,14 +160,18 @@ const Products = () => {
       </Helmet>
     <div className="bg-slate-50 min-h-screen pb-20 pt-6 font-sans">
       
-      {/* New Interactive White-Background Combo Promotion Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ComboPromoBanner onBannerClick={() => setIsComboFilterActive(true)} />
-      </div>
+      {/* Promotion Banners (Hidden during active navbar search) */}
+      {!isSearching && (
+        <>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ComboPromoBanner onBannerClick={() => setIsComboFilterActive(true)} />
+          </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <PromoBanner />
-      </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+            <PromoBanner />
+          </div>
+        </>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8">
 
@@ -202,6 +208,10 @@ const Products = () => {
                   if (e.target.value === '' && location.search) {
                     navigate('/produktet', { replace: true });
                   }
+                }}
+                onPressEnter={(e) => {
+                  if (e && e.target && typeof e.target.blur === 'function') e.target.blur();
+                  if (document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur();
                 }}
                 className="rounded-2xl hover:border-pink-300 focus:border-pink-500 py-2"
               />
@@ -291,6 +301,10 @@ const Products = () => {
                 prefix={<SearchOutlined className="text-gray-400" />}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onPressEnter={(e) => {
+                  if (e && e.target && typeof e.target.blur === 'function') e.target.blur();
+                  if (document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur();
+                }}
                 className="rounded-2xl py-3"
               />
             </div>
@@ -371,6 +385,25 @@ const Products = () => {
 
         {/* Lista e Produkteve */}
         <div className="w-full lg:w-3/4">
+          {isSearching && (
+            <div className="mb-4 inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold shadow-md mr-2">
+              <SearchOutlined className="text-pink-400 text-sm" />
+              <span>
+                {currentLang === 'mk' ? `Пребарување: "${searchTerm}"` : `Kërkimi: "${searchTerm}"`}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchTerm('');
+                  navigate('/produktet');
+                }}
+                className="ml-2 hover:text-pink-400 transition-colors cursor-pointer"
+                title="Pastro kërkimin"
+              >
+                <CloseCircleFilled className="text-base" />
+              </button>
+            </div>
+          )}
           {isComboFilterActive && (
             <div className="mb-4 inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white px-4 py-2 rounded-full text-xs font-black shadow-md">
               <GiftOutlined className="text-sm" />

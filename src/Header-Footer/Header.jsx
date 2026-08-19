@@ -21,7 +21,13 @@ const Header = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    if (e && e.target && typeof e.target.blur === 'function') {
+      e.target.blur();
+    }
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
+    }
     if (searchQuery.trim()) {
       navigate(`/produktet?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
