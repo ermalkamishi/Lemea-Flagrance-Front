@@ -208,7 +208,7 @@ const Header = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           onPressEnter={handleSearch}
           allowClear
-          className="rounded-2xl border-pink-200/80 bg-slate-50 hover:bg-white focus:bg-white text-sm shadow-inner py-2"
+          className="rounded-2xl border-pink-200/80 bg-slate-50 hover:bg-white focus:bg-white text-base md:text-sm shadow-inner py-2"
         />
       </div>
 

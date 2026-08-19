@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+/* Prevent auto-zoom on iOS Safari / Mobile webkit when focusing input elements */
+@media screen and (max-width: 768px) {
+  input,
+  select,
+  textarea,
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-affix-wrapper input {
+    font-size: 16px !important;
+  }
+}
