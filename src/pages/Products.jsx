@@ -147,6 +147,13 @@ const Products = () => {
   };
 
   const isSearching = Boolean(searchTerm && searchTerm.trim());
+  const isFiltered = Boolean(
+    isSearching ||
+    isComboFilterActive ||
+    (category && category !== t('products.categories.all')) ||
+    inStockOnly ||
+    (priceRange && (priceRange[0] > 0 || priceRange[1] < 4000))
+  );
 
   return (
     <>
@@ -160,8 +167,8 @@ const Products = () => {
       </Helmet>
     <div className="bg-slate-50 min-h-screen pb-20 pt-6 font-sans">
       
-      {/* Promotion Banners (Hidden during active navbar search) */}
-      {!isSearching && (
+      {/* Promotion Banners (Hidden when any product filter is active) */}
+      {!isFiltered && (
         <>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ComboPromoBanner onBannerClick={() => setIsComboFilterActive(true)} />
