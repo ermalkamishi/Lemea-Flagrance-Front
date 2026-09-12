@@ -91,20 +91,14 @@ const Home = () => {
 
   const [activeCategory, setActiveCategory] = useState('');
   const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 10, seconds: 19 });
-  const [reviews, setReviews] = useState([]);
   const [categories, setCategories] = useState([]);
   const apiUrl = getApiBaseUrl();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [reviewsRes, categoriesRes] = await Promise.all([
-          fetch(`${apiUrl}/reviews`),
-          fetch(`${apiUrl}/categories`)
-        ]);
-        const reviewsData = await reviewsRes.json();
+        const categoriesRes = await fetch(`${apiUrl}/categories`);
         const categoriesData = await categoriesRes.json();
-        setReviews(reviewsData);
         setCategories(categoriesData);
         // Only set default if nothing is selected yet
         if (categoriesData.length > 0 && !activeCategory) {
@@ -251,11 +245,13 @@ const Home = () => {
         {/* Grid-i i Produkteve të Filtruara */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.length > 0 ? (
-            filteredProducts.slice(0, 8).map((product) => (
+            filteredProducts.slice(0, 8).map((product, index) => (
               <div
                 key={product.id}
                 onClick={(e) => handleProductClick(product.id, e)}
-                className="bg-white rounded-2xl p-4 border border-gray-100 hover:shadow-xl hover:shadow-pink-100 transition-all duration-300 cursor-pointer group flex flex-col h-full"
+                className={`bg-white rounded-2xl p-4 border border-gray-100 hover:shadow-xl hover:shadow-pink-100 transition-all duration-300 cursor-pointer group flex-col h-full ${
+                  index >= 4 ? 'hidden md:flex' : 'flex'
+                }`}
               >
                 <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-gray-50">
                   <img
@@ -576,63 +572,6 @@ const Home = () => {
             >
               {t('hero.view_all')}
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 5. SEKSIONI I KOMENTEVE TË KLIENTËVE */}
-      <div className="bg-pink-50/50 border-t border-pink-100 py-20 relative overflow-hidden">
-        <div className="absolute top-[-50px] left-[-50px] w-64 h-64 bg-pink-200/30 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-[-50px] right-[-50px] w-80 h-80 bg-purple-200/30 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-800 mb-4">
-              {t('home.reviews.title')}
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-              {t('home.reviews.desc')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {(() => {
-              const placeholders = [
-                { name: t('home.reviews.rev1_name'), product: "Yara Lattafa Pink", comment: t('home.reviews.rev1_text'), rating: 5 },
-                { name: t('home.reviews.rev2_name'), product: "Asad Lattafa Black", comment: t('home.reviews.rev2_text'), rating: 5 },
-                { name: t('home.reviews.rev3_name'), product: "Sara D.", comment: t('home.reviews.rev3_text'), rating: 4 }
-              ];
-
-              // Combine real reviews with placeholders to always have 3
-              const displayReviews = [...reviews, ...placeholders].slice(0, 3);
-
-              return displayReviews.map((review, idx) => (
-                <div key={idx} className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-pink-100 transition-all duration-300 relative h-full flex flex-col">
-                  <svg className="absolute top-6 right-6 w-12 h-12 text-pink-100 rotate-180" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                  </svg>
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <svg key={i} className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <p className="text-gray-600 mb-8 italic leading-relaxed relative z-10 flex-grow">
-                    "{review.comment || review.text}"
-                  </p>
-                  <div className="flex items-center gap-3 mt-auto">
-                    <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold border border-pink-200">
-                      {(review.name || "U").charAt(0)}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-gray-800 text-sm">{review.name}</h4>
-                      <p className="text-xs text-gray-400">{t('home.reviews.verified_buyer')} {review.product ? `• ${review.product}` : ''}</p>
-                    </div>
-                  </div>
-                </div>
-              ));
-            })()}
           </div>
         </div>
       </div>
