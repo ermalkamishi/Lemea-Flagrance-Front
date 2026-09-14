@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import PromoBanner from '../components/PromoBanner';
+import HomePromoBanner from '../components/HomePromoBanner';
 import { useNavigate } from 'react-router-dom';
 import { Carousel, Alert, Rate } from 'antd';
 import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined, GiftOutlined } from '@ant-design/icons';
@@ -145,7 +146,11 @@ const Home = () => {
       'Parfume': 'perfumes',
       'Body Mist': 'body_spray',
       'Për meshkuj': 'men',
-      'Rhode Lipgloss': 'lipgloss'
+      'Për Meshkuj': 'men',
+      'Rhode Lipgloss': 'lipgloss',
+      'Rhode Blush': 'blush',
+      'Sete': 'sets',
+      'Sets': 'sets'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
     const translated = t(`home.categories.${key}`);
@@ -310,8 +315,13 @@ const Home = () => {
         </div>
       </div>
 
+      {/* BANERI I RI PROMOCIONAL (3 SLIDES) - Ndërmjet seksionit 1 dhe 2 */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-2">
+        <HomePromoBanner />
+      </div>
+
       {/* 1. SEKSIONI I BESUESHMËRISË */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { icon: <SafetyCertificateOutlined />, title: t('home.trust.secure_payment'), desc: t('home.trust.secure_desc') },

@@ -20,6 +20,7 @@ import { getApiBaseUrl } from '../utils/apiBase';
 import { toNumber } from '../utils/numberUtils';
 import { getProductRatingInfo, getFallbackReviews } from '../utils/reviewUtils';
 import { fetchProducts } from '../redux/productsSlice';
+import { JET_SETS } from '../data/jetSetsData';
 
 const ProductDetailed = () => {
   const { id } = useParams();
@@ -40,7 +41,9 @@ const ProductDetailed = () => {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewForm] = Form.useForm();
 
-  const fromStore = useMemo(() => allProducts.find((p) => p.id === id), [allProducts, id]);
+  const fromStore = useMemo(() => {
+    return allProducts.find((p) => p.id === id) || JET_SETS.find((p) => p.id === id);
+  }, [allProducts, id]);
 
   const activeReviews = useMemo(() => {
     return productReviews && productReviews.length > 0 ? productReviews : getFallbackReviews(product);
@@ -109,7 +112,11 @@ const ProductDetailed = () => {
       'Parfume': 'perfumes',
       'Body Mist': 'body_spray',
       'Për meshkuj': 'men',
-      'Rhode Lipgloss': 'lipgloss'
+      'Për Meshkuj': 'men',
+      'Rhode Lipgloss': 'lipgloss',
+      'Rhode Blush': 'blush',
+      'Sete': 'sets',
+      'Sets': 'sets'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
     const translated = t(`home.categories.${key}`);
@@ -118,7 +125,10 @@ const ProductDetailed = () => {
 
   const similarProducts = useMemo(() => {
     if (!product) return [];
-    return allProducts
+    const pool = allProducts.some((p) => p.category === product.category)
+      ? allProducts
+      : [...allProducts, ...JET_SETS];
+    return pool
       .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
       .slice(0, 4);
   }, [allProducts, product]);

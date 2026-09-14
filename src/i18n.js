@@ -246,9 +246,26 @@ const resources = {
           "perfumes": "Parfume",
           "body_spray": "Body Mist",
           "men": "P\u00ebr meshkuj",
-          "lipgloss": "Rhode Lipgloss"
+          "lipgloss": "Rhode Lipgloss",
+          "sets": "Sete"
         },
         "no_products": "Nuk u gjetën produkte në këtë kategori."
+      },
+      "home_promo": {
+        "slide1_badge": "OFERTË SPECIALE BUNDLE",
+        "slide1_title": "3 Body Mist për 999 Den",
+        "slide1_desc": "Kombinoni 3 Body Mist të preferuara Victoria's Secret me çmim ekskluziv.",
+        "slide1_btn": "Eksploro Victoria's Secret",
+        "slide2_badge": "GARDEN OF SMELLS",
+        "slide2_title": "VS + Sol De Janeiro Combo",
+        "slide2_desc": "Zgjidh 1 Victoria's Secret Mist + 1 Sol De Janeiro Mist për vetëm 999 Den (Kurse 199 Den).",
+        "slide2_btn": "Bli Combo Tani",
+        "slide3_badge": "KOLEKSIONI JET SET",
+        "slide3_title": "Sol De Janeiro Travel Sets",
+        "slide3_desc": "4 setet më të kërkuara në botë me aromë tropikale dhe hidratim të thellë.",
+        "slide3_btn": "Shiko Të Gjitha Setet",
+        "add_to_cart": "Shto",
+        "scent_notes": "Aroma"
       },
       "products": {
         "title": "Koleksioni Ynë",
@@ -268,7 +285,8 @@ const resources = {
           "perfumes": "Parfume",
           "body_spray": "Body Mist",
           "men": "P\u00ebr meshkuj",
-          "lipgloss": "Rhode Lipgloss"
+          "lipgloss": "Rhode Lipgloss",
+          "sets": "Sete"
         },
         "sorting": {
           "trending": "Tendencë",
@@ -677,7 +695,8 @@ const resources = {
           "perfumes": "Парфеми",
           "body_spray": "Body Mist",
           "men": "За мажи",
-          "lipgloss": "Rhode Lipgloss"
+          "lipgloss": "Rhode Lipgloss",
+          "sets": "Сетови"
         },
         "no_products": "Не се пронајдени производи во оваа категорија."
       },
@@ -699,7 +718,8 @@ const resources = {
           "perfumes": "Парфеми",
           "body_spray": "Body Mist",
           "men": "За мажи",
-          "lipgloss": "Rhode Lipgloss"
+          "lipgloss": "Rhode Lipgloss",
+          "sets": "Сетови"
         },
         "sorting": {
           "trending": "Тренд",

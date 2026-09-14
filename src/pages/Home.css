@@ -34,3 +34,32 @@
   background-color: white !important;
   width: 24px !important;
 }
+
+/* Styling for light background promo banner dots */
+.custom-promo-dots {
+  position: absolute !important;
+  bottom: 12px !important;
+  margin: 0 !important;
+  z-index: 20;
+}
+
+.custom-promo-dots li button {
+  height: 6px !important;
+  border-radius: 4px;
+  background-color: rgba(15, 23, 42, 0.25) !important;
+  transition: all 0.3s ease;
+}
+
+.custom-promo-dots li.slick-active button {
+  background-color: #ec4899 !important;
+  width: 24px !important;
+}
+
+/* Ensure promo carousel slider and list fill the exact slide height */
+.promo-carousel-wrapper .slick-slider,
+.promo-carousel-wrapper .slick-list,
+.promo-carousel-wrapper .slick-track,
+.promo-carousel-wrapper .slick-slide > div {
+  height: 100% !important;
+}
+

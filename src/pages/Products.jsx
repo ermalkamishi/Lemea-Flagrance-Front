@@ -10,8 +10,10 @@ import { addToCart } from '../redux/cartSlice';
 import { getImageUrl } from '../utils/imageUtils';
 import { toNumber } from '../utils/numberUtils';
 import { getProductRatingInfo } from '../utils/reviewUtils';
-import { SearchOutlined, FilterOutlined, ShoppingCartOutlined, FireOutlined, GiftOutlined, CheckCircleFilled, ArrowRightOutlined, CloseCircleFilled } from '@ant-design/icons';
+import { SearchOutlined, FilterOutlined, ShoppingCartOutlined, FireOutlined, GiftOutlined, CheckCircleFilled, ArrowRightOutlined, CloseCircleFilled, AppstoreOutlined, TagOutlined } from '@ant-design/icons';
 import { getApiBaseUrl } from '../utils/apiBase';
+
+import { JET_SETS as FALLBACK_JET_SETS } from '../data/jetSetsData';
 
 const Products = () => {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ const Products = () => {
   const currentLang = i18n.language;
   const allProducts = useSelector(state => state.products.items) || [];
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
   const [categories, setCategories] = useState([]);
   const [isComboFilterActive, setIsComboFilterActive] = useState(false);
 
@@ -31,13 +34,28 @@ const Products = () => {
     const search = params.get('search');
     const catParam = params.get('category');
     const comboParam = params.get('combo');
+    const brandParam = params.get('brand');
 
     if (comboParam === 'vs_sdj') {
       setIsComboFilterActive(true);
+    } else {
+      setIsComboFilterActive(false);
     }
-    if (search) setSearchTerm(search);
+
+    if (brandParam) {
+      setSelectedBrand(brandParam);
+    } else {
+      setSelectedBrand('');
+    }
+
+    if (search) {
+      setSearchTerm(search);
+    } else {
+      setSearchTerm('');
+    }
     if (catParam) {
-      setCategory(catParam);
+      const normalizedCat = (catParam.toLowerCase() === 'sets' || catParam.toLowerCase() === 'sete') ? 'Sete' : catParam;
+      setCategory(normalizedCat);
     } else {
       setCategory(t('products.categories.all'));
     }
@@ -56,6 +74,14 @@ const Products = () => {
     fetchCategories();
   }, [apiUrl]);
 
+  const displayCategories = useMemo(() => {
+    const list = Array.isArray(categories) ? [...categories] : [];
+    if (!list.some(c => c.name && (c.name.toLowerCase() === 'sete' || c.name.toLowerCase() === 'sets'))) {
+      list.push({ name: 'Sete', name_mk: 'Сетови' });
+    }
+    return list;
+  }, [categories]);
+
   const [category, setCategory] = useState(t('products.categories.all'));
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('trending');
@@ -63,10 +89,62 @@ const Products = () => {
   const [priceRange, setPriceRange] = useState([0, 4000]);
   const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
 
+  const isCategoryActive = useMemo(() => {
+    if (!category) return false;
+    const allLabel = t('products.categories.all');
+    return (
+      category !== allLabel &&
+      category !== 'Të Gjitha' &&
+      category !== 'Сите' &&
+      category !== 'All'
+    );
+  }, [category, t]);
+
+  const handleCategoryChange = (val) => {
+    setCategory(val);
+    const params = new URLSearchParams(location.search);
+    const allLabel = t('products.categories.all');
+    if (!val || val === allLabel || val === 'Të Gjitha' || val === 'Сите' || val === 'All') {
+      params.delete('category');
+    } else {
+      params.set('category', val);
+    }
+    const newQ = params.toString() ? `?${params.toString()}` : '';
+    navigate(`/produktet${newQ}`);
+  };
+
+  const handleClearCategory = () => {
+    const allLabel = t('products.categories.all');
+    setCategory(allLabel);
+    const params = new URLSearchParams(location.search);
+    params.delete('category');
+    const newQ = params.toString() ? `?${params.toString()}` : '';
+    navigate(`/produktet${newQ}`);
+  };
+
+  const handleClearBrand = () => {
+    setSelectedBrand('');
+    const params = new URLSearchParams(location.search);
+    params.delete('brand');
+    const newQ = params.toString() ? `?${params.toString()}` : '';
+    navigate(`/produktet${newQ}`);
+  };
+
+  const handleClearAllFilters = () => {
+    const allLabel = t('products.categories.all');
+    setCategory(allLabel);
+    setSelectedBrand('');
+    setSearchTerm('');
+    setIsComboFilterActive(false);
+    setPriceRange([0, 4000]);
+    setInStockOnly(false);
+    setSortBy('trending');
+    navigate('/produktet');
+  };
 
   const getCategoryLabel = (catName) => {
     if (!catName || catName === t('products.categories.all')) return catName;
-    const catObj = categories.find(c => c.name === catName);
+    const catObj = displayCategories.find(c => c.name === catName);
     if (currentLang === 'mk' && catObj && catObj.name_mk) {
       return catObj.name_mk;
     }
@@ -74,7 +152,11 @@ const Products = () => {
       'Parfume': 'perfumes',
       'Body Mist': 'body_spray',
       'Për meshkuj': 'men',
-      'Rhode Lipgloss': 'lipgloss'
+      'Për Meshkuj': 'men',
+      'Rhode Lipgloss': 'lipgloss',
+      'Rhode Blush': 'blush',
+      'Sete': 'sets',
+      'Sets': 'sets'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
     const translated = t(`home.categories.${key}`);
@@ -84,6 +166,11 @@ const Products = () => {
   const filteredProducts = useMemo(() => {
     let result = [...allProducts];
 
+    // If allProducts doesn't have Sete items, inject fallback Jet Sets
+    if (!result.some(p => p.category === 'Sete')) {
+      result = [...result, ...FALLBACK_JET_SETS];
+    }
+
     if (isComboFilterActive) {
       result = result.filter(p => {
         const b = (p.brand || '').toLowerCase();
@@ -92,6 +179,18 @@ const Products = () => {
         const isVS = b.includes('victoria') || n.includes('victoria') || n.includes('vs ');
         const isSDJ = b.includes('sol') || n.includes('sol de janeiro');
         return (isVS || isSDJ) && (c.includes('mist') || c.includes('body'));
+      });
+    }
+
+    if (selectedBrand) {
+      const bTerm = selectedBrand.toLowerCase().trim();
+      result = result.filter(p => {
+        const b = (p.brand || '').toLowerCase();
+        const n = (p.name || '').toLowerCase();
+        if (bTerm === 'vs' || bTerm === "victoria's secret" || bTerm === 'victoria secret') {
+          return b.includes('victoria') || n.includes('victoria') || n.includes('vs ');
+        }
+        return b.includes(bTerm) || n.includes(bTerm);
       });
     }
 
@@ -140,7 +239,7 @@ const Products = () => {
     if (sortBy === 'trending') result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
     return result;
-  }, [searchTerm, category, inStockOnly, sortBy, priceRange, allProducts, isComboFilterActive, t]);
+  }, [searchTerm, category, inStockOnly, sortBy, priceRange, allProducts, isComboFilterActive, selectedBrand, t]);
 
   const handleProductClick = (id) => {
     navigate(`/produktet/${id}`);
@@ -150,7 +249,8 @@ const Products = () => {
   const isFiltered = Boolean(
     isSearching ||
     isComboFilterActive ||
-    (category && category !== t('products.categories.all')) ||
+    selectedBrand ||
+    isCategoryActive ||
     inStockOnly ||
     (priceRange && (priceRange[0] > 0 || priceRange[1] < 4000))
   );
@@ -230,10 +330,10 @@ const Products = () => {
                 value={category}
                 size="large"
                 className="w-full"
-                onChange={setCategory}
+                onChange={handleCategoryChange}
                 options={[
                   { value: t('products.categories.all'), label: t('products.categories.all') },
-                  ...categories.map(cat => ({ value: cat.name, label: getCategoryLabel(cat.name) }))
+                  ...displayCategories.map(cat => ({ value: cat.name, label: getCategoryLabel(cat.name) }))
                 ]}
               />
             </div>
@@ -288,14 +388,8 @@ const Products = () => {
           width="85%"
           className="mobile-filter-drawer"
           extra={
-            <AntButton type="text" onClick={() => {
-              setSearchTerm('');
-              setCategory(t('products.categories.all'));
-              setPriceRange([0, 4000]);
-              setSortBy('trending');
-              setInStockOnly(false);
-            }} className="text-pink-500 font-bold">
-              Të Gjitha
+            <AntButton type="text" onClick={handleClearAllFilters} className="text-pink-500 font-bold">
+              {currentLang === 'mk' ? 'Исчисти сè' : 'Të Gjitha'}
             </AntButton>
           }
         >
@@ -319,10 +413,10 @@ const Products = () => {
             <div>
               <h4 className="font-bold text-gray-800 mb-4 text-sm uppercase tracking-widest">{t('products.category')}</h4>
               <div className="grid grid-cols-2 gap-2">
-                {[{ value: t('products.categories.all'), label: t('products.categories.all') }, ...categories.map(cat => ({ value: cat.name, label: getCategoryLabel(cat.name) }))].map(opt => (
+                {[{ value: t('products.categories.all'), label: t('products.categories.all') }, ...displayCategories.map(cat => ({ value: cat.name, label: getCategoryLabel(cat.name) }))].map(opt => (
                   <button
                     key={opt.value}
-                    onClick={() => setCategory(opt.value)}
+                    onClick={() => handleCategoryChange(opt.value)}
                     className={`px-4 py-3 rounded-xl text-sm font-bold transition-all ${category === opt.value ? 'bg-pink-500 text-white shadow-lg shadow-pink-200' : 'bg-gray-50 text-gray-600 border border-gray-100'}`}
                   >
                     {opt.label}
@@ -392,36 +486,102 @@ const Products = () => {
 
         {/* Lista e Produkteve */}
         <div className="w-full lg:w-3/4">
-          {isSearching && (
-            <div className="mb-4 inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold shadow-md mr-2">
-              <SearchOutlined className="text-pink-400 text-sm" />
-              <span>
-                {currentLang === 'mk' ? `Пребарување: "${searchTerm}"` : `Kërkimi: "${searchTerm}"`}
-              </span>
+
+          {/* Active Filter Badges Bar */}
+          {(isSearching || isComboFilterActive || selectedBrand || isCategoryActive) && (
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              {/* Category Badge */}
+              {isCategoryActive && (
+                <div className="inline-flex items-center gap-2 bg-pink-600 text-white px-3.5 py-1.5 rounded-full text-xs font-black shadow-md">
+                  <AppstoreOutlined className="text-sm" />
+                  <span>
+                    {currentLang === 'mk' ? 'Категорија: ' : 'Kategoria: '}
+                    <strong>{getCategoryLabel(category)}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleClearCategory}
+                    className="ml-1.5 hover:text-pink-200 transition-colors cursor-pointer flex items-center justify-center"
+                    title={currentLang === 'mk' ? 'Отстрани категорија' : 'Hiq kategorinë'}
+                  >
+                    <CloseCircleFilled className="text-base" />
+                  </button>
+                </div>
+              )}
+
+              {/* Brand Badge */}
+              {selectedBrand && (
+                <div className="inline-flex items-center gap-2 bg-rose-600 text-white px-3.5 py-1.5 rounded-full text-xs font-black shadow-md">
+                  <TagOutlined className="text-sm" />
+                  <span>
+                    {currentLang === 'mk' ? 'Бренд: ' : 'Brendi: '}
+                    <strong>{selectedBrand}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleClearBrand}
+                    className="ml-1.5 hover:text-rose-200 transition-colors cursor-pointer flex items-center justify-center"
+                    title={currentLang === 'mk' ? 'Отстрани бренд' : 'Hiq brendin'}
+                  >
+                    <CloseCircleFilled className="text-base" />
+                  </button>
+                </div>
+              )}
+
+              {/* Combo Filter Badge */}
+              {isComboFilterActive && (
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white px-3.5 py-1.5 rounded-full text-xs font-black shadow-md">
+                  <GiftOutlined className="text-sm" />
+                  <span>{currentLang === 'mk' ? 'VS + Sol De Janeiro Combo' : 'VS + Sol De Janeiro Combo (999 Den)'}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsComboFilterActive(false);
+                      const params = new URLSearchParams(location.search);
+                      params.delete('combo');
+                      const newQ = params.toString() ? `?${params.toString()}` : '';
+                      navigate(`/produktet${newQ}`);
+                    }}
+                    className="ml-1.5 hover:text-pink-200 transition-colors cursor-pointer flex items-center justify-center"
+                    title="Hiq filtrin"
+                  >
+                    <CloseCircleFilled className="text-base" />
+                  </button>
+                </div>
+              )}
+
+              {/* Search Badge */}
+              {isSearching && (
+                <div className="inline-flex items-center gap-2 bg-slate-900 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-md">
+                  <SearchOutlined className="text-pink-400 text-sm" />
+                  <span>
+                    {currentLang === 'mk' ? `Пребарување: "${searchTerm}"` : `Kërkimi: "${searchTerm}"`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchTerm('');
+                      const params = new URLSearchParams(location.search);
+                      params.delete('search');
+                      const newQ = params.toString() ? `?${params.toString()}` : '';
+                      navigate(`/produktet${newQ}`);
+                    }}
+                    className="ml-1.5 hover:text-pink-400 transition-colors cursor-pointer flex items-center justify-center"
+                    title="Pastro kërkimin"
+                  >
+                    <CloseCircleFilled className="text-base" />
+                  </button>
+                </div>
+              )}
+
+              {/* Clear All Button */}
               <button
                 type="button"
-                onClick={() => {
-                  setSearchTerm('');
-                  navigate('/produktet');
-                }}
-                className="ml-2 hover:text-pink-400 transition-colors cursor-pointer"
-                title="Pastro kërkimin"
+                onClick={handleClearAllFilters}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-gray-500 hover:text-pink-600 hover:bg-pink-50 border border-gray-200 transition-all cursor-pointer shadow-sm ml-1"
+                title="Pastro të gjitha filtrat"
               >
-                <CloseCircleFilled className="text-base" />
-              </button>
-            </div>
-          )}
-          {isComboFilterActive && (
-            <div className="mb-4 inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white px-4 py-2 rounded-full text-xs font-black shadow-md">
-              <GiftOutlined className="text-sm" />
-              <span>{currentLang === 'mk' ? 'Филтрирано: VS + Sol De Janeiro Combo' : 'Filtruar: VS + Sol De Janeiro Combo (999 Den)'}</span>
-              <button
-                type="button"
-                onClick={() => setIsComboFilterActive(false)}
-                className="ml-2 hover:text-pink-200 transition-colors cursor-pointer"
-                title="Hiq filtrin"
-              >
-                <CloseCircleFilled className="text-base" />
+                <span>{currentLang === 'mk' ? 'Исчисти сè' : 'Pastro të gjitha'}</span>
               </button>
             </div>
           )}
