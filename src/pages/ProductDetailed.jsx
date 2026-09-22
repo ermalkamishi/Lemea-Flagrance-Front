@@ -114,9 +114,9 @@ const ProductDetailed = () => {
       'Për Meshkuj': 'men',
       'Rhode Lipgloss': 'lipgloss',
       'Rhode Blush': 'blush',
+      'Sete & Koleksione': 'sets_collections',
       'Sete': 'sets',
-      'Sets': 'sets',
-      'Sete & Koleksione': 'sets'
+      'Sets': 'sets'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
     const translated = t(`home.categories.${key}`);

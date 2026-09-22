@@ -247,7 +247,8 @@ const resources = {
           "body_spray": "Body Mist",
           "men": "P\u00ebr meshkuj",
           "lipgloss": "Rhode Lipgloss",
-          "sets": "Sete"
+          "sets": "Sete",
+          "sets_collections": "Sete & Koleksione"
         },
         "no_products": "Nuk u gjetën produkte në këtë kategori."
       },
@@ -286,7 +287,8 @@ const resources = {
           "body_spray": "Body Mist",
           "men": "P\u00ebr meshkuj",
           "lipgloss": "Rhode Lipgloss",
-          "sets": "Sete"
+          "sets": "Sete",
+          "sets_collections": "Sete & Koleksione"
         },
         "sorting": {
           "trending": "Tendencë",
@@ -696,7 +698,8 @@ const resources = {
           "body_spray": "Body Mist",
           "men": "За мажи",
           "lipgloss": "Rhode Lipgloss",
-          "sets": "Сетови"
+          "sets": "Сетови",
+          "sets_collections": "Сетови и Колекции"
         },
         "no_products": "Не се пронајдени производи во оваа категорија."
       },
@@ -719,7 +722,8 @@ const resources = {
           "body_spray": "Body Mist",
           "men": "За мажи",
           "lipgloss": "Rhode Lipgloss",
-          "sets": "Сетови"
+          "sets": "Сетови",
+          "sets_collections": "Сетови и Колекции"
         },
         "sorting": {
           "trending": "Тренд",

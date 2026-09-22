@@ -40,26 +40,27 @@ const HomePromoBanner = () => {
               <img
                 src={promoImg1}
                 alt="Victoria's Secret 3 Body Mist 999 Den"
-                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 opacity-100 contrast-[1.03]"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
               />
 
-              {/* Soft Gradient Scrim on Left for optimal text readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/45 to-transparent w-full sm:w-[55%] pointer-events-none" />
+              {/* Soft Gradient Scrim on Left: Cushions the text with natural background tone while leaving artwork full-opacity */}
+              <div className="absolute inset-y-0 left-0 w-[75%] sm:w-[55%] bg-gradient-to-r from-white/95 via-white/70 to-transparent pointer-events-none" />
 
               {/* Content Box - Constrained to Left Quadrant */}
-              <div className="relative z-10 p-5 sm:p-8 lg:p-12 max-w-[280px] sm:max-w-[340px] lg:max-w-[390px] flex flex-col items-start">
+              <div className="relative z-10 p-5 sm:p-8 lg:p-12 max-w-[260px] sm:max-w-[340px] lg:max-w-[390px] flex flex-col items-start">
                 
                 {/* Headline */}
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 font-serif leading-tight tracking-tight mb-2">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-950 font-serif leading-tight tracking-tight mb-2 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
                   {isMk ? (
-                    <>Victoria's Secret <br /><span className="text-pink-600 font-extrabold">3 Body Mists за 999 Ден</span></>
+                    <>Victoria's Secret <br /><span className="text-pink-700 font-black">3 Body Mists за 999 Ден</span></>
                   ) : (
-                    <>Victoria's Secret <br /><span className="text-pink-600 font-extrabold">3 Body Mist për 999 Den</span></>
+                    <>Victoria's Secret <br /><span className="text-pink-700 font-black">3 Body Mist për 999 Den</span></>
                   )}
                 </h2>
 
                 {/* Subtitle */}
-                <p className="text-gray-700 font-medium text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
+                <p className="text-slate-900 font-bold text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
                   {isMk
                     ? 'Изберете ги вашите 3 омилени мириси по специјална понуда денес.'
                     : 'Zgjidhni 3 nga aromat tuaja më të dashura me çmimin special promocional.'}
@@ -72,7 +73,7 @@ const HomePromoBanner = () => {
                     e.stopPropagation();
                     navigate("/produktet?category=Body+Mist&brand=Victoria's+Secret");
                   }}
-                  className="inline-flex items-center gap-2 bg-slate-900 hover:bg-pink-600 text-white font-extrabold text-xs sm:text-sm px-5 sm:px-7 py-3 rounded-2xl shadow-xl shadow-slate-900/15 hover:shadow-pink-500/25 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-2 bg-slate-900 hover:bg-pink-600 text-white font-extrabold text-xs sm:text-sm px-5 sm:px-7 py-3 rounded-2xl shadow-xl shadow-slate-900/20 hover:shadow-pink-500/25 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
                 >
                   <span>{isMk ? 'Истражи Victoria\'s Secret' : 'Eksploro Victoria\'s Secret'}</span>
                   <ArrowRightOutlined className="text-xs transition-transform group-hover:translate-x-1" />
@@ -92,26 +93,27 @@ const HomePromoBanner = () => {
               <img
                 src={promoImg2}
                 alt="Garden of Smells Combo Offer"
-                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 opacity-100 contrast-[1.03]"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
               />
 
-              {/* Soft Gradient Scrim on Left for optimal text readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#FAF5F1]/90 via-[#FAF5F1]/45 to-transparent w-full sm:w-[55%] pointer-events-none" />
+              {/* Soft Gradient Scrim on Left: Perfectly balances text contrast using artwork's warm ivory tone while keeping artwork 100% vivid */}
+              <div className="absolute inset-y-0 left-0 w-[75%] sm:w-[55%] bg-gradient-to-r from-[#FAF5F1]/95 via-[#FAF5F1]/75 to-transparent pointer-events-none" />
 
               {/* Content Box - Constrained to Left Quadrant */}
-              <div className="relative z-10 p-5 sm:p-8 lg:p-12 max-w-[280px] sm:max-w-[340px] lg:max-w-[390px] flex flex-col items-start">
+              <div className="relative z-10 p-5 sm:p-8 lg:p-12 max-w-[260px] sm:max-w-[340px] lg:max-w-[390px] flex flex-col items-start">
                 
                 {/* Headline */}
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 font-serif leading-tight tracking-tight mb-2">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-950 font-serif leading-tight tracking-tight mb-2 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
                   {isMk ? (
-                    <>VS + Sol De Janeiro <br /><span className="text-amber-500 font-extrabold">Комбо за 999 Ден!</span></>
+                    <>VS + Sol De Janeiro <br /><span className="text-amber-800 sm:text-amber-700 font-black">Комбо за 999 Ден!</span></>
                   ) : (
-                    <>VS + Sol De Janeiro <br /><span className="text-amber-500 font-extrabold">Combo për 999 Den!</span></>
+                    <>VS + Sol De Janeiro <br /><span className="text-amber-800 sm:text-amber-700 font-black">Combo për 999 Den!</span></>
                   )}
                 </h2>
 
                 {/* Subtitle */}
-                <p className="text-gray-700 font-medium text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
+                <p className="text-slate-900 font-bold text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
                   {isMk
                     ? '1 Victoria\'s Secret (499 Ден) + 1 Sol De Janeiro (699 Ден) заедно по супер цена.'
                     : '1 Victoria\'s Secret (499 Den) + 1 Sol De Janeiro (699 Den) së bashku me çmim promocional.'}
@@ -125,13 +127,13 @@ const HomePromoBanner = () => {
                       e.stopPropagation();
                       navigate('/produktet?combo=vs_sdj');
                     }}
-                    className="inline-flex items-center gap-2 bg-slate-900 hover:bg-amber-500 text-white font-extrabold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-2xl shadow-xl shadow-slate-900/15 hover:shadow-amber-500/25 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-2 bg-slate-900 hover:bg-amber-600 text-white font-extrabold text-xs sm:text-sm px-5 sm:px-6 py-3 rounded-2xl shadow-xl shadow-slate-900/20 hover:shadow-amber-500/25 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
                   >
                     <span>{isMk ? 'Види ги комбинациите' : 'Zbulo Kombinimet'}</span>
                     <ArrowRightOutlined className="text-xs transition-transform group-hover:translate-x-1" />
                   </button>
 
-                  <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-pink-200 text-xs font-bold text-pink-600 shadow-sm">
+                  <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-pink-200 text-xs font-black text-pink-700 shadow-md">
                     {isMk ? '-199 Ден' : '-199 Den'}
                   </div>
                 </div>

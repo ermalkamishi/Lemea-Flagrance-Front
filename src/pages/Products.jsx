@@ -73,11 +73,7 @@ const Products = () => {
   }, [apiUrl]);
 
   const displayCategories = useMemo(() => {
-    const list = Array.isArray(categories) ? [...categories] : [];
-    if (!list.some(c => c.name && (c.name.toLowerCase() === 'sete' || c.name.toLowerCase() === 'sets'))) {
-      list.push({ name: 'Sete', name_mk: 'Сетови' });
-    }
-    return list;
+    return Array.isArray(categories) ? categories : [];
   }, [categories]);
 
   const [category, setCategory] = useState(t('products.categories.all'));
@@ -153,9 +149,9 @@ const Products = () => {
       'Për Meshkuj': 'men',
       'Rhode Lipgloss': 'lipgloss',
       'Rhode Blush': 'blush',
+      'Sete & Koleksione': 'sets_collections',
       'Sete': 'sets',
-      'Sets': 'sets',
-      'Sete & Koleksione': 'sets'
+      'Sets': 'sets'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
     const translated = t(`home.categories.${key}`);
