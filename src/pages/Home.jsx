@@ -315,7 +315,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* BANERI I RI PROMOCIONAL (3 SLIDES) - Ndërmjet seksionit 1 dhe 2 */}
+      {/* BANERI I RI PROMOCIONAL - Ndërmjet seksionit 1 dhe 2 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-2">
         <HomePromoBanner />
       </div>

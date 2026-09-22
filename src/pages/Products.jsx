@@ -13,8 +13,6 @@ import { getProductRatingInfo } from '../utils/reviewUtils';
 import { SearchOutlined, FilterOutlined, ShoppingCartOutlined, FireOutlined, GiftOutlined, CheckCircleFilled, ArrowRightOutlined, CloseCircleFilled, AppstoreOutlined, TagOutlined } from '@ant-design/icons';
 import { getApiBaseUrl } from '../utils/apiBase';
 
-import { JET_SETS as FALLBACK_JET_SETS } from '../data/jetSetsData';
-
 const Products = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -156,7 +154,8 @@ const Products = () => {
       'Rhode Lipgloss': 'lipgloss',
       'Rhode Blush': 'blush',
       'Sete': 'sets',
-      'Sets': 'sets'
+      'Sets': 'sets',
+      'Sete & Koleksione': 'sets'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
     const translated = t(`home.categories.${key}`);
@@ -165,11 +164,6 @@ const Products = () => {
 
   const filteredProducts = useMemo(() => {
     let result = [...allProducts];
-
-    // If allProducts doesn't have Sete items, inject fallback Jet Sets
-    if (!result.some(p => p.category === 'Sete')) {
-      result = [...result, ...FALLBACK_JET_SETS];
-    }
 
     if (isComboFilterActive) {
       result = result.filter(p => {

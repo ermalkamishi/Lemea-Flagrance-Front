@@ -20,7 +20,6 @@ import { getApiBaseUrl } from '../utils/apiBase';
 import { toNumber } from '../utils/numberUtils';
 import { getProductRatingInfo, getFallbackReviews } from '../utils/reviewUtils';
 import { fetchProducts } from '../redux/productsSlice';
-import { JET_SETS } from '../data/jetSetsData';
 
 const ProductDetailed = () => {
   const { id } = useParams();
@@ -42,7 +41,7 @@ const ProductDetailed = () => {
   const [reviewForm] = Form.useForm();
 
   const fromStore = useMemo(() => {
-    return allProducts.find((p) => p.id === id) || JET_SETS.find((p) => p.id === id);
+    return allProducts.find((p) => p.id === id);
   }, [allProducts, id]);
 
   const activeReviews = useMemo(() => {
@@ -116,7 +115,8 @@ const ProductDetailed = () => {
       'Rhode Lipgloss': 'lipgloss',
       'Rhode Blush': 'blush',
       'Sete': 'sets',
-      'Sets': 'sets'
+      'Sets': 'sets',
+      'Sete & Koleksione': 'sets'
     };
     const key = keyMap[catName] || catName.toLowerCase().replace(/ /g, '_');
     const translated = t(`home.categories.${key}`);
@@ -125,10 +125,7 @@ const ProductDetailed = () => {
 
   const similarProducts = useMemo(() => {
     if (!product) return [];
-    const pool = allProducts.some((p) => p.category === product.category)
-      ? allProducts
-      : [...allProducts, ...JET_SETS];
-    return pool
+    return allProducts
       .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
       .slice(0, 4);
   }, [allProducts, product]);

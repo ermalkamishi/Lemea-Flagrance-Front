@@ -16,6 +16,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { logout } from '../redux/authSlice';
 import { getImageUrl } from '../utils/imageUtils';
 import { getApiBaseUrl } from '../utils/apiBase';
 import { fetchProducts as fetchProductsGlobal } from '../redux/productsSlice';
@@ -39,7 +40,7 @@ const statusTagColor = (status) => {
 };
 
 // ─── Sidebar ────────────────────────────────────────────────────────────────
-function AdminSidebar({ activeTab, menuItems, onMenuSelect, onShopNavigate, ordersCount, productsCount }) {
+function AdminSidebar({ activeTab, menuItems, onMenuSelect, onShopNavigate, onLogout, ordersCount, productsCount }) {
   const { t } = useTranslation();
 
   return (
@@ -113,20 +114,35 @@ function AdminSidebar({ activeTab, menuItems, onMenuSelect, onShopNavigate, orde
           <Tag color="pink" style={{ border: 0, fontSize: 10, fontWeight: 700, borderRadius: 8 }}>v1.2</Tag>
         </div>
 
-        <Button
-          block
-          icon={<LogoutOutlined />}
-          onClick={onShopNavigate}
-          style={{
-            borderRadius: 12, height: 44,
-            borderColor: '#fce7f3', color: '#64748b',
-            fontWeight: 600, transition: 'all 0.2s ease',
-            background: '#fff'
-          }}
-          className="hover:border-pink-300 hover:text-pink-600"
-        >
-          {t('admin.back_to_shop', 'Kthehu te Dyqani')}
-        </Button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <Button
+            block
+            icon={<ShoppingOutlined />}
+            onClick={onShopNavigate}
+            style={{
+              borderRadius: 12, height: 40,
+              borderColor: '#fce7f3', color: '#64748b',
+              fontWeight: 600, transition: 'all 0.2s ease',
+              background: '#fff'
+            }}
+            className="hover:border-pink-300 hover:text-pink-600"
+          >
+            {t('admin.back_to_shop', 'Kthehu te Dyqani')}
+          </Button>
+
+          <Button
+            block
+            danger
+            icon={<LogoutOutlined />}
+            onClick={onLogout}
+            style={{
+              borderRadius: 12, height: 40,
+              fontWeight: 600, transition: 'all 0.2s ease',
+            }}
+          >
+            {t('nav.logout', 'Dil (Logout)')}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -178,6 +194,20 @@ const AdminDashboard = () => {
     return t('admin.orders', 'Porositë');
   }, [activeTab, t]);
 
+  const handleLogout = useCallback(() => {
+    dispatch(logout());
+    message.info('Ju keni dalë me sukses nga paneli i administratorit.');
+    navigate('/login');
+  }, [dispatch, navigate]);
+
+  const handleAuthError = useCallback((err) => {
+    if (err?.response?.status === 401) {
+      message.error('Seanca juaj ka skaduar! Ju lutem kyçuni përsëri.');
+      dispatch(logout());
+      navigate('/login');
+    }
+  }, [dispatch, navigate]);
+
   // ── Fetchers ──────────────────────────────────────────────────────────────
   const fetchStats = useCallback(async () => {
     try {
@@ -185,8 +215,11 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setStats(res.data);
-    } catch (e) { console.error(e); }
-  }, [token, apiUrl]);
+    } catch (e) {
+      console.error(e);
+      handleAuthError(e);
+    }
+  }, [token, apiUrl, handleAuthError]);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -201,8 +234,11 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data);
-    } catch (e) { console.error(e); }
-  }, [token, apiUrl]);
+    } catch (e) {
+      console.error(e);
+      handleAuthError(e);
+    }
+  }, [token, apiUrl, handleAuthError]);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -347,11 +383,15 @@ const AdminDashboard = () => {
       fetchStats();
     } catch (err) {
       console.error(err);
-      message.error(t('admin.save_failed', 'Dështoi ruajtja e produktit'));
+      if (err?.response?.status === 401) {
+        handleAuthError(err);
+      } else {
+        message.error(t('admin.save_failed', 'Dështoi ruajtja e produktit'));
+      }
     } finally {
       setSubmittingProduct(false);
     }
-  }, [editingProduct, fileList, token, apiUrl, fetchProducts, fetchStats, dispatch, t]);
+  }, [editingProduct, fileList, token, apiUrl, fetchProducts, fetchStats, dispatch, handleAuthError, t]);
 
   // ── Delete product ────────────────────────────────────────────────────────
   const handleDeleteProduct = useCallback(async (id) => {
@@ -703,6 +743,7 @@ const AdminDashboard = () => {
               menuItems={menuItems}
               onMenuSelect={(key) => { setActiveTab(key); setMobileMenuOpen(false); }}
               onShopNavigate={() => navigate('/')}
+              onLogout={handleLogout}
               ordersCount={orders.length}
               productsCount={products.length}
             />
@@ -722,6 +763,7 @@ const AdminDashboard = () => {
             menuItems={menuItems}
             onMenuSelect={(key) => { setActiveTab(key); setMobileMenuOpen(false); }}
             onShopNavigate={() => navigate('/')}
+            onLogout={handleLogout}
             ordersCount={orders.length}
             productsCount={products.length}
           />

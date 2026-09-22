@@ -1,50 +1,22 @@
 import React, { useRef } from 'react';
-import { Carousel, message } from 'antd';
+import { Carousel } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../redux/cartSlice';
 import {
   ArrowRightOutlined,
   LeftOutlined,
-  RightOutlined,
-  ShoppingOutlined,
-  PlusOutlined,
-  CheckCircleFilled
+  RightOutlined
 } from '@ant-design/icons';
 
 // Slide 1 & 2 image assets
 import promoImg1 from '../assets/promo-banner-image (1).jpg';
 import promoImg2 from '../assets/promo-banner-image (2).jpg';
 
-// Slide 3 Jet Set data
-import { JET_SETS } from '../data/jetSetsData';
-
 const HomePromoBanner = () => {
   const carouselRef = useRef(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { i18n } = useTranslation();
   const isMk = i18n.language === 'mk';
-
-  const handleAddToCart = (item, e) => {
-    if (e) e.stopPropagation();
-    dispatch(
-      addToCart({
-        id: item.id,
-        name: item.fullName,
-        price: item.price,
-        image: item.image,
-        category: item.category,
-        brand: item.brand,
-        quantity: 1
-      })
-    );
-    message.success({
-      content: `${item.name} ${isMk ? 'е додаден во кошничката!' : 'u shtua në shportë!'}`,
-      icon: <CheckCircleFilled className="text-emerald-500" />
-    });
-  };
 
   return (
     <div className="relative group select-none promo-carousel-wrapper">
@@ -164,106 +136,6 @@ const HomePromoBanner = () => {
                   </div>
                 </div>
 
-              </div>
-
-            </div>
-          </div>
-
-          {/* ════════════════════════════════════════════════════════
-              SLIDE 3: 4 Sol De Janeiro Jet Sets
-          ════════════════════════════════════════════════════════ */}
-          <div className="outline-none">
-            <div className="relative w-full h-[360px] sm:h-[400px] md:h-[430px] lg:h-[455px] bg-gradient-to-br from-[#FAF7F2] via-[#F6F1EA] to-[#ECE3D4] p-3.5 sm:p-5 lg:p-6 flex flex-col justify-between overflow-hidden">
-              
-              {/* Soft decorative background glow blobs */}
-              <div className="absolute -top-24 -left-24 w-72 h-72 bg-amber-200/30 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-pink-200/30 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl pointer-events-none" />
-
-              {/* Header Row: Title & Action Button */}
-              <div className="relative z-10 flex flex-row items-center justify-between gap-3 mb-2 sm:mb-3">
-                <div>
-                  <h3 className="text-base sm:text-xl lg:text-2xl font-black text-slate-900 font-serif tracking-tight leading-tight">
-                    {isMk ? 'Иконски патувачки сетови 3-во-1' : 'Sete Udhëtimi Ikonike 3-në-1'}
-                  </h3>
-                  <p className="text-gray-600 text-[11px] sm:text-xs mt-0.5 hidden sm:block">
-                    {isMk
-                      ? 'Body Mist (30ml) + Krem Trupi (50ml) + Xhel Dushi (90ml)'
-                      : 'Body Mist (30ml) + Krem Trupi (50ml) + Xhel Dushi (90ml)'}
-                  </p>
-                </div>
-
-                {/* Main CTA Button to Sets Category */}
-                <button
-                  type="button"
-                  onClick={() => navigate('/produktet?category=Sete')}
-                  className="inline-flex items-center gap-1.5 sm:gap-2 bg-slate-900 hover:bg-pink-600 text-white font-extrabold text-xs sm:text-sm px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl shadow-md hover:shadow-pink-500/20 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 cursor-pointer whitespace-nowrap"
-                >
-                  <span>{isMk ? 'Сите сетови' : 'Shiko Setet'}</span>
-                  <ArrowRightOutlined className="text-xs" />
-                </button>
-              </div>
-
-              {/* 4 Product Cards Grid - Bigger Cards & Full-Width Images */}
-              <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4 pb-2">
-                {JET_SETS.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => navigate(`/produktet/${item.id}`)}
-                    style={{ '--hover-glow': item.glowColor }}
-                    className="group/card bg-white hover:bg-white rounded-2xl overflow-hidden border border-amber-100/80 hover:border-pink-400 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1"
-                  >
-                    {/* Card Image Container - Fills the entire width of the card */}
-                    <div className="relative w-full h-28 sm:h-36 md:h-40 lg:h-48 overflow-hidden bg-[#FAF7F2]">
-                      <img
-                        src={item.image}
-                        alt={item.fullName}
-                        className="w-full h-full object-cover object-bottom group-hover/card:scale-105 transition-transform duration-500"
-                      />
-                      {/* Scent Number Tag */}
-                      <span className={`absolute top-2 left-2 ${item.badgeBg} text-white font-black text-[10px] sm:text-xs px-2 py-0.5 rounded-md shadow-md backdrop-blur-sm`}>
-                        {item.scentName}
-                      </span>
-                    </div>
-
-                    {/* Card Details */}
-                    <div className="p-2.5 sm:p-3 lg:p-3.5 flex flex-col justify-between flex-1">
-                      <div>
-                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm lg:text-[15px] truncate group-hover/card:text-pink-600 transition-colors">
-                          {isMk ? item.nameMk : item.name}
-                        </h4>
-                        
-                        {/* Scent Notes */}
-                        <p className="text-[10px] sm:text-xs text-gray-500 truncate mt-0.5">
-                          {isMk ? item.notesMk : item.notesSq}
-                        </p>
-                      </div>
-
-                      {/* Price & Add button row */}
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="text-slate-900 font-black text-xs sm:text-sm lg:text-[15px]">
-                            {item.price.toLocaleString()} Den
-                          </span>
-                          <span className="text-[10px] sm:text-xs text-gray-400 line-through">
-                            {item.oldPrice.toLocaleString()}
-                          </span>
-                        </div>
-
-                        {/* Quick Add Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => handleAddToCart(item, e)}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-pink-500 text-slate-700 hover:text-white flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer shadow-sm"
-                          title={isMk ? 'Додај во кошничка' : 'Shto në shportë'}
-                        >
-                          <PlusOutlined className="text-xs" />
-                        </button>
-                      </div>
-                    </div>
-
-                  </div>
-                ))}
               </div>
 
             </div>
