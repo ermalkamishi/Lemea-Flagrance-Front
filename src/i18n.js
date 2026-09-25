@@ -142,7 +142,7 @@ const resources = {
         "rights": "Të gjitha të drejtat e rezervuara."
       },
       "about": {
-        "title": "Historia e Lemea",
+        "title": "Historia e Lemea's",
         "subtitle": "Nga një pasion i vogël për artin e parfumerisë, ne u shndërruam në një destinacion ku eleganca takon cilësinë.",
         "values": {
           "passion_title": "Pasion për Aromat",
