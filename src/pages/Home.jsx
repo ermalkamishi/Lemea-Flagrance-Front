@@ -185,28 +185,34 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>Lemea Fragrance | Parfume &amp; Body Mist Origjinale</title>
-        <meta name="description" content="Bli parfume dhe body mist origjinale Lattafa, Victoria Secret dhe më shumë. Dërrgesa e shpejtë në Maqedoni dhe Kosovë. Çmime të përballueshme." />
-        <meta property="og:title" content="Lemea Fragrance | Parfume &amp; Body Mist Origjinale" />
-        <meta property="og:description" content="Bli parfume dhe body mist origjinale Lattafa, Victoria Secret dhe më shumë. Dërrgesa e shpejtë në Maqedoni dhe Kosovë." />
-        <meta property="og:url" content="https://www.lemeafragrance.shop/" />
-        <link rel="canonical" href="https://www.lemeafragrance.shop/" />
+        <title>Lemea Fragrance | Parfume origjinale në Maqedoni &amp; Kosovë</title>
+        <meta
+          name="description"
+          content="Bleni parfume origjinale online në Lemea Fragrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
+        />
+        <meta property="og:title" content="Lemea Fragrance | Parfume origjinale në Maqedoni &amp; Kosovë" />
+        <meta
+          property="og:description"
+          content="Bleni parfume origjinale online në Lemea Fragrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
+        />
+        <meta property="og:url" content="https://lemeaflagrance.shop/" />
+        <meta property="og:image" content="https://lemeaflagrance.shop/logo.png" />
+        <meta name="twitter:title" content="Lemea Fragrance | Parfume origjinale në Maqedoni &amp; Kosovë" />
+        <meta
+          name="twitter:description"
+          content="Bleni parfume origjinale online në Lemea Fragrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
+        />
+        <meta name="twitter:image" content="https://lemeaflagrance.shop/logo.png" />
+        <link rel="canonical" href="https://lemeaflagrance.shop/" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "Store",
+          "@type": "Organization",
           "name": "Lemea Fragrance",
-          "url": "https://www.lemeafragrance.shop",
-          "logo": "https://www.lemeafragrance.shop/og-image.jpg",
-          "description": "Dyqan online i parfumeve dhe body mist origjinale. Lattafa, Victoria Secret dhe më shumë.",
-          "email": "lemea.fragrance@gmail.com",
-          "areaServed": [
-            { "@type": "Country", "name": "North Macedonia" },
-            { "@type": "Country", "name": "Kosovo" }
-          ],
-          "priceRange": "$$",
-          "currenciesAccepted": "MKD",
-          "paymentAccepted": "Cash",
-          "sameAs": []
+          "url": "https://lemeaflagrance.shop",
+          "logo": "https://lemeaflagrance.shop/logo.png",
+          "sameAs": [
+            "https://www.instagram.com/lemea.flagrance"
+          ]
         })}</script>
       </Helmet>
     <div className="bg-slate-50 min-h-screen pb-20">
