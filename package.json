@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "start": "node server.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -19,6 +20,7 @@
     "@tailwindcss/vite": "^4.2.4",
     "antd": "^6.3.7",
     "axios": "^1.16.0",
+    "express": "^5.2.1",
     "framer-motion": "^13.2.0",
     "i18next": "^26.1.0",
     "i18next-browser-languagedetector": "^8.2.1",
