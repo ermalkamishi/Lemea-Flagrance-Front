@@ -29,12 +29,12 @@ const Contact = () => {
   return (
     <>
       <Helmet>
-        <title>Kontakti | Lemea Fragrance</title>
+        <title>Kontakti | Lemea Flagrance</title>
         <meta name="description" content="Na kontakto për çdo pyetje rreth porosive, produkteve ose dorëzimeve. Jemi këtu për të ndihmuar!" />
-        <meta property="og:title" content="Kontakti | Lemea Fragrance" />
+        <meta property="og:title" content="Kontakti | Lemea Flagrance" />
         <meta property="og:description" content="Na kontakto për çdo pyetje rreth porosive, produkteve ose dorëzimeve. Jemi këtu për të ndihmuar!" />
-        <meta property="og:url" content="https://www.lemeafragrance.shop/kontakti" />
-        <link rel="canonical" href="https://www.lemeafragrance.shop/kontakti" />
+        <meta property="og:url" content="https://lemeaflagrance.shop/kontakti" />
+        <link rel="canonical" href="https://lemeaflagrance.shop/kontakti" />
       </Helmet>
     <div className="bg-slate-50 min-h-screen py-16 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

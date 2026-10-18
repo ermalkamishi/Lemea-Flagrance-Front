@@ -796,7 +796,7 @@ const AdminDashboard = () => {
                   {pageTitle}
                 </div>
                 <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>
-                  Paneli zyrtar i administrimit Lemea Fragrance
+                  Paneli zyrtar i administrimit Lemea Flagrance
                 </div>
               </div>
             </div>

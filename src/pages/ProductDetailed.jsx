@@ -186,36 +186,36 @@ const ProductDetailed = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-20 pt-4 font-sans">
       <Helmet>
-        <title>{product.name}{product.brand ? ` – ${product.brand}` : ''} | Lemea Fragrance</title>
+        <title>{product.name}{product.brand ? ` – ${product.brand}` : ''} | Lemea Flagrance</title>
         <meta
           name="description"
-          content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — bli online në Lemea Fragrance. Çmimi: ${priceNum.toLocaleString()} Den. Dërrgesa e shpejtë në Maqedoni dhe Kosovë.`}
+          content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — bli online në Lemea Flagrance. Çmimi: ${priceNum.toLocaleString()} Den. Dërrgesa e shpejtë në Maqedoni dhe Kosovë.`}
         />
-        <meta property="og:title" content={`${product.name} | Lemea Fragrance`} />
+        <meta property="og:title" content={`${product.name} | Lemea Flagrance`} />
         <meta
           property="og:description"
           content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — çmimi: ${priceNum.toLocaleString()} Den.`}
         />
-        <meta property="og:image" content={product.image ? `https://lemeafragrance.shop/api/images/${product.image}` : 'https://www.lemeafragrance.shop/og-image.jpg'} />
-        <meta property="og:url" content={`https://www.lemeafragrance.shop/produktet/${product.id}`} />
-        <link rel="canonical" href={`https://www.lemeafragrance.shop/produktet/${product.id}`} />
+        <meta property="og:image" content={product.image ? `https://lemeaflagrance.shop/api/images/${product.image}` : 'https://lemeaflagrance.shop/og-image.jpg'} />
+        <meta property="og:url" content={`https://lemeaflagrance.shop/produktet/${product.id}`} />
+        <link rel="canonical" href={`https://lemeaflagrance.shop/produktet/${product.id}`} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
           "name": product.name,
-          "image": product.image ? `https://lemeafragrance.shop/api/images/${product.image}` : undefined,
+          "image": product.image ? `https://lemeaflagrance.shop/api/images/${product.image}` : undefined,
           "description": product.description || `${product.name} ${product.brand ? `nga ${product.brand}` : ''}.`,
           "brand": product.brand ? { "@type": "Brand", "name": product.brand } : undefined,
           "sku": product.id,
           "offers": {
             "@type": "Offer",
-            "url": `https://www.lemeafragrance.shop/produktet/${product.id}`,
+            "url": `https://lemeaflagrance.shop/produktet/${product.id}`,
             "priceCurrency": "MKD",
             "price": priceNum,
             "availability": product.inStock && product.stockQuantity !== 0
               ? "https://schema.org/InStock"
               : "https://schema.org/OutOfStock",
-            "seller": { "@type": "Organization", "name": "Lemea Fragrance" }
+            "seller": { "@type": "Organization", "name": "Lemea Flagrance" }
           }
         })}</script>
       </Helmet>

@@ -11,7 +11,7 @@ const NotFound = () => {
   return (
     <>
       <Helmet>
-        <title>404 – Faqja nuk u gjet | Lemea Fragrance</title>
+        <title>404 – Faqja nuk u gjet | Lemea Flagrance</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
     <div className="min-h-[70vh] flex flex-col items-center justify-center bg-slate-50 px-4">

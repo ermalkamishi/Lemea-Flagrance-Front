@@ -10,11 +10,11 @@ const PrivacyPolicy = () => {
   return (
     <>
       <Helmet>
-        <title>Politika e Privatësisë | Lemea Fragrance</title>
-        <meta name="description" content="Lexo politikën tonë të privatësisë dhe mëso se si i mbrojmë të dhënat tuaja personale gjatë blerjeve në Lemea Fragrance." />
-        <meta property="og:title" content="Politika e Privatësisë | Lemea Fragrance" />
-        <meta property="og:url" content="https://www.lemeafragrance.shop/privacypolicy" />
-        <link rel="canonical" href="https://www.lemeafragrance.shop/privacypolicy" />
+        <title>Politika e Privatësisë | Lemea Flagrance</title>
+        <meta name="description" content="Lexo politikën tonë të privatësisë dhe mëso se si i mbrojmë të dhënat tuaja personale gjatë blerjeve në Lemea Flagrance." />
+        <meta property="og:title" content="Politika e Privatësisë | Lemea Flagrance" />
+        <meta property="og:url" content="https://lemeaflagrance.shop/privacypolicy" />
+        <link rel="canonical" href="https://lemeaflagrance.shop/privacypolicy" />
       </Helmet>
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12">

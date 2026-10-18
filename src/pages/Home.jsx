@@ -185,29 +185,29 @@ const Home = () => {
   return (
     <>
       <Helmet>
-        <title>Lemea Fragrance | Parfume origjinale në Maqedoni &amp; Kosovë</title>
+        <title>Lemea Flagrance | Parfume origjinale në Maqedoni &amp; Kosovë</title>
         <meta
           name="description"
-          content="Bleni parfume origjinale online në Lemea Fragrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
+          content="Bleni parfume origjinale online në Lemea Flagrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
         />
-        <meta property="og:title" content="Lemea Fragrance | Parfume origjinale në Maqedoni &amp; Kosovë" />
+        <meta property="og:title" content="Lemea Flagrance | Parfume origjinale në Maqedoni &amp; Kosovë" />
         <meta
           property="og:description"
-          content="Bleni parfume origjinale online në Lemea Fragrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
+          content="Bleni parfume origjinale online në Lemea Flagrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
         />
         <meta property="og:url" content="https://lemeaflagrance.shop/" />
         <meta property="og:image" content="https://lemeaflagrance.shop/logo.png" />
-        <meta name="twitter:title" content="Lemea Fragrance | Parfume origjinale në Maqedoni &amp; Kosovë" />
+        <meta name="twitter:title" content="Lemea Flagrance | Parfume origjinale në Maqedoni &amp; Kosovë" />
         <meta
           name="twitter:description"
-          content="Bleni parfume origjinale online në Lemea Fragrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
+          content="Bleni parfume origjinale online në Lemea Flagrance. Porositni linjat më të njohura si Lattafa dhe French Avenue me dërgesë në Maqedoni dhe Kosovë."
         />
         <meta name="twitter:image" content="https://lemeaflagrance.shop/logo.png" />
         <link rel="canonical" href="https://lemeaflagrance.shop/" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          "name": "Lemea Fragrance",
+          "name": "Lemea Flagrance",
           "url": "https://lemeaflagrance.shop",
           "logo": "https://lemeaflagrance.shop/logo.png",
           "sameAs": [

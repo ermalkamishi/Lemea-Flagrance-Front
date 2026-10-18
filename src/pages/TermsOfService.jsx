@@ -8,11 +8,11 @@ const TermsOfService = () => {
   return (
     <>
       <Helmet>
-        <title>Kushtet e Shërbimit | Lemea Fragrance</title>
-        <meta name="description" content="Kushtet e shërbimit të Lemea Fragrance — të drejtat dhe detyrimet tuaja si klient gjatë blerjeve online." />
-        <meta property="og:title" content="Kushtet e Shërbimit | Lemea Fragrance" />
-        <meta property="og:url" content="https://www.lemeafragrance.shop/termsofservice" />
-        <link rel="canonical" href="https://www.lemeafragrance.shop/termsofservice" />
+        <title>Kushtet e Shërbimit | Lemea Flagrance</title>
+        <meta name="description" content="Kushtet e shërbimit të Lemea Flagrance — të drejtat dhe detyrimet tuaja si klient gjatë blerjeve online." />
+        <meta property="og:title" content="Kushtet e Shërbimit | Lemea Flagrance" />
+        <meta property="og:url" content="https://lemeaflagrance.shop/termsofservice" />
+        <link rel="canonical" href="https://lemeaflagrance.shop/termsofservice" />
       </Helmet>
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border-t-8 border-pink-600">

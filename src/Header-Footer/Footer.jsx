@@ -86,7 +86,7 @@ const Footer = () => {
         </div>
         <div className="mt-4 flex flex-col items-center justify-between border-t border-slate-800 pt-8 md:flex-row">
           <p className="text-slate-500 text-sm">
-            &copy; {currentYear} Lemea Fragrance. {t('footer.rights')}
+            &copy; {currentYear} Lemea Flagrance. {t('footer.rights')}
           </p>
         </div>
 

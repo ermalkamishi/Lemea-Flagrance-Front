@@ -59,12 +59,12 @@ const Aboutus = () => {
   return (
     <>
       <Helmet>
-        <title>Rreth Nesh | Lemea Fragrance</title>
-        <meta name="description" content="Mëso më shumë rreth Lemea Fragrance — misioni ynë, vlerat tona dhe angazhimi ynë ndaj cilësisë dhe autenticitetit të parfumeve." />
-        <meta property="og:title" content="Rreth Nesh | Lemea Fragrance" />
-        <meta property="og:description" content="Mëso më shumë rreth Lemea Fragrance — misioni ynë, vlerat tona dhe angazhimi ynë ndaj cilësisë dhe autenticitetit." />
-        <meta property="og:url" content="https://www.lemeafragrance.shop/rreth-nesh" />
-        <link rel="canonical" href="https://www.lemeafragrance.shop/rreth-nesh" />
+        <title>Rreth Nesh | Lemea Flagrance</title>
+        <meta name="description" content="Mëso më shumë rreth Lemea Flagrance — misioni ynë, vlerat tona dhe angazhimi ynë ndaj cilësisë dhe autenticitetit të parfumeve." />
+        <meta property="og:title" content="Rreth Nesh | Lemea Flagrance" />
+        <meta property="og:description" content="Mëso më shumë rreth Lemea Flagrance — misioni ynë, vlerat tona dhe angazhimi ynë ndaj cilësisë dhe autenticitetit." />
+        <meta property="og:url" content="https://lemeaflagrance.shop/rreth-nesh" />
+        <link rel="canonical" href="https://lemeaflagrance.shop/rreth-nesh" />
       </Helmet>
 
       <div className="bg-slate-50 min-h-screen py-16 px-4">

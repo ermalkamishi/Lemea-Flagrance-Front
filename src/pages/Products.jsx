@@ -248,12 +248,12 @@ const Products = () => {
   return (
     <>
       <Helmet>
-        <title>Produktet Tona | Lemea Fragrance</title>
+        <title>Produktet Tona | Lemea Flagrance</title>
         <meta name="description" content="Shfleto koleksionin tonë të parfumeve origjinale, body mist dhe lipgloss. Lattafa, Victoria Secret dhe më shumë. Dorgësa e shpejtë në Maqedoni dhe Kosovë." />
-        <meta property="og:title" content="Produktet Tona | Lemea Fragrance" />
+        <meta property="og:title" content="Produktet Tona | Lemea Flagrance" />
         <meta property="og:description" content="Shfleto koleksionin tonë të parfumeve, body mist dhe lipgloss. Filtroji sipas kategorisë dhe çmimit." />
-        <meta property="og:url" content="https://www.lemeafragrance.shop/produktet" />
-        <link rel="canonical" href="https://www.lemeafragrance.shop/produktet" />
+        <meta property="og:url" content="https://lemeaflagrance.shop/produktet" />
+        <link rel="canonical" href="https://lemeaflagrance.shop/produktet" />
       </Helmet>
     <div className="bg-slate-50 min-h-screen pb-20 pt-6 font-sans">
       
