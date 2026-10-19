@@ -1,6 +1,6 @@
 <div align="center">
 
-  # ✨ Lemea Fragrance (Lemea Flagrance) ✨
+  # Lemea Fragrance (Lemea Flagrance) 
   ### *The Essence of Luxury — Premium Fragrances & Oriental Perfumes*
 
   [![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -19,7 +19,7 @@
 
 ---
 
-## 🌟 Overview
+## Overview
 
 **Lemea Fragrance** is a modern, high-performance e-commerce platform dedicated to curating and delivering authentic Arabian and designer perfumes (such as *Lattafa*, *French Avenue*, and *Maison Alhambra*) across **North Macedonia** and **Kosovo**.
 
@@ -27,41 +27,41 @@ Crafted with a sleek, luxury aesthetic, this web application combines the blazin
 
 ---
 
-## ✨ Key Highlights
+## Key Highlights
 
-- 🌹 **Curated Perfume Showcase**: High-res product galleries, scent notes breakdown, interactive 3D visualizers, and real-time inventory tracking.
-- 🎁 **Smart Dynamic Promotion Engine**:
+-  **Curated Perfume Showcase**: High-res product galleries, scent notes breakdown, interactive 3D visualizers, and real-time inventory tracking.
+-  **Smart Dynamic Promotion Engine**:
   - Automated combo rules (e.g., *Perfume + Free Body Mist*, *3 Body Mists for 999 Den*).
   - Time-limited flash sale banners and real-time cart recalculations powered by Redux selectors.
-- 📱 **Social Crawler Smart Proxy**:
+-  **Social Crawler Smart Proxy**:
   - Embedded Node.js Express server (`server.js`) intercepts social crawlers (Facebook, WhatsApp, Viber, Twitter, Telegram, LinkedIn, Discord, Googlebot).
   - Pre-fetches dynamic OpenGraph previews from the NestJS backend, ensuring rich product cards when links are shared on chat apps.
-- 🌍 **Bilingual & Localized (i18n)**:
+-  **Bilingual & Localized (i18n)**:
   - Seamless instant language switcher between **Shqip (Albanian)** and **Македонски (Macedonian)**.
   - Native currency support (**MKD / Denar**) and Cash on Delivery (COD) tailored for local couriers.
-- 🛒 **Frictionless Shopping Experience**:
+-  **Frictionless Shopping Experience**:
   - Persistent shopping bag with local storage sync.
   - Express checkout optimized for regional addresses and phone formats.
   - Customer review and rating submission pipeline.
-- 👑 **Administrative Control Center**:
+-  **Administrative Control Center**:
   - Complete Product CRUD with drag-and-drop image uploads.
   - Live order management with status flows (*Në pritje*, *Në proces*, *Kryer*, *Anuluar*).
   - Revenue, inventory metrics, and quick product toggles.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## Architecture & Tech Stack
 
 ```mermaid
 graph TD
-    Client[📱 User Browser / 🤖 Social Bot] -->|HTTP Request| Server[🚀 Express Production Server]
-    Server -->|Social Crawler Detected| BotProxy[🔄 Dynamic OpenGraph Proxy]
-    BotProxy -->|Fetch Meta Tags| BackendAPI[🏢 NestJS Backend API]
-    Server -->|Standard User| StaticDist[⚡ Vite React 19 SPA]
-    StaticDist --> ReduxStore[🧠 Redux Toolkit State]
-    ReduxStore --> CartEngine[🎁 Smart Promotion & Cart Engine]
-    StaticDist --> i18nEngine[🌐 i18next Localization sq / mk]
-    StaticDist --> ThreeJS[🔮 Three.js & Fiber 3D Stage]
+    Client[User Browser / Social Bot] -->|HTTP Request| Server[Express Production Server]
+    Server -->|Social Crawler Detected| BotProxy[Dynamic OpenGraph Proxy]
+    BotProxy -->|Fetch Meta Tags| BackendAPI[NestJS Backend API]
+    Server -->|Standard User| StaticDist[Vite React 19 SPA]
+    StaticDist --> ReduxStore[Redux Toolkit State]
+    ReduxStore --> CartEngine[Smart Promotion & Cart Engine]
+    StaticDist --> i18nEngine[i18next Localization sq / mk]
+    StaticDist --> ThreeJS[Three.js & Fiber 3D Stage]
 ```
 
 ### 💻 Technologies
@@ -195,8 +195,8 @@ Instead of returning an empty SPA shell, it forwards the crawler request to the 
 
 ---
 
-## 🛡️ License & Acknowledgements
+##  License & Acknowledgements
 
-Created with ❤️ for **Lemea Fragrance**.  
+Created for **Lemea Fragrance**.  
 All rights reserved. Designed to deliver an unforgettable olfactory journey.
 
