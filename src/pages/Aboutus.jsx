@@ -223,19 +223,7 @@ const Aboutus = () => {
           </div>
         </section>
 
-        {/* 2. STATS — live numbers from the catalogue */}
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center py-3 sm:py-4 rounded-2xl hover:bg-pink-50/60 transition-colors">
-                <div className="text-3xl sm:text-4xl font-black bg-gradient-to-br from-pink-500 to-rose-600 bg-clip-text text-transparent">
-                  <CountUp target={s.value} suffix={s.suffix} />
-                </div>
-                <div className="text-xs sm:text-sm font-semibold text-gray-500 mt-1">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </section>
+       
 
         {/* 3. VALUES */}
         <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-20">
