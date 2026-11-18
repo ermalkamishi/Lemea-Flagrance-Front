@@ -5,7 +5,7 @@ import HomePromoBanner from '../components/HomePromoBanner';
 import { useNavigate } from 'react-router-dom';
 import ProductLink from '../components/ProductLink';
 import { Carousel, Alert, Rate } from 'antd';
-import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined, GiftOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined, GiftOutlined, FireOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { addToCart } from '../redux/cartSlice';
@@ -52,6 +52,24 @@ const Home = () => {
 
   const dealOfTheDayProduct = allProducts.find(p => p.oldPrice && p.price < p.oldPrice) || allProducts.find(p => p.isPopular) || allProducts[0];
 
+  // Real discount numbers (no fake countdown)
+  const discountPct = (p) => {
+    const price = toNumber(p?.price, 0);
+    const oldPrice = toNumber(p?.oldPrice, 0);
+    return oldPrice > price && price > 0 ? Math.round((1 - price / oldPrice) * 100) : 0;
+  };
+  const dealDiscount = discountPct(dealOfTheDayProduct);
+  const dealSavings = dealDiscount > 0
+    ? toNumber(dealOfTheDayProduct.oldPrice, 0) - toNumber(dealOfTheDayProduct.price, 0)
+    : 0;
+  // Other discounted products first, then fill with popular/other products (max 10)
+  const otherDeals = (() => {
+    const rest = allProducts.filter((p) => p.id !== dealOfTheDayProduct?.id);
+    const discounted = rest.filter((p) => discountPct(p) > 0);
+    const fill = rest.filter((p) => discountPct(p) === 0);
+    return [...discounted, ...fill].slice(0, 10);
+  })();
+
   const heroSlides = [
     {
       id: 1,
@@ -92,7 +110,6 @@ const Home = () => {
   ];
 
   const [activeCategory, setActiveCategory] = useState('');
-  const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 10, seconds: 19 });
   const [categories, setCategories] = useState([]);
   const apiUrl = getApiBaseUrl();
 
@@ -125,17 +142,6 @@ const Home = () => {
     }
   }, [t]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        return prev;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const getCategoryLabel = (catName) => {
     if (!catName) return '';
@@ -354,93 +360,129 @@ const Home = () => {
         <PromoBanner />
       </div>
 
-      {/* 2. BANERI "OFERTA E DITËS" */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="flex flex-col lg:flex-row gap-4 bg-white p-4 rounded-3xl shadow-lg border border-gray-100">
-          <div className="w-full lg:w-[45%] bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-6 lg:p-8 flex flex-col justify-between relative overflow-hidden group">
-            <div className="absolute top-6 left-6 bg-white text-rose-600 font-extrabold px-3 py-1 rounded-full text-sm z-10 shadow-md">
-              -{dealOfTheDayProduct?.oldPrice ? Math.round((1 - dealOfTheDayProduct.price / dealOfTheDayProduct.oldPrice) * 100) : '31'}%
-            </div>
-            <div className="z-10 flex flex-col items-center lg:items-start text-center lg:text-left h-full">
-              <div className="flex items-center gap-2 text-yellow-300 font-bold text-sm mb-4 uppercase tracking-wider">
-              </div>
-              <h2 className="text-3xl lg:text-4xl font-extrabold text-white mb-2 leading-tight">
-                {(currentLang === 'mk' && dealOfTheDayProduct?.name_mk) ? dealOfTheDayProduct.name_mk : (dealOfTheDayProduct?.name || 'Lattafa Khamrah')} <br /> {getCategoryLabel(dealOfTheDayProduct?.category) || 'Eau de Parfum'}
-              </h2>
-              <div className="flex items-end justify-center lg:justify-start gap-3 my-4">
-                <span className="text-4xl font-black text-white">
-                  {dealOfTheDayProduct ? toNumber(dealOfTheDayProduct.price, 0).toLocaleString() : '1,800'} {t('common.currency')}
-                </span>
-                {dealOfTheDayProduct?.oldPrice && (
-                  <span className="text-rose-200 line-through text-lg font-medium mb-1">{dealOfTheDayProduct.oldPrice.toLocaleString()} {t('common.currency')}</span>
+      {/* 2. BANERI "OFERTA E DITËS" — kompakt: karta e ofertës + rresht me oferta të tjera */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
+        <div className="flex flex-col lg:flex-row gap-4 bg-white p-3 sm:p-4 rounded-3xl shadow-lg border border-gray-100">
+
+          {/* Karta kryesore e ofertës */}
+          {dealOfTheDayProduct && (
+            <div
+              onClick={(e) => handleProductClick(dealOfTheDayProduct.id, e)}
+              className="w-full lg:w-[42%] shrink-0 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-5 sm:p-6 flex gap-4 relative overflow-hidden group cursor-pointer"
+            >
+              <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+              <div className="relative z-10 flex flex-col min-w-0 flex-1">
+                <div className="inline-flex items-center gap-1.5 self-start bg-white/20 backdrop-blur-md text-white font-bold text-[11px] uppercase tracking-wider px-3 py-1 rounded-full mb-3">
+                  <FireOutlined /> {t('home.deal.tag')}
+                </div>
+                <h2 className="text-xl sm:text-2xl lg:text-[1.65rem] font-extrabold text-white leading-tight line-clamp-2">
+                  <ProductLink id={dealOfTheDayProduct.id}>
+                    {(currentLang === 'mk' && dealOfTheDayProduct.name_mk) ? dealOfTheDayProduct.name_mk : dealOfTheDayProduct.name}
+                  </ProductLink>
+                </h2>
+                <p className="text-rose-100 text-sm font-medium mt-1">{getCategoryLabel(dealOfTheDayProduct.category)}</p>
+
+                <div className="flex items-end flex-wrap gap-x-3 gap-y-1 mt-3">
+                  <span className="text-3xl font-black text-white">
+                    {toNumber(dealOfTheDayProduct.price, 0).toLocaleString()} {t('common.currency')}
+                  </span>
+                  {dealDiscount > 0 && (
+                    <span className="text-rose-200 line-through text-base font-semibold mb-1">
+                      {toNumber(dealOfTheDayProduct.oldPrice, 0).toLocaleString()} {t('common.currency')}
+                    </span>
+                  )}
+                </div>
+
+                {dealDiscount > 0 && (
+                  <div className="inline-flex items-center gap-2 self-start mt-2 bg-white text-rose-600 font-extrabold text-sm px-3 py-1 rounded-lg shadow-sm">
+                    -{dealDiscount}% · {t('home.deal.save')} {dealSavings.toLocaleString()} {t('common.currency')}
+                  </div>
                 )}
-              </div>
-              <div className="flex items-center gap-3 mb-8">
-                <span className="text-white text-sm font-medium">{t('home.deal.ends_in')}</span>
-                <div className="flex gap-2">
-                  <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1.5 text-white font-bold text-center min-w-[40px]">
-                    {String(timeLeft.hours).padStart(2, '0')} <span className="text-[10px] block font-normal">{t('home.deal.hours')}</span>
-                  </div>
-                  <span className="text-white font-bold self-start mt-1">:</span>
-                  <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1.5 text-white font-bold text-center min-w-[40px]">
-                    {String(timeLeft.minutes).padStart(2, '0')} <span className="text-[10px] block font-normal">{t('home.deal.minutes')}</span>
-                  </div>
-                  <span className="text-white font-bold self-start mt-1">:</span>
-                  <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1.5 text-white font-bold text-center min-w-[40px]">
-                    {String(timeLeft.seconds).padStart(2, '0')} <span className="text-[10px] block font-normal">{t('home.deal.seconds')}</span>
-                  </div>
+
+                <div className="flex gap-2 mt-auto pt-5">
+                  <button
+                    onClick={(e) => handleAddToCart(dealOfTheDayProduct, e)}
+                    className="flex-1 bg-white text-rose-600 font-bold py-2.5 px-3 rounded-xl hover:bg-rose-50 transition-colors flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm sm:text-base"
+                  >
+                    <ShoppingCartOutlined className="text-lg" /> {t('home.deal.add_to_cart')}
+                  </button>
+                  <button
+                    onClick={(e) => handleProductClick(dealOfTheDayProduct.id, e)}
+                    aria-label={t('home.deal.view_details')}
+                    className="bg-rose-700/40 hover:bg-rose-700/60 text-white font-bold py-2.5 px-4 rounded-xl transition-colors border border-rose-300/30 flex items-center justify-center cursor-pointer"
+                  >
+                    <ArrowRightOutlined />
+                  </button>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-3 w-full mt-auto">
-                <button
-                  onClick={(e) => handleAddToCart(dealOfTheDayProduct, e)}
-                  className="flex-1 bg-white text-rose-600 font-bold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-                >
-                  <ShoppingCartOutlined className="text-lg" /> {t('home.deal.add_to_cart')}
-                </button>
-                <button
-                  onClick={(e) => handleProductClick(dealOfTheDayProduct?.id, e)}
-                  className="flex-1 bg-rose-700/50 hover:bg-rose-700/70 text-white font-bold py-3 px-4 rounded-xl transition-colors backdrop-blur-md border border-rose-400/30 flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  {t('home.deal.view_details')} <ArrowRightOutlined />
-                </button>
+
+              <div className="relative z-10 w-[38%] sm:w-[40%] shrink-0 self-center">
+                <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-white shadow-xl ring-4 ring-white/20">
+                  <img
+                    src={getImageUrl(dealOfTheDayProduct.image)}
+                    alt={dealOfTheDayProduct.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
               </div>
             </div>
-            {dealOfTheDayProduct && (
-              <img
-                src={getImageUrl(dealOfTheDayProduct.image)}
-                alt={dealOfTheDayProduct.name}
-                className="absolute right-[-20%] bottom-[-10%] w-2/3 opacity-40 lg:opacity-60 mix-blend-luminosity group-hover:scale-105 transition-transform duration-700 pointer-events-none"
-              />
-            )}
-          </div>
-          <div className="w-full lg:w-[55%] grid grid-cols-2 md:grid-cols-3 gap-3">
-            {allProducts.filter(p => p.oldPrice && p.id !== dealOfTheDayProduct?.id).slice(0, 6).map((item, idx) => (
-              <div
-                key={item.id}
-                onClick={(e) => handleProductClick(item.id, e)}
-                className="relative rounded-2xl overflow-hidden cursor-pointer group h-40 lg:h-full bg-gray-100"
+          )}
+
+          {/* Oferta të tjera — një rresht që rrëshqet anash */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            <div className="flex items-center justify-between px-1 pb-2">
+              <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">{t('home.deal.more_deals')}</h3>
+              <button
+                onClick={() => navigate('/produktet')}
+                className="text-sm font-semibold text-pink-600 hover:text-pink-700 flex items-center gap-1 cursor-pointer"
               >
-                <img src={getImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute top-2 left-2 bg-white text-rose-500 font-extrabold px-2 py-0.5 rounded-md text-xs shadow-sm">
-                  -{Math.round((1 - item.price / item.oldPrice) * 100)}%
-                </div>
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
-              </div>
-            ))}
-            {/* Fallback if not enough discounted products */}
-            {allProducts.filter(p => p.oldPrice && p.id !== dealOfTheDayProduct?.id).length < 6 &&
-              allProducts.slice(0, 6 - allProducts.filter(p => p.oldPrice && p.id !== dealOfTheDayProduct?.id).length).map((item) => (
-                <div
-                  key={`extra-${item.id}`}
-                  onClick={(e) => handleProductClick(item.id, e)}
-                  className="relative rounded-2xl overflow-hidden cursor-pointer group h-40 lg:h-full bg-gray-100"
-                >
-                  <img src={getImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"></div>
-                </div>
-              ))
-            }
+                {t('home.deal.see_all')} <ArrowRightOutlined className="text-xs" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 custom-scrollbar flex-1">
+              {otherDeals.map((item) => {
+                const pct = discountPct(item);
+                return (
+                  <div
+                    key={item.id}
+                    onClick={(e) => handleProductClick(item.id, e)}
+                    className="snap-start shrink-0 w-[42%] sm:w-[30%] lg:w-[calc((100%-1.5rem)/3)] bg-gray-50 rounded-2xl overflow-hidden cursor-pointer group border border-gray-100 hover:shadow-lg hover:shadow-pink-100 transition-shadow flex flex-col"
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-gray-100">
+                      <img
+                        src={getImageUrl(item.image)}
+                        alt={item.name}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {pct > 0 && (
+                        <span className="absolute top-2 left-2 bg-rose-500 text-white font-extrabold px-2 py-0.5 rounded-md text-xs shadow-sm">
+                          -{pct}%
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-2.5 sm:p-3">
+                      <h4 className="text-gray-800 font-semibold text-xs sm:text-sm line-clamp-1">
+                        <ProductLink id={item.id}>
+                          {currentLang === 'mk' && item.name_mk ? item.name_mk : item.name}
+                        </ProductLink>
+                      </h4>
+                      <div className="flex items-baseline gap-1.5 mt-1 flex-wrap">
+                        <span className="text-rose-600 font-extrabold text-sm">
+                          {toNumber(item.price, 0).toLocaleString()} {t('common.currency')}
+                        </span>
+                        {pct > 0 && (
+                          <span className="text-gray-400 line-through text-[11px] font-medium">
+                            {toNumber(item.oldPrice, 0).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

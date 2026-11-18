@@ -223,7 +223,10 @@ const resources = {
           "minutes": "MIN",
           "seconds": "SEK",
           "add_to_cart": "Shto në shportë",
-          "view_details": "Shiko detajet"
+          "view_details": "Shiko detajet",
+          "save": "Kurse",
+          "more_deals": "Më shumë oferta",
+          "see_all": "Shiko të gjitha"
         },
         "new_collection": {
           "title": "Koleksioni i Ri",
@@ -674,7 +677,10 @@ const resources = {
           "minutes": "МИН",
           "seconds": "СЕК",
           "add_to_cart": "Додај во кошничка",
-          "view_details": "Види детали"
+          "view_details": "Види детали",
+          "save": "Заштеди",
+          "more_deals": "Повеќе понуди",
+          "see_all": "Види ги сите"
         },
         "new_collection": {
           "title": "Нова колекција",
