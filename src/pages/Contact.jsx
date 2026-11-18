@@ -16,14 +16,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import { getApiBaseUrl } from '../utils/apiBase';
 import axios from 'axios';
+import { CONTACT_EMAIL, SOCIAL } from '../config/social';
 
-const CONTACT_EMAIL = 'lemea.fragrance@gmail.com';
-const INSTAGRAM_URL = 'https://www.instagram.com/lemea.flagrance/';
-const INSTAGRAM_HANDLE = '@lemea.flagrance';
-const TIKTOK_URL = 'https://www.tiktok.com/@lemea.flagrance';
-const TIKTOK_HANDLE = '@lemea.flagrance';
-const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61575000181053';
-const FACEBOOK_NAME = 'Lemea Flagrance';
+const INSTAGRAM_URL = SOCIAL.instagram.url;
+const INSTAGRAM_HANDLE = SOCIAL.instagram.handle;
+const TIKTOK_URL = SOCIAL.tiktok.url;
+const TIKTOK_HANDLE = SOCIAL.tiktok.handle;
+const FACEBOOK_URL = SOCIAL.facebook.url;
+const FACEBOOK_NAME = SOCIAL.facebook.handle;
 const MESSAGE_MAX = 2000;
 
 // Brand theme for the form only (pink focus/borders, rounded inputs)
