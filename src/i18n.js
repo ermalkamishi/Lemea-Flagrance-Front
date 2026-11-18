@@ -185,7 +185,22 @@ const resources = {
         "required_email": "Ju lutem shënoni email-in tuaj!",
         "required_subject": "Ju lutem shënoni subjektin!",
         "required_message": "Ju lutem shkruani mesazhin tuaj!",
-        "invalid_email": "Ky nuk është një email i vlefshëm!"
+        "invalid_email": "Ky nuk është një email i vlefshëm!",
+        "instagram_label": "Instagram",
+        "instagram_hint": "Na shkruani edhe në DM",
+        "tiktok_label": "TikTok",
+        "tiktok_hint": "Shikoni videot tona",
+        "facebook_label": "Facebook",
+        "facebook_hint": "Na ndiqni në Facebook",
+        "email_hint": "Kliko për të na shkruar",
+        "location_hint": "Dërgesa në Maqedoni dhe Kosovë",
+        "topic_label": "Për çfarë bëhet fjalë?",
+        "topics": ["Porosia ime", "Produktet", "Dërgesa", "Bashkëpunim", "Tjetër"],
+        "copy_email": "Kopjo",
+        "copied": "Email-i u kopjua!",
+        "success_title": "Faleminderit!",
+        "success_text": "Mesazhi juaj u dërgua me sukses. Do t'ju përgjigjemi në email-in që shënuat.",
+        "send_another": "Dërgo një mesazh tjetër"
       },
       "home": {
         "hero_slides": {
@@ -639,7 +654,22 @@ const resources = {
         "required_email": "Ве молиме внесете ја вашата е-пошта!",
         "required_subject": "Ве молиме внесете предмет!",
         "required_message": "Ве молиме напишете ја вашата порака!",
-        "invalid_email": "Ова не е валидна е-пошта!"
+        "invalid_email": "Ова не е валидна е-пошта!",
+        "instagram_label": "Instagram",
+        "instagram_hint": "Пишете ни и во DM",
+        "tiktok_label": "TikTok",
+        "tiktok_hint": "Погледнете ги нашите видеа",
+        "facebook_label": "Facebook",
+        "facebook_hint": "Следете нè на Facebook",
+        "email_hint": "Кликни за да ни пишеш",
+        "location_hint": "Испорака во Македонија и Косово",
+        "topic_label": "За што станува збор?",
+        "topics": ["Мојата нарачка", "Производи", "Испорака", "Соработка", "Друго"],
+        "copy_email": "Копирај",
+        "copied": "Е-поштата е копирана!",
+        "success_title": "Ви благодариме!",
+        "success_text": "Вашата порака е успешно испратена. Ќе ви одговориме на е-поштата што ја внесовте.",
+        "send_another": "Испрати друга порака"
       },
       "home": {
         "hero_slides": {

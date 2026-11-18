@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { StarFilled, ArrowRightOutlined, GiftOutlined } from '@ant-design/icons';
+import { StarFilled, ArrowRightOutlined } from '@ant-design/icons';
 import { toNumber } from '../utils/numberUtils';
 
 // Import transparent bottle assets
@@ -236,7 +236,7 @@ const ComboPromoBanner = ({ onBannerClick }) => {
           })}
 
           {/* Discoverability hint */}
-          <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] sm:text-xs font-semibold text-gray-400 bg-white/70 backdrop-blur-sm rounded-full px-3 py-1 whitespace-nowrap">
+          <div className="hidden md:block pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] sm:text-xs font-semibold text-gray-400 bg-white/70 backdrop-blur-sm rounded-full px-3 py-1 whitespace-nowrap">
             <span className="[@media(hover:hover)]:hidden">
               {isMk ? 'Допри шише за да ја видиш аромата' : 'Prek një shishe për ta parë aromën'}
             </span>
@@ -251,7 +251,7 @@ const ComboPromoBanner = ({ onBannerClick }) => {
           
 
           {/* Bold Promotional Headline */}
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight font-serif mb-2 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight font-serif mb-4 md:mb-2 tracking-tight">
             {isMk ? (
               <>ПАКЕТ ПОНУДА: <span className="text-pink-600">VS + SDJ</span> за <span className="text-amber-500 underline decoration-pink-300">999 Den</span>!</>
             ) : (
@@ -260,7 +260,7 @@ const ComboPromoBanner = ({ onBannerClick }) => {
           </h2>
 
           {/* Subtitle Details */}
-          <p className="text-gray-600 text-sm sm:text-base mb-4 leading-relaxed font-medium">
+          <p className="hidden md:block text-gray-600 text-sm sm:text-base mb-4 leading-relaxed font-medium">
             {isMk
               ? "Купете 1 Victoria's Secret Body Mist (499 Den) + 1 Sol De Janeiro Body Mist (699 Den) заедно за само 999 Den!"
               : "Bli 1 Victoria's Secret Body Mist (499 Den) + 1 Sol De Janeiro Body Mist (699 Den) së bashku për vetëm 999 Den!"
@@ -271,7 +271,7 @@ const ComboPromoBanner = ({ onBannerClick }) => {
           <div className="flex flex-wrap items-center gap-4">
 
             {/* Price Box */}
-            <div className="flex items-center gap-3 bg-pink-50/80 border border-pink-100 px-4 py-2 rounded-2xl">
+            <div className="hidden md:flex items-center gap-3 bg-pink-50/80 border border-pink-100 px-4 py-2 rounded-2xl">
               <span className="text-gray-400 line-through text-sm font-semibold">1,198 Den</span>
               <span className="text-2xl font-black text-slate-900">999 <span className="text-sm font-bold">Den</span></span>
               <span className="bg-rose-500 text-white font-extrabold text-xs px-2.5 py-1 rounded-lg shadow-sm">

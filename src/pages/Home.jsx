@@ -218,7 +218,9 @@ const Home = () => {
           "url": "https://lemeaflagrance.shop",
           "logo": "https://lemeaflagrance.shop/logo.png",
           "sameAs": [
-            "https://www.instagram.com/lemea.flagrance"
+            "https://www.instagram.com/lemea.flagrance",
+            "https://www.tiktok.com/@lemea.flagrance",
+            "https://www.facebook.com/profile.php?id=61575000181053"
           ]
         })}</script>
       </Helmet>
@@ -373,9 +375,7 @@ const Home = () => {
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
 
               <div className="relative z-10 flex flex-col min-w-0 flex-1">
-                <div className="inline-flex items-center gap-1.5 self-start bg-white/20 backdrop-blur-md text-white font-bold text-[11px] uppercase tracking-wider px-3 py-1 rounded-full mb-3">
-                  <FireOutlined /> {t('home.deal.tag')}
-                </div>
+                
                 <h2 className="text-xl sm:text-2xl lg:text-[1.65rem] font-extrabold text-white leading-tight line-clamp-2">
                   <ProductLink id={dealOfTheDayProduct.id}>
                     {(currentLang === 'mk' && dealOfTheDayProduct.name_mk) ? dealOfTheDayProduct.name_mk : dealOfTheDayProduct.name}
