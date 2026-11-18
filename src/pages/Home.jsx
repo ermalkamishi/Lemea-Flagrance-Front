@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import PromoBanner from '../components/PromoBanner';
 import HomePromoBanner from '../components/HomePromoBanner';
 import { useNavigate } from 'react-router-dom';
+import ProductLink from '../components/ProductLink';
 import { Carousel, Alert, Rate } from 'antd';
 import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined, GiftOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -283,7 +284,7 @@ const Home = () => {
                       {getCategoryLabel(product.category)}
                     </span>
                     <h3 className="text-gray-800 font-semibold text-sm line-clamp-2 mb-2">
-                      {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
+                      <ProductLink id={product.id}>{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</ProductLink>
                     </h3>
                   </div>
 
@@ -472,7 +473,7 @@ const Home = () => {
               </div>
               <div className="mt-auto">
                 <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wider block mb-1">{getCategoryLabel(product.category)}</span>
-                <h3 className="text-gray-800 font-semibold text-sm sm:text-base line-clamp-1 mb-1">{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</h3>
+                <h3 className="text-gray-800 font-semibold text-sm sm:text-base line-clamp-1 mb-1"><ProductLink id={product.id}>{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</ProductLink></h3>
                 <div className="flex items-center gap-1 mb-2">
                   <Rate disabled defaultValue={toNumber(product.rating, 5)} allowHalf style={{ fontSize: 10 }} />
                   <span className="text-[10px] text-gray-400">({product.reviewsCount || 0})</span>
@@ -529,7 +530,7 @@ const Home = () => {
                             <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                           </div>
                           <div className="p-4 flex flex-col justify-between">
-                            <h3 className="text-white font-semibold text-sm mb-2 line-clamp-2">{product.name}</h3>
+                            <h3 className="text-white font-semibold text-sm mb-2 line-clamp-2"><ProductLink id={product.id}>{product.name}</ProductLink></h3>
                             <div>
                               {slide.id === 2 ? (
                                 <span className="text-yellow-300 font-bold text-md">333 {t('common.currency')} <span className="text-[10px] opacity-80">(Ofertë)</span></span>
@@ -576,7 +577,7 @@ const Home = () => {
                     {t('home.new_collection.badge')}
                   </span>
                 </div>
-                <h3 className="text-gray-800 font-semibold text-sm text-center line-clamp-1">{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</h3>
+                <h3 className="text-gray-800 font-semibold text-sm text-center line-clamp-1"><ProductLink id={product.id}>{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</ProductLink></h3>
                 <p className="text-gray-500 text-center text-sm font-medium mt-1">{toNumber(product.price, 0).toLocaleString()} {t('common.currency')}</p>
               </div>
             ))}

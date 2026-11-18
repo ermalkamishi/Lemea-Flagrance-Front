@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import ComboPromoBanner from '../components/ComboPromoBanner';
 import PromoBanner from '../components/PromoBanner';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ProductLink from '../components/ProductLink';
 import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton, Rate } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -622,7 +623,7 @@ const Products = () => {
                     className="font-bold text-gray-800 text-sm sm:text-lg mb-1 sm:mb-2 line-clamp-2 cursor-pointer hover:text-pink-600 transition-colors leading-snug"
                     onClick={() => handleProductClick(product.id)}
                   >
-                    {currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}
+                    <ProductLink id={product.id}>{currentLang === 'mk' && product.name_mk ? product.name_mk : product.name}</ProductLink>
                   </h3>
 
                   {(() => {

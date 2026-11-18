@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { addToCart } from '../redux/cartSlice';
 import { getImageUrl } from '../utils/imageUtils';
+import ProductLink from '../components/ProductLink';
 import { getApiBaseUrl } from '../utils/apiBase';
 import { toNumber } from '../utils/numberUtils';
 import { getProductRatingInfo, getFallbackReviews } from '../utils/reviewUtils';
@@ -183,27 +184,35 @@ const ProductDetailed = () => {
 
   const imagesList = product.images && product.images.length > 0 ? product.images : [product.image];
 
+  // Absolute image URL for Google structured data and social previews
+  const SITE_URL = 'https://lemeaflagrance.shop';
+  const seoImage = (() => {
+    const url = getImageUrl(product.image);
+    if (!url) return `${SITE_URL}/logo.png`;
+    return url.startsWith('/') ? `${SITE_URL}${url}` : url;
+  })();
+
   return (
     <div className="min-h-screen bg-slate-50 pb-20 pt-4 font-sans">
       <Helmet>
         <title>{product.name}{product.brand ? ` – ${product.brand}` : ''} | Lemea Flagrance</title>
         <meta
           name="description"
-          content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — bli online në Lemea Flagrance. Çmimi: ${priceNum.toLocaleString()} Den. Dërrgesa e shpejtë në Maqedoni dhe Kosovë.`}
+          content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — bli online në Lemea Flagrance. Çmimi: ${priceNum.toLocaleString()} Den. Dërgesa e shpejtë në Maqedoni dhe Kosovë.`}
         />
         <meta property="og:title" content={`${product.name} | Lemea Flagrance`} />
         <meta
           property="og:description"
           content={`${product.name}${product.brand ? ` nga ${product.brand}` : ''} — çmimi: ${priceNum.toLocaleString()} Den.`}
         />
-        <meta property="og:image" content={product.image ? `https://lemeaflagrance.shop/api/images/${product.image}` : 'https://lemeaflagrance.shop/og-image.jpg'} />
+        <meta property="og:image" content={seoImage} />
         <meta property="og:url" content={`https://lemeaflagrance.shop/produktet/${product.id}`} />
         <link rel="canonical" href={`https://lemeaflagrance.shop/produktet/${product.id}`} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",
           "name": product.name,
-          "image": product.image ? `https://lemeaflagrance.shop/api/images/${product.image}` : undefined,
+          "image": seoImage,
           "description": product.description || `${product.name} ${product.brand ? `nga ${product.brand}` : ''}.`,
           "brand": product.brand ? { "@type": "Brand", "name": product.brand } : undefined,
           "sku": product.id,
@@ -463,7 +472,7 @@ const ProductDetailed = () => {
                         {getCategoryLabel(p.category)}
                       </span>
                       <h3 className="text-slate-800 font-bold text-xs sm:text-sm line-clamp-2 mb-2 leading-tight">
-                        {currentLang === 'mk' && p.name_mk ? p.name_mk : p.name}
+                        <ProductLink id={p.id}>{currentLang === 'mk' && p.name_mk ? p.name_mk : p.name}</ProductLink>
                       </h3>
                     </div>
                     <div className="flex items-center justify-between mt-1">
