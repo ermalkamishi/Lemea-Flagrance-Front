@@ -45,7 +45,7 @@ app.get(PRODUCT_ROUTE_REGEX, async (req, res, next) => {
       headers: {
         'user-agent': userAgent,
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'x-forwarded-host': req.headers['host'] || 'www.lemeafragrance.shop',
+        'x-forwarded-host': req.headers['host'] || 'www.lemeaflagrance.shop',
         'x-forwarded-proto': req.headers['x-forwarded-proto'] || 'https',
       },
     });
