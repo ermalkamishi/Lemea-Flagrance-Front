@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import PromoBanner from '../components/PromoBanner';
 import HomePromoBanner from '../components/HomePromoBanner';
+import HeroShowcase from '../components/HeroShowcase';
 import { useNavigate } from 'react-router-dom';
 import ProductLink from '../components/ProductLink';
 import { Carousel, Alert, Rate } from 'antd';
@@ -189,6 +190,37 @@ const Home = () => {
       .slice(0, 4);
   }, [allProducts]);
 
+  // Products for the animated hero ring: in stock, with a picture, best-rated first,
+  // mixed across categories (fragrances & body mists first, others only to fill up).
+  const heroProducts = useMemo(() => {
+    const MAX = 14;
+    const pool = allProducts.filter(
+      p => p.image && p.inStock && (p.stockQuantity > 0 || p.stockQuantity === undefined)
+    );
+    const groups = new Map();
+    pool.forEach((p) => {
+      const key = p.category || 'other';
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(p);
+    });
+    groups.forEach(list => list.sort((a, b) => (b.rating || 0) - (a.rating || 0)));
+
+    const isFragrance = (cat) => /parfum|mist|meshkuj|men|sete|sets/i.test(cat);
+    const roundRobin = (lists, picked) => {
+      for (let i = 0; picked.length < MAX && lists.some(l => i < l.length); i++) {
+        lists.forEach((l) => {
+          if (i < l.length && picked.length < MAX) picked.push(l[i]);
+        });
+      }
+      return picked;
+    };
+    const entries = [...groups.entries()];
+    const picked = roundRobin(entries.filter(([cat]) => isFragrance(cat)).map(([, l]) => l), []);
+    return roundRobin(entries.filter(([cat]) => !isFragrance(cat)).map(([, l]) => l), picked);
+  }, [allProducts]);
+
+  const getProductName = (p) => (currentLang === 'mk' && p.name_mk ? p.name_mk : p.name);
+
   return (
     <>
       <Helmet>
@@ -239,6 +271,14 @@ const Home = () => {
           />
         </div>
       )}
+
+      {/* HERO: unaza e animuar e produkteve */}
+      <HeroShowcase
+        products={heroProducts}
+        loading={productsStatus === 'idle' || productsStatus === 'loading'}
+        getName={getProductName}
+        getCategoryLabel={getCategoryLabel}
+      />
 
       {/* Seksioni i Filtrave dhe Produkteve */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">

@@ -225,6 +225,11 @@ const resources = {
         "send_another": "Dërgo një mesazh tjetër"
       },
       "home": {
+        "hero_showcase": {
+          "title": "Zbuloni Aromën që ju Përfaqëson",
+          "subtitle": "Parfume dhe body mist origjinale, të zgjedhura për ju",
+          "view_product": "Shiko produktin"
+        },
         "hero_slides": {
           "slide1_title1": "Lattafa Khamrah",
           "slide1_title2": "Aromë Magjepsëse",
@@ -715,6 +720,11 @@ const resources = {
         "send_another": "Испрати друга порака"
       },
       "home": {
+        "hero_showcase": {
+          "title": "Откријте го мирисот што ве претставува",
+          "subtitle": "Оригинални парфеми и body mist, избрани за вас",
+          "view_product": "Види производ"
+        },
         "hero_slides": {
           "slide1_title1": "Lattafa Khamrah",
           "slide1_title2": "Волшебен мирис",
