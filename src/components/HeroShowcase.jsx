@@ -371,11 +371,7 @@ const HeroShowcase = ({
       <div key={shown.key} className="hs-center-inner">
        
         <p className="hs-center-name font-serif">{nameOf(shown)}</p>
-        {shownProduct && (
-          <p className="hs-center-price">
-            {toNumber(shownProduct.price, 0).toLocaleString()} {t('common.currency')}
-          </p>
-        )}
+        
         <Link to={linkOf(shown)} className="hs-center-btn">
           {t('home.hero_showcase.view_product')}
         </Link>
