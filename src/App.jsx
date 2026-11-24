@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { UpOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
@@ -37,12 +37,58 @@ const AutoScrollToTop = () => {
   return null;
 };
 
+// Hero intro: on the first visit of a browser session (landing on Home), only the
+// animated hero shows; header, footer and the rest of the page fade in after it.
+const INTRO_SEEN_KEY = 'lemea_intro_seen';
+const INTRO_SAFETY_MS = 5000; // never keep the site hidden longer than this
+const shouldPlayIntro = (pathname) => {
+  if (pathname !== '/') return false;
+  try {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
+    return !window.sessionStorage.getItem(INTRO_SEEN_KEY);
+  } catch {
+    return false;
+  }
+};
+
 function AppContent() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const dispatch = useDispatch();
   const location = useLocation();
+  const [introPhase, setIntroPhase] = useState(() =>
+    shouldPlayIntro(location.pathname) ? 'playing' : 'done'
+  );
 
   const isAdminPath = location.pathname.startsWith('/admin');
+
+  const endIntro = useCallback(() => {
+    setIntroPhase((phase) => (phase === 'playing' ? 'revealing' : phase));
+  }, []);
+
+  useEffect(() => {
+    if (introPhase === 'playing') {
+      try {
+        window.sessionStorage.setItem(INTRO_SEEN_KEY, '1');
+      } catch {
+        /* storage unavailable: the intro just plays again next time */
+      }
+      const safety = setTimeout(endIntro, INTRO_SAFETY_MS);
+      return () => clearTimeout(safety);
+    }
+    if (introPhase === 'revealing') {
+      const done = setTimeout(() => setIntroPhase('done'), 1000);
+      return () => clearTimeout(done);
+    }
+    return undefined;
+  }, [introPhase, endIntro]);
+
+  // Leaving Home during the intro shows everything right away.
+  const introClass =
+    introPhase === 'playing' && location.pathname === '/'
+      ? ' app-intro-playing'
+      : introPhase === 'revealing'
+        ? ' app-intro-revealing'
+        : '';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,14 +111,14 @@ function AppContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 font-sans relative">
+    <div className={`flex flex-col min-h-screen bg-slate-50 font-sans relative${introClass}`}>
       <AutoScrollToTop />
       
       {!isAdminPath && <Header />}
       
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home playIntro={introPhase === 'playing'} onIntroDone={endIntro} />} />
           <Route path="/produktet" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/rreth-nesh" element={<Aboutus />} />

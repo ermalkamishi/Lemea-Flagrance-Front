@@ -226,7 +226,7 @@ const resources = {
       },
       "home": {
         "hero_showcase": {
-          "title": "Zbuloni Aromën që ju Përfaqëson",
+          "title": "Aromë që flet para jush.",
           "view_product": "Shiko produktin"
         },
         "hero_slides": {
@@ -720,7 +720,7 @@ const resources = {
       },
       "home": {
         "hero_showcase": {
-          "title": "Откријте го мирисот што ве претставува",
+          "title": "Mирис кој зборува пред вас.",
           "subtitle": "Оригинални парфеми и body mist, избрани за вас",
           "view_product": "Види производ"
         },

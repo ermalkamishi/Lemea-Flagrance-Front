@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import PromoBanner from '../components/PromoBanner';
 import HomePromoBanner from '../components/HomePromoBanner';
 import HeroShowcase from '../components/HeroShowcase';
+import { HERO_PRODUCTS, normalizeProductName } from '../config/heroProducts';
 import { useNavigate } from 'react-router-dom';
 import ProductLink from '../components/ProductLink';
 import { Carousel, Alert, Rate } from 'antd';
@@ -17,7 +18,7 @@ import { CheckCircleFilled } from '@ant-design/icons';
 import './Home.css';
 import { getApiBaseUrl } from '../utils/apiBase';
 
-const Home = () => {
+const Home = ({ playIntro = false, onIntroDone }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
@@ -190,33 +191,15 @@ const Home = () => {
       .slice(0, 4);
   }, [allProducts]);
 
-  // Products for the animated hero ring: in stock, with a picture, best-rated first,
-  // mixed across categories (fragrances & body mists first, others only to fill up).
-  const heroProducts = useMemo(() => {
-    const MAX = 14;
-    const pool = allProducts.filter(
-      p => p.image && p.inStock && (p.stockQuantity > 0 || p.stockQuantity === undefined)
-    );
-    const groups = new Map();
-    pool.forEach((p) => {
-      const key = p.category || 'other';
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(p);
+  // Items for the animated hero arc (see src/config/heroProducts.js).
+  // The transparent images show immediately; the matching catalog product
+  // (link, price) is attached once products have loaded.
+  const heroItems = useMemo(() => {
+    const byName = new Map(allProducts.map(p => [normalizeProductName(p.name), p]));
+    return HERO_PRODUCTS.map(({ name, image }) => {
+      const key = normalizeProductName(name);
+      return { key, product: byName.get(key) || null, image, label: name };
     });
-    groups.forEach(list => list.sort((a, b) => (b.rating || 0) - (a.rating || 0)));
-
-    const isFragrance = (cat) => /parfum|mist|meshkuj|men|sete|sets/i.test(cat);
-    const roundRobin = (lists, picked) => {
-      for (let i = 0; picked.length < MAX && lists.some(l => i < l.length); i++) {
-        lists.forEach((l) => {
-          if (i < l.length && picked.length < MAX) picked.push(l[i]);
-        });
-      }
-      return picked;
-    };
-    const entries = [...groups.entries()];
-    const picked = roundRobin(entries.filter(([cat]) => isFragrance(cat)).map(([, l]) => l), []);
-    return roundRobin(entries.filter(([cat]) => !isFragrance(cat)).map(([, l]) => l), picked);
   }, [allProducts]);
 
   const getProductName = (p) => (currentLang === 'mk' && p.name_mk ? p.name_mk : p.name);
@@ -272,12 +255,14 @@ const Home = () => {
         </div>
       )}
 
-      {/* HERO: unaza e animuar e produkteve */}
+      {/* HERO: harku i animuar i produkteve */}
       <HeroShowcase
-        products={heroProducts}
+        items={heroItems}
         loading={productsStatus === 'idle' || productsStatus === 'loading'}
         getName={getProductName}
         getCategoryLabel={getCategoryLabel}
+        playIntro={playIntro}
+        onIntroDone={onIntroDone}
       />
 
       {/* Seksioni i Filtrave dhe Produkteve */}

@@ -34,6 +34,7 @@
 /* origin of the arc = bottom centre of the stage */
 .hs-arc {
   position: absolute;
+  z-index: 1; /* keeps all products below the product info text */
   left: 50%;
   bottom: 0;
   width: 0;
@@ -49,8 +50,6 @@
   cursor: pointer;
   outline: none;
   border-radius: 14px;
-  /* white parts of the product photos melt into the section background */
-  mix-blend-mode: multiply;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -59,40 +58,21 @@
 }
 
 .hs-product {
-  display: none;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   pointer-events: none;
-  /* push near-white photo edges to pure white so they vanish with the blend */
-  filter: brightness(1.04) contrast(1.04);
+  /* --fit-* are set per image by autoFit() in HeroShowcase.jsx; --hover on hover */
+  transform: scale(calc(var(--fit-k, 1) * var(--hover, 1))) translate(var(--fit-x, 0%), var(--fit-y, 0%));
+  /* soft shadow that follows the bottle's own shape (not a box) → looks like a real object */
+  filter: drop-shadow(0 14px 12px rgba(15, 23, 42, 0.16)) drop-shadow(0 3px 3px rgba(15, 23, 42, 0.1));
   transition: transform 0.35s ease;
 }
 
-.hs-back {
-  position: absolute;
-  inset: 8% 14%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 14px;
-  background: linear-gradient(145deg, #f472b6 0%, #ec4899 45%, #be185d 100%);
-}
-
-.hs-back-mark {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-/* after the flip the product photo shows instead of the pink card back */
-.hs-card.is-front .hs-product { display: block; }
-.hs-card.is-front .hs-back { display: none; }
-
 .hs-card.is-hovered .hs-product,
 .hs-card:focus-visible .hs-product {
-  transform: scale(1.1);
+  --hover: 1.1;
 }
 
 .hs-card:focus-visible {
@@ -109,7 +89,17 @@
   transform: translateX(-50%);
   text-align: center;
   pointer-events: none;
-  animation: hs-fade-up 0.6s ease-out 1.9s both;
+  animation: hs-fade-up 0.6s ease-out 1.3s both;
+}
+
+/* phones: the info sits under the arc, in normal page flow */
+.hs-center.is-below {
+  --hs-x: 0;
+  position: relative;
+  left: auto;
+  transform: none;
+  margin: 0.5rem auto 0;
+  padding: 0 1rem;
 }
 
 .hs-center-inner {
@@ -199,6 +189,34 @@
 @keyframes hs-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* ---- first visit of a session: the hero shows first, the rest of the site fades in ----
+   App.jsx puts .app-intro-playing on its root while the hero intro runs,
+   then .app-intro-revealing for one second while everything fades in. */
+.app-intro-revealing > header,
+.app-intro-revealing > footer,
+.app-intro-revealing .hs-section ~ * {
+  transition: opacity 0.8s ease;
+}
+
+.app-intro-playing > header,
+.app-intro-playing > footer,
+.app-intro-playing .hs-section ~ * {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Header.css gives <header> a slideDown animation on load, which would show it during
+   the intro. Hold it back; it then plays when the intro ends, so the header slides in. */
+.app-intro-playing > header {
+  animation: none;
+}
+
+/* Refresh / coming back to Home: no intro, everything is there right away */
+.hs-no-intro .hs-header,
+.hs-no-intro .hs-center {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
