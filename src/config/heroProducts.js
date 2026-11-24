@@ -41,6 +41,12 @@ export const HERO_PRODUCTS = [
   { name: 'Club De Nuit Woman', image: clubDeNuit },
 ];
 
+/**
+ * Phones: the hero is not at the top of the Home page but further down, in place of
+ * the "Hero Carousel" banner (which is not shown on phones), and the intro doesn't play.
+ */
+export const HERO_MOBILE_QUERY = '(max-width: 639px)';
+
 /** Lower-case, no accents/apostrophes, single spaces: "Bade'e  Al Oud" → "badee al oud". */
 export const normalizeProductName = (name) =>
   String(name || '')

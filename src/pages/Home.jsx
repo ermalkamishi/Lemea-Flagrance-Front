@@ -3,10 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import PromoBanner from '../components/PromoBanner';
 import HomePromoBanner from '../components/HomePromoBanner';
 import HeroShowcase from '../components/HeroShowcase';
-import { HERO_PRODUCTS, normalizeProductName } from '../config/heroProducts';
+import HomeHeroBanner from '../components/HomeHeroBanner';
+import { HERO_PRODUCTS, HERO_MOBILE_QUERY, normalizeProductName } from '../config/heroProducts';
 import { useNavigate } from 'react-router-dom';
 import ProductLink from '../components/ProductLink';
-import { Carousel, Alert, Rate } from 'antd';
+import { Alert, Rate } from 'antd';
 import { ClockCircleOutlined, SafetyCertificateOutlined, CarOutlined, CustomerServiceOutlined, SyncOutlined, ArrowRightOutlined, ShoppingCartOutlined, GiftOutlined, FireOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -18,8 +19,24 @@ import { CheckCircleFilled } from '@ant-design/icons';
 import './Home.css';
 import { getApiBaseUrl } from '../utils/apiBase';
 
+// Phones show the animated hero further down the page, in place of the Hero Carousel banner.
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && !!window.matchMedia?.(HERO_MOBILE_QUERY).matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia?.(HERO_MOBILE_QUERY);
+    if (!mq) return undefined;
+    const onChange = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return isMobile;
+};
+
 const Home = ({ playIntro = false, onIntroDone }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
@@ -49,9 +66,6 @@ const Home = ({ playIntro = false, onIntroDone }) => {
     navigate(`/produktet/${productId}`);
   };
 
-  // Find real products for hero slides based on names or pick first ones
-  const findProductByName = (name) => allProducts.find(p => p.name.toLowerCase().includes(name.toLowerCase()));
-
   const dealOfTheDayProduct = allProducts.find(p => p.oldPrice && p.price < p.oldPrice) || allProducts.find(p => p.isPopular) || allProducts[0];
 
   // Real discount numbers (no fake countdown)
@@ -71,45 +85,6 @@ const Home = ({ playIntro = false, onIntroDone }) => {
     const fill = rest.filter((p) => discountPct(p) === 0);
     return [...discounted, ...fill].slice(0, 10);
   })();
-
-  const heroSlides = [
-    {
-      id: 1,
-      tag: t('hero.tag'),
-      title1: 'Lattafa Khamrah',
-      title2: t('home.hero_slides.slide1_title2'),
-      title2Color: 'text-yellow-300',
-      desc: t('home.hero_slides.slide1_desc'),
-      btnText: t('hero.btn'),
-      btnColor: 'bg-yellow-400 text-yellow-900 hover:bg-yellow-300 shadow-yellow-400/20',
-      bgGradient: 'from-amber-700 via-orange-600 to-amber-500',
-      featuredProductNames: ['Khamrah', 'Asad', 'Yara']
-    },
-    {
-      id: 2,
-      tag: t('common.limited_edition', 'Ofertë Limituar'),
-      title1: t('home.hero_slides.offer_title1', '3 Body Mist'),
-      title2: t('home.hero_slides.offer_title2', 'Për vetëm 999 Den'),
-      title2Color: 'text-yellow-300',
-      desc: t('home.hero_slides.offer_desc', 'Zgjidh 3 Body Mist-et tuaja të preferuara Victoria Secret dhe pëfito çmimin special. Kombino aromën tënde sot!'),
-      btnText: t('hero.view_all', 'Shiko të Gjitha'),
-      btnColor: 'bg-white text-pink-600 hover:bg-pink-50 shadow-white/20',
-      bgGradient: 'from-pink-600 via-rose-500 to-orange-400',
-      featuredProductNames: ['Pure Seduction', 'Love Spell', 'Aqua Kiss']
-    },
-    {
-      id: 3,
-      tag: t('home.hero_slides.slide3_tag'),
-      title1: t('home.hero_slides.slide3_title1'),
-      title2: t('home.hero_slides.slide3_title2'),
-      title2Color: 'text-orange-200',
-      desc: t('home.hero_slides.slide3_desc'),
-      btnText: t('home.hero_slides.slide3_btn'),
-      btnColor: 'bg-orange-500 text-white hover:bg-orange-400 shadow-orange-500/20',
-      bgGradient: 'from-rose-700 via-pink-600 to-orange-400',
-      featuredProductNames: ['Amber Romance', 'Fakhar']
-    }
-  ];
 
   const [activeCategory, setActiveCategory] = useState('');
   const [categories, setCategories] = useState([]);
@@ -204,6 +179,17 @@ const Home = ({ playIntro = false, onIntroDone }) => {
 
   const getProductName = (p) => (currentLang === 'mk' && p.name_mk ? p.name_mk : p.name);
 
+  // HERO: harku i animuar i produkteve (lart në desktop/tablet, poshtë në telefon)
+  const heroShowcase = (
+    <HeroShowcase
+      items={heroItems}
+      loading={productsStatus === 'idle' || productsStatus === 'loading'}
+      getName={getProductName}
+      playIntro={playIntro && !isMobile}
+      onIntroDone={onIntroDone}
+    />
+  );
+
   return (
     <>
       <Helmet>
@@ -255,14 +241,30 @@ const Home = ({ playIntro = false, onIntroDone }) => {
         </div>
       )}
 
-      {/* HERO: harku i animuar i produkteve */}
-      <HeroShowcase
-        items={heroItems}
-        loading={productsStatus === 'idle' || productsStatus === 'loading'}
-        getName={getProductName}
-        playIntro={playIntro}
-        onIntroDone={onIntroDone}
-      />
+      {/* HERO (desktop/tablet): seksioni i parë */}
+      {!isMobile && heroShowcase}
+
+      {/* SEKSIONI I BESUESHMËRISË — menjëherë pas hero-s */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { icon: <SafetyCertificateOutlined />, title: t('home.trust.secure_payment'), desc: t('home.trust.secure_desc') },
+            { icon: <SyncOutlined />, title: t('home.trust.customer_protection'), desc: t('home.trust.protection_desc') },
+            { icon: <CarOutlined />, title: t('home.trust.fast_shipping'), desc: t('home.trust.shipping_desc') },
+            { icon: <CustomerServiceOutlined />, title: t('home.trust.support'), desc: t('home.trust.support_desc') }
+          ].map((feature, idx) => (
+            <div key={idx} className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 flex-shrink-0 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-xl">
+                {feature.icon}
+              </div>
+              <div>
+                <h4 className="text-gray-800 font-bold text-sm">{feature.title}</h4>
+                <p className="text-gray-500 text-xs mt-0.5">{feature.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Seksioni i Filtrave dhe Produkteve */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
@@ -355,30 +357,8 @@ const Home = ({ playIntro = false, onIntroDone }) => {
       </div>
 
       {/* BANERI I RI PROMOCIONAL - Ndërmjet seksionit 1 dhe 2 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
         <HomePromoBanner />
-      </div>
-
-      {/* 1. SEKSIONI I BESUESHMËRISË */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { icon: <SafetyCertificateOutlined />, title: t('home.trust.secure_payment'), desc: t('home.trust.secure_desc') },
-            { icon: <SyncOutlined />, title: t('home.trust.customer_protection'), desc: t('home.trust.protection_desc') },
-            { icon: <CarOutlined />, title: t('home.trust.fast_shipping'), desc: t('home.trust.shipping_desc') },
-            { icon: <CustomerServiceOutlined />, title: t('home.trust.support'), desc: t('home.trust.support_desc') }
-          ].map((feature, idx) => (
-            <div key={idx} className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 flex-shrink-0 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-xl">
-                {feature.icon}
-              </div>
-              <div>
-                <h4 className="text-gray-800 font-bold text-sm">{feature.title}</h4>
-                <p className="text-gray-500 text-xs mt-0.5">{feature.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* PROMO BANNER 5 DITË - Seksioni i dytë */}
@@ -559,65 +539,8 @@ const Home = ({ playIntro = false, onIntroDone }) => {
         </div>
       </div>
 
-      {/* Hero Carousel */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-16">
-        <div className="relative rounded-[40px] overflow-hidden shadow-2xl">
-          <Carousel autoplay autoplaySpeed={4500} effect="scrollx" dotPosition="bottom">
-            {heroSlides.map((slide) => (
-              <div key={slide.id} className="outline-none">
-                <div className={`w-full p-5 py-6 sm:p-6 sm:py-8 lg:p-12 bg-gradient-to-br ${slide.bgGradient} flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10 min-h-[280px] sm:min-h-[320px] lg:min-h-[450px]`}>
-                  <div className="w-full lg:w-1/2 z-10 flex flex-col items-start text-white">
-                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-3 py-1 lg:px-4 lg:py-1.5 rounded-full mb-3 lg:mb-6">
-                      <span className="text-[10px] sm:text-xs lg:text-sm font-bold tracking-wider uppercase text-white">{slide.tag}</span>
-                    </div>
-                    <h1 className="text-2xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-2 sm:mb-3 lg:mb-4 leading-tight">
-                      {slide.title1} <br className="hidden sm:block" />
-                      <span className={`${slide.title2Color} block sm:inline mt-1 sm:mt-0`}>{slide.title2}</span>
-                    </h1>
-                    <p className="text-xs sm:text-sm lg:text-lg text-white/90 mb-4 sm:mb-6 lg:mb-8 max-w-md leading-relaxed">{slide.desc}</p>
-                    <button
-                      onClick={() => navigate('/produktet')}
-                      className={`${slide.btnColor} font-bold text-sm sm:text-base lg:text-lg px-5 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-3 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto text-center cursor-pointer`}
-                    >
-                      {slide.btnText}
-                    </button>
-                  </div>
-                  <div className="hidden lg:flex w-full lg:w-1/2 z-10 gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x">
-                    {slide.featuredProductNames.map((name) => {
-                      const product = findProductByName(name) || allProducts[Math.floor(Math.random() * allProducts.length)];
-                      if (!product) return null;
-                      return (
-                        <div
-                          key={product.id}
-                          onClick={(e) => handleProductClick(product.id, e)}
-                          className="min-w-[180px] w-[180px] flex-shrink-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden hover:bg-white/20 transition-all duration-300 cursor-pointer snap-start group hover:-translate-y-2 hover:shadow-xl"
-                        >
-                          <div className="h-40 overflow-hidden bg-black/10">
-                            <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                          </div>
-                          <div className="p-4 flex flex-col justify-between">
-                            <h3 className="text-white font-semibold text-sm mb-2 line-clamp-2"><ProductLink id={product.id}>{product.name}</ProductLink></h3>
-                            <div>
-                              {slide.id === 2 ? (
-                                <span className="text-yellow-300 font-bold text-md">333 {t('common.currency')} <span className="text-[10px] opacity-80">(Ofertë)</span></span>
-                              ) : (
-                                <>
-                                  {product.oldPrice && <span className="text-white/60 line-through text-xs mr-2">{toNumber(product.oldPrice, 0).toLocaleString()} {t('common.currency')}</span>}
-                                  <span className="text-white font-bold text-md">{toNumber(product.price, 0).toLocaleString()} {t('common.currency')}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Carousel>
-        </div>
-      </div>
+      {/* Baneri promocional (desktop/tablet) — në telefon këtu shfaqet hero i animuar */}
+      {isMobile ? heroShowcase : <HomeHeroBanner />}
 
       {/* 4. SEKSIONI: KOLEKSIONI I RI */}
       <div className="bg-white border-t border-gray-100 py-16">

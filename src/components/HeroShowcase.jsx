@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { autoFitImage } from '../utils/autoFitImage';
 import './HeroShowcase.css';
 
 /*
@@ -23,7 +24,7 @@ const REVEAL_EARLY_MS = 300; // the rest of the site starts fading in just befor
 const TILT = 0.3; // 0 = bottles stay upright, 1 = they lean fully along the arc
 const DEPTH_MIN = 0.78; // size at the ends of the arc (1 at the top) → sense of depth
 const CLICK_GUARD_MS = 250; // ignore the click that ends a drag
-const DWELL_MS = 2600; // phones: how long each product stays in the centre before the next one
+const MOBILE_SPEED = 26; // phones: px per second (a bit slower, the products are bigger there)
 const ARC_SAMPLES = 240;
 
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
@@ -38,7 +39,7 @@ const wrap = (v, len) => ((((v + len / 2) % len) + len) % len) - len / 2;
  *
  * Phones (small) use a "featured carousel" instead: a wide, gentle dome that is
  * wider than the screen, so one big product sits in the centre with smaller ones
- * at the sides; it moves one product at a time (see DWELL_MS).
+ * at the sides; it slides slowly to the right (see MOBILE_SPEED) and can be swiped.
  */
 const getLayout = (width, count) => {
   const small = width < 640;
@@ -119,58 +120,8 @@ const pointOnArc = (layout, dist) => {
   };
 };
 
-/*
- * Auto-fit: find the visible (non-transparent) part of a product image and scale/
- * centre it so it fills ~84% of the box height or ~72% of its width, whichever
- * comes first. Result goes into CSS variables used by .hs-product's transform.
- */
-const FIT_HEIGHT = 0.9;
-const FIT_WIDTH = 0.8;
-const MAX_FIT_SCALE = 1.9;
-const fitted = new WeakSet();
-const autoFit = (img) => {
-  if (!img || fitted.has(img) || !img.complete || !img.naturalWidth) return;
-  fitted.add(img);
-  try {
-    const W = img.naturalWidth;
-    const H = img.naturalHeight;
-    const down = Math.min(1, 160 / Math.max(W, H)); // a small copy is plenty to find the edges
-    const w = Math.max(1, Math.round(W * down));
-    const h = Math.max(1, Math.round(H * down));
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    ctx.drawImage(img, 0, 0, w, h);
-    const { data } = ctx.getImageData(0, 0, w, h);
-    let x1 = w;
-    let y1 = h;
-    let x2 = -1;
-    let y2 = -1;
-    for (let y = 0; y < h; y += 1) {
-      for (let x = 0; x < w; x += 1) {
-        if (data[(y * w + x) * 4 + 3] > 40) {
-          if (x < x1) x1 = x;
-          if (x > x2) x2 = x;
-          if (y < y1) y1 = y;
-          if (y > y2) y2 = y;
-        }
-      }
-    }
-    if (x2 < 0) return;
-    const unit = 1 / Math.max(w, h); // object-fit: contain → one pixel as a fraction of the box
-    const bw = (x2 - x1 + 1) * unit;
-    const bh = (y2 - y1 + 1) * unit;
-    const k = Math.min(FIT_WIDTH / bw, FIT_HEIGHT / bh, MAX_FIT_SCALE);
-    const ox = ((x1 + x2 + 1) / 2 - w / 2) * unit;
-    const oy = ((y1 + y2 + 1) / 2 - h / 2) * unit;
-    img.style.setProperty('--fit-k', k.toFixed(3));
-    img.style.setProperty('--fit-x', `${(-ox * 100).toFixed(2)}%`);
-    img.style.setProperty('--fit-y', `${(-oy * 100).toFixed(2)}%`);
-  } catch {
-    /* unreadable image (e.g. cross-origin): keep the plain contained layout */
-  }
-};
+// Every product fills ~90% of its box height or ~80% of its width (see autoFitImage).
+const autoFit = (img) => autoFitImage(img, { fitHeight: 0.9, fitWidth: 0.8, maxScale: 1.9 });
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
@@ -195,8 +146,6 @@ const HeroShowcase = ({
   const motion = useRef({
     offset: 0,
     speed: 0,
-    snapTarget: 0, // phones: offset of the product being moved to the centre
-    nextStepAt: null, // phones: when to move on to the next product
     introStart: null,
     introReported: false,
     hovering: false,
@@ -264,10 +213,7 @@ const HeroShowcase = ({
     if (m.introStart === null) m.introStart = reduce || !withIntro ? -Infinity : performance.now();
     if (m.activeIdx >= count) m.activeIdx = 0;
     m.offset = wrap(m.offset, loop);
-    if (small) {
-      m.snapTarget = wrap(Math.round(m.offset / step) * step, loop);
-      m.nextStepAt = null;
-    }
+    const autoSpeed = small ? MOBILE_SPEED : AUTO_SPEED;
 
     let raf;
     let last = performance.now();
@@ -283,21 +229,11 @@ const HeroShowcase = ({
       }
       if (!m.visible) return;
 
+      // slow drift to the right; after a swipe the momentum eases back into the drift
       if (elapsed >= introEnd && !m.dragging) {
-        if (small) {
-          // phones: one product at a time, each pausing in the centre
-          if (m.nextStepAt === null || m.hovering) m.nextStepAt = now + DWELL_MS;
-          if (!reduce && now >= m.nextStepAt) {
-            m.snapTarget = wrap(m.snapTarget - step, loop); // next product comes in from the right
-            m.nextStepAt = now + DWELL_MS;
-          }
-          const diff = wrap(m.snapTarget - m.offset, loop);
-          m.offset = wrap(m.offset + diff * (1 - Math.exp(-dt * 5)), loop);
-        } else {
-          const target = m.hovering || reduce ? 0 : AUTO_SPEED;
-          m.speed += (target - m.speed) * (1 - Math.exp(-dt * 2.2));
-          m.offset = wrap(m.offset + m.speed * dt, loop);
-        }
+        const target = m.hovering || reduce ? 0 : autoSpeed;
+        m.speed += (target - m.speed) * (1 - Math.exp(-dt * 2.2));
+        m.offset = wrap(m.offset + m.speed * dt, loop);
       }
 
       let best = 0;
@@ -402,12 +338,6 @@ const HeroShowcase = ({
     if (!m.dragging) return;
     m.dragging = false;
     m.dragEndedAt = performance.now();
-    if (layout.small && count) {
-      // settle on the nearest product; a quick flick moves on to the next one
-      const step = layout.loop / count;
-      m.snapTarget = wrap(Math.round((m.offset + m.speed * 0.12) / step) * step, layout.loop);
-      m.nextStepAt = m.dragEndedAt + DWELL_MS;
-    }
     setIsDragging(false);
     if (stageRef.current?.hasPointerCapture?.(e.pointerId)) {
       stageRef.current.releasePointerCapture(e.pointerId);
@@ -488,9 +418,11 @@ const HeroShowcase = ({
                   tabIndex={-1}
                   aria-label={nameOf(item)}
                   onClick={guardClick}
-                  onPointerEnter={() => setHover(i)}
-                  onPointerLeave={() => setHover(null)}
-                  onFocus={() => setHover(i)}
+                  // Pause only for a real mouse hover or keyboard focus. A finger touching a
+                  // product (to swipe) must not pause it: touch has no "leave", so it would stay paused.
+                  onPointerEnter={(e) => e.pointerType === 'mouse' && setHover(i)}
+                  onPointerLeave={(e) => e.pointerType === 'mouse' && setHover(null)}
+                  onFocus={(e) => e.currentTarget.matches(':focus-visible') && setHover(i)}
                   onBlur={() => setHover(null)}
                   className={`hs-card${hoverIdx === i ? ' is-hovered' : ''}`}
                   style={{

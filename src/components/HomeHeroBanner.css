@@ -1,0 +1,385 @@
+/* Promotional banner on the Home page (see HomeHeroBanner.jsx) */
+
+.hb-frame {
+  position: relative;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -25px rgba(15, 23, 42, 0.45);
+}
+
+/* Fade effect: hidden slides must not catch clicks */
+.hb-banner .slick-slide:not(.slick-active) {
+  pointer-events: none;
+}
+
+/* all slides as tall as the tallest one (no empty strip under a shorter slide) */
+.hb-banner .slick-track {
+  display: flex !important;
+}
+
+.hb-banner .slick-slide {
+  height: auto !important;
+}
+
+.hb-banner .slick-slide > div,
+.hb-banner .slick-slide > div > div {
+  height: 100%;
+}
+
+/* ---- slide ---- */
+.hb-slide {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: 340px;
+  padding: 2.5rem 2rem 4rem;
+  overflow: hidden;
+  background: var(--hb-bg);
+  isolation: isolate;
+}
+
+@media (min-width: 768px) {
+  .hb-slide { min-height: 400px; }
+}
+
+@media (min-width: 1024px) {
+  .hb-slide {
+    min-height: 470px;
+    padding: 3.5rem 3.5rem 4.5rem;
+  }
+}
+
+/* soft light that drifts slowly over the gradient */
+.hb-orb {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  background: var(--hb-glow);
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.hb-orb-a {
+  width: 560px;
+  height: 560px;
+  right: -10%;
+  top: -35%;
+  animation: hb-drift 16s ease-in-out infinite alternate;
+}
+
+.hb-orb-b {
+  width: 380px;
+  height: 380px;
+  right: 32%;
+  bottom: -45%;
+  opacity: 0.55;
+  animation: hb-drift 21s ease-in-out infinite alternate-reverse;
+}
+
+/* ---- text ---- */
+.hb-content {
+  position: relative;
+  z-index: 2;
+  max-width: 34rem;
+  color: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  .hb-content {
+    max-width: 48%;
+  }
+}
+
+.hb-tag {
+  display: inline-block;
+  padding: 0.4rem 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(6px);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hb-title {
+  margin: 1.1rem 0 0.9rem;
+  font-size: clamp(2rem, 3.4vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.18);
+}
+
+.hb-desc {
+  max-width: 30rem;
+  margin: 0 0 1.8rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+@media (min-width: 1024px) {
+  .hb-desc { font-size: 1.08rem; }
+}
+
+.hb-btn {
+  position: relative;
+  overflow: hidden;
+  padding: 0.85rem 2.1rem;
+  border: 0;
+  border-radius: 9999px;
+  background: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* light sheen sweeping across the button on hover */
+.hb-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.75) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+
+.hb-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px -12px rgba(0, 0, 0, 0.55);
+}
+
+.hb-btn:hover::after {
+  transform: translateX(120%);
+}
+
+/* ---- products (tablet: smaller, desktop: full size) ---- */
+.hb-banner {
+  --hb-w: 160px; /* width of one product */
+}
+
+.hb-stage {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hb-stage {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    right: 2%;
+    top: 0;
+    bottom: 0;
+    width: 48%;
+  }
+
+  .hb-content {
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hb-banner { --hb-w: 210px; }
+  .hb-stage { right: 3%; width: 50%; }
+}
+
+.hb-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--hb-w);
+  transition: transform 0.5s ease;
+}
+
+/* three products: the first in front, two smaller and turned at the sides */
+.hb-count-3 .hb-pos-0 { transform: translate(-50%, -54%); z-index: 3; }
+.hb-count-3 .hb-pos-1 { transform: translate(-50%, -50%) translateX(-82%) translateY(5%) rotate(-7deg) scale(0.8); z-index: 2; }
+.hb-count-3 .hb-pos-2 { transform: translate(-50%, -50%) translateX(82%) translateY(5%) rotate(7deg) scale(0.8); z-index: 2; }
+
+/* two products: side by side, slightly turned */
+.hb-count-2 .hb-pos-0 { transform: translate(-50%, -52%) translateX(-48%) rotate(-4deg); z-index: 2; }
+.hb-count-2 .hb-pos-1 { transform: translate(-50%, -48%) translateX(48%) rotate(4deg) scale(0.92); z-index: 1; }
+
+/* one product */
+.hb-count-1 .hb-pos-0 { transform: translate(-50%, -52%); }
+
+/* keep the name/price tags level even when the product is turned */
+.hb-count-3 .hb-pos-1 .hb-label { transform: rotate(7deg); }
+.hb-count-3 .hb-pos-2 .hb-label { transform: rotate(-7deg); }
+.hb-count-2 .hb-pos-0 .hb-label { transform: rotate(4deg); }
+.hb-count-2 .hb-pos-1 .hb-label { transform: rotate(-4deg); }
+
+.hb-float {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  animation: hb-bob 5.5s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -1.7s);
+}
+
+.hb-bottle,
+.hb-card {
+  display: block;
+  width: var(--hb-w);
+  height: calc(var(--hb-w) * 1.19);
+}
+
+.hb-bottle img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(calc(var(--fit-k, 1) * var(--hover, 1))) translate(var(--fit-x, 0%), var(--fit-y, 0%));
+  filter: drop-shadow(0 24px 22px rgba(0, 0, 0, 0.35)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  transition: transform 0.4s ease;
+}
+
+/* products without a transparent image: clean photo card */
+.hb-card {
+  padding: 14px;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 24px 40px -18px rgba(0, 0, 0, 0.45);
+  transition: transform 0.4s ease;
+}
+
+.hb-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hb-float:hover .hb-bottle img { --hover: 1.07; }
+.hb-float:hover .hb-card { transform: translateY(-4px) scale(1.03); }
+
+/* frosted name + price tag under each product */
+.hb-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: calc(var(--hb-w) - 10px);
+  margin-top: 0.75rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  text-align: center;
+}
+
+.hb-label-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.hb-label-price {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fde68a;
+}
+
+.hb-label-old {
+  margin-right: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: line-through;
+}
+
+.hb-label-note {
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* ---- per-slide entrance (runs each time a slide becomes the current one) ---- */
+.slick-current .hb-anim {
+  animation: hb-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms) both;
+}
+
+.hb-anim { display: block; width: fit-content; }
+.hb-title.hb-anim, .hb-desc.hb-anim { width: auto; }
+
+.slick-current .hb-enter {
+  animation: hb-rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) calc(250ms + var(--i, 0) * 130ms) both;
+}
+
+/* ---- dots: left, under the text; the active one fills up as the slide's timer ---- */
+.hb-banner .ant-carousel .slick-dots.hb-dots {
+  bottom: 26px !important;
+  justify-content: flex-start;
+  padding-inline-start: 2rem;
+  margin: 0 !important;
+}
+
+@media (min-width: 1024px) {
+  .hb-banner .ant-carousel .slick-dots.hb-dots { padding-inline-start: 3.5rem; }
+}
+
+.hb-banner .ant-carousel .slick-dots.hb-dots li {
+  width: 22px !important;
+  height: 4px !important;
+  margin-inline: 4px 0 !important;
+}
+
+.hb-banner .ant-carousel .slick-dots.hb-dots li.slick-active {
+  width: 56px !important;
+}
+
+.hb-banner .ant-carousel .slick-dots.hb-dots li button {
+  width: 100% !important;
+  height: 4px !important;
+  opacity: 1 !important;
+  background-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.hb-banner .ant-carousel .slick-dots.hb-dots li.slick-active button {
+  width: 100% !important;
+  background-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.hb-banner .ant-carousel .slick-dots.hb-dots li::after {
+  height: 4px !important;
+  background: #ffffff;
+}
+
+/* ---- keyframes ---- */
+@keyframes hb-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hb-rise {
+  from { opacity: 0; transform: translateY(70px) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hb-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes hb-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-70px, 45px) scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hb-orb,
+  .hb-float,
+  .slick-current .hb-anim,
+  .slick-current .hb-enter {
+    animation: none;
+  }
+}

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { UpOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { fetchProducts } from './redux/productsSlice';
+import { HERO_MOBILE_QUERY } from './config/heroProducts';
 
 // Importojmë Header dhe Footer
 import Header from './Header-Footer/Header';
@@ -45,6 +46,7 @@ const shouldPlayIntro = (pathname) => {
   if (pathname !== '/') return false;
   try {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
+    if (window.matchMedia?.(HERO_MOBILE_QUERY).matches) return false; // phones: hero isn't at the top
     return !window.sessionStorage.getItem(INTRO_SEEN_KEY);
   } catch {
     return false;
