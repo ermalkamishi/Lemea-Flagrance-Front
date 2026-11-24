@@ -6,41 +6,100 @@ import { toNumber } from '../utils/numberUtils';
 import './HeroShowcase.css';
 
 /*
- * Animated landing hero: a deck of product cards rises from the bottom,
- * flips face-up, fans out and closes into a tilted ring that keeps turning.
- * Pure CSS 3D transforms driven by one requestAnimationFrame loop (no WebGL).
- * Hover pauses the ring, drag/swipe spins it, every card links to its product.
+ * Animated landing hero: a deck of cards rises from the bottom, flips to reveal
+ * the products, then the products spread along a 180° arc that runs from the
+ * bottom-left edge of the screen to the bottom-right edge and keeps flowing.
+ * Plain 2D CSS transforms driven by one requestAnimationFrame loop (no WebGL).
+ * Product photos use mix-blend-mode: multiply so their white backgrounds
+ * disappear into the section background.
+ * Hover pauses the flow, drag/swipe moves it, every product links to its page.
  */
 
-const AUTO_SPEED = 6; // degrees per second once the ring has formed
+const AUTO_SPEED = 40; // px per second along the arc once the intro is done
 const INTRO = {
   riseDuration: 700,
   riseStagger: 35,
-  flipAt: 550,
-  flipDuration: 520,
-  flipStagger: 30,
+  flipAt: 1050, // flip while the deck spreads, so the photos never pile up on each other
+  flipDuration: 450,
+  flipStagger: 40,
   spreadAt: 1000,
   spreadDuration: 1400,
 };
 const INTRO_END = INTRO.spreadAt + INTRO.spreadDuration;
 const CLICK_GUARD_MS = 250; // ignore the click that ends a drag
+const ARC_SAMPLES = 240;
 
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+const clamp01 = (v) => clamp(v, 0, 1);
 const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
 const easeInOutCubic = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-const wrapDeg = (a) => ((((a + 180) % 360) + 360) % 360) - 180;
+const wrap = (v, len) => ((((v + len / 2) % len) + len) % len) - len / 2;
 
+/*
+ * Geometry: a half-ellipse whose centre sits on the bottom edge of the stage.
+ * phi = 0 is the top of the arc, ±phiMax are just past the left/right ends
+ * (slightly below the bottom edge, so products slide out of view there).
+ */
 const getLayout = (width, count) => {
-  const w = Math.round(Math.min(136, Math.max(84, width / 9)));
-  const h = Math.round((w * 4) / 3);
-  const r = Math.round((Math.max(count, 10) * w * 1.12) / (2 * Math.PI));
-  const below = Math.round(w * 0.5); // how much of the ring shows under its centre line
-  const stageH = Math.round(r + h / 2 + 28 + below);
-  const innerR = r - h / 2;
-  const centerW = Math.round(Math.min(440, 2 * innerR * 0.82));
-  // On small screens the arch is low, so the product info sits lower (below the ring's centre line).
-  const centerBottom = innerR < 200 ? 10 : below + 12;
-  return { w, h, r, below, stageH, centerW, centerBottom };
+  const size = Math.round(clamp(width / 9.5, 96, 184)); // square box per product
+  const small = width < 640;
+  const contentH = small ? 112 : 170; // product info shown inside the arch
+  const rx = Math.max(size, width / 2 - size * 0.4);
+  const ry = Math.round(Math.max(size / 2 + contentH + 24, Math.min(rx * 0.5, 420)));
+  const clearance = size * 0.6 + 6; // how far below the edge a product must go to be hidden
+  const phiMax = Math.PI / 2 + Math.asin(Math.min(0.95, clearance / ry));
+
+  // Arc-length lookup table so products move at an even speed along the ellipse.
+  const phis = new Float64Array(ARC_SAMPLES + 1);
+  const lens = new Float64Array(ARC_SAMPLES + 1);
+  let prevX = rx * Math.sin(-phiMax);
+  let prevY = -ry * Math.cos(-phiMax);
+  for (let k = 0; k <= ARC_SAMPLES; k += 1) {
+    const phi = -phiMax + (2 * phiMax * k) / ARC_SAMPLES;
+    const x = rx * Math.sin(phi);
+    const y = -ry * Math.cos(phi);
+    phis[k] = phi;
+    lens[k] = k === 0 ? 0 : lens[k - 1] + Math.hypot(x - prevX, y - prevY);
+    prevX = x;
+    prevY = y;
+  }
+  const pathLen = lens[ARC_SAMPLES];
+  const spacing = size * 0.92;
+  const loop = Math.max(pathLen + spacing, Math.max(count, 1) * spacing);
+
+  return {
+    size,
+    rx,
+    ry,
+    phis,
+    lens,
+    pathLen,
+    spacing,
+    loop,
+    stageH: Math.round(ry + size / 2 + 20),
+    centerW: Math.round(Math.min(440, Math.max(180, 2 * (rx - size * 0.55) * 0.8))),
+    centerBottom: 16,
+  };
+};
+
+// Position + rotation of a product that is `dist` px along the arc (0 = left end).
+const pointOnArc = (layout, dist) => {
+  const { lens, phis, rx, ry } = layout;
+  let lo = 0;
+  let hi = ARC_SAMPLES;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if (lens[mid] < dist) lo = mid;
+    else hi = mid;
+  }
+  const seg = lens[hi] - lens[lo] || 1;
+  const phi = phis[lo] + ((phis[hi] - phis[lo]) * (dist - lens[lo])) / seg;
+  return {
+    x: rx * Math.sin(phi),
+    y: -ry * Math.cos(phi),
+    // rotate so the product "stands" on the arc (points away from its centre)
+    angle: (Math.atan2(ry * Math.sin(phi), rx * Math.cos(phi)) * 180) / Math.PI,
+  };
 };
 
 const prefersReducedMotion = () =>
@@ -53,8 +112,9 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
   const stageRef = useRef(null);
   const cardRefs = useRef([]);
   const tabState = useRef([]);
+  const faceState = useRef([]);
   const motion = useRef({
-    rot: 0,
+    offset: 0,
     speed: 0,
     introStart: null,
     hovering: false,
@@ -78,7 +138,7 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
   const layout = useMemo(() => getLayout(width || 1024, count || 14), [width, count]);
   const nameOf = (p) => (getName ? getName(p) : p.name);
 
-  // Track the section width so card size / ring radius fit the screen.
+  // Track the section width so product size / arc fit the screen.
   useEffect(() => {
     const el = sectionRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return undefined;
@@ -98,13 +158,15 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
     return () => io.disconnect();
   }, [shouldRender]);
 
-  // The animation loop: intro (rise → flip → spread) then a slowly turning ring.
+  // The animation loop: intro (rise → flip → spread) then products flowing along the arc.
   useEffect(() => {
     if (!count) return undefined;
     const m = motion.current;
     const reduce = prefersReducedMotion();
-    const step = 360 / count;
-    const offsets = Array.from({ length: count }, (_, i) => wrapDeg(i * step));
+    const { loop, pathLen, spacing, size, ry } = layout;
+    const step = loop / count;
+    // product 0 starts at the top of the arc, the others alternate right/left of it
+    const offsets = Array.from({ length: count }, (_, i) => wrap(i * step, loop));
     if (m.introStart === null) m.introStart = reduce ? -Infinity : performance.now();
     if (m.activeIdx >= count) m.activeIdx = 0;
 
@@ -120,7 +182,7 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
       if (elapsed >= INTRO_END && !m.dragging) {
         const target = m.hovering || reduce ? 0 : AUTO_SPEED;
         m.speed += (target - m.speed) * (1 - Math.exp(-dt * 2.2));
-        m.rot += m.speed * dt;
+        m.offset = wrap(m.offset + m.speed * dt, loop);
       }
 
       const spread = easeInOutCubic(clamp01((elapsed - INTRO.spreadAt) / INTRO.spreadDuration));
@@ -129,24 +191,42 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
       for (let i = 0; i < count; i += 1) {
         const card = cardRefs.current[i];
         if (!card) continue;
-        const d = Math.min(i, count - i); // distance from the top card → symmetric fan
+        const d = Math.min(i, count - i); // distance from the first product → symmetric fan
         const rise = easeOutCubic(clamp01((elapsed - d * INTRO.riseStagger) / INTRO.riseDuration));
         const flip = easeInOutCubic(
           clamp01((elapsed - INTRO.flipAt - d * INTRO.flipStagger) / INTRO.flipDuration)
         );
-        const angle = m.rot + offsets[i] * spread;
-        const lift = (1 - rise) * (layout.r + layout.h + 40);
-        card.style.transform = `rotateZ(${angle}deg) translateY(${lift - layout.r}px) rotateY(${180 * (1 - flip)}deg)`;
-        card.style.opacity = String(clamp01(rise * 3));
 
-        const a = Math.abs(wrapDeg(angle));
-        const reachable = a < 95 && rise > 0.99;
+        const rel = wrap(offsets[i] * spread + m.offset, loop); // px from the top of the arc
+        const dist = pathLen / 2 + rel;
+        const onPath = dist >= 0 && dist <= pathLen;
+        const lift = (1 - rise) * (ry + size + 40);
+
+        if (onPath) {
+          const { x, y, angle } = pointOnArc(layout, dist);
+          const flipScale = Math.max(0.001, Math.abs(1 - 2 * flip));
+          card.style.transform = `translate(${x}px, ${y + lift}px) rotate(${angle}deg) scaleX(${flipScale})`;
+          // dissolve near the bottom corners instead of being cut by the stage edge
+          const heightFade = clamp01((-y - size * 0.45) / (size * 0.55));
+          card.style.opacity = String(clamp01(rise * 3) * heightFade);
+          card.style.visibility = 'visible';
+        } else {
+          card.style.visibility = 'hidden';
+        }
+
+        const showFront = flip >= 0.5;
+        if (faceState.current[i] !== showFront) {
+          faceState.current[i] = showFront;
+          card.classList.toggle('is-front', showFront);
+        }
+
+        const reachable = onPath && rise > 0.99 && Math.abs(rel) < pathLen / 2 - spacing * 0.5;
         if (tabState.current[i] !== reachable) {
           tabState.current[i] = reachable;
           card.tabIndex = reachable ? 0 : -1;
         }
-        if (a < bestAbs) {
-          bestAbs = a;
+        if (Math.abs(rel) < bestAbs) {
+          bestAbs = Math.abs(rel);
           best = i;
         }
       }
@@ -157,9 +237,9 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [count, layout.r, layout.h]);
+  }, [count, layout]);
 
-  // ---- drag / swipe to spin ----
+  // ---- drag / swipe to move the products along the arc ----
   const onPointerDown = (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const m = motion.current;
@@ -180,11 +260,10 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
       stageRef.current?.setPointerCapture?.(e.pointerId);
     }
     const now = performance.now();
-    const degPerPx = 180 / (Math.PI * layout.r);
-    const dDeg = (e.clientX - m.lastX) * degPerPx;
-    m.rot += dDeg;
-    const instant = dDeg / (Math.max(1, now - m.lastT) / 1000);
-    m.speed = Math.max(-240, Math.min(240, m.speed * 0.5 + instant * 0.5));
+    const dx = e.clientX - m.lastX;
+    m.offset = wrap(m.offset + dx, layout.loop);
+    const instant = dx / (Math.max(1, now - m.lastT) / 1000);
+    m.speed = clamp(m.speed * 0.5 + instant * 0.5, -1500, 1500);
     m.lastX = e.clientX;
     m.lastT = now;
   };
@@ -213,18 +292,13 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
   if (!shouldRender) return null;
 
   const shown = count ? products[hoverIdx ?? activeIdx] || products[0] : null;
-  const showNames = layout.w >= 104;
 
   return (
     <section ref={sectionRef} className="hs-section" aria-label={t('home.hero_showcase.title')}>
       <div className="hs-header max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 text-center">
-        <span className="hs-eyebrow">Lemea Flagrance</span>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-800 leading-tight">
           {t('home.hero_showcase.title')}
         </h1>
-        <p className="text-gray-500 text-sm sm:text-base mt-3 max-w-xl mx-auto">
-          {t('home.hero_showcase.subtitle')}
-        </p>
       </div>
 
       <div
@@ -240,15 +314,15 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
           <div
             className="hs-skeleton"
             style={{
-              width: layout.r * 2 + layout.h,
-              height: layout.r * 2 + layout.h,
-              bottom: layout.below - layout.r - layout.h / 2,
-              borderWidth: layout.h * 0.9,
+              width: layout.rx * 2 + layout.size,
+              height: layout.ry * 2 + layout.size,
+              bottom: -(layout.ry + layout.size / 2),
+              borderWidth: layout.size * 0.75,
             }}
           />
         ) : (
           <>
-            <div className="hs-ring" style={{ bottom: layout.below }}>
+            <div className="hs-arc">
               {products.map((p, i) => (
                 <Link
                   key={p.id}
@@ -266,24 +340,22 @@ const HeroShowcase = ({ products = [], loading = false, getName, getCategoryLabe
                   onBlur={() => setHover(null)}
                   className={`hs-card${hoverIdx === i ? ' is-hovered' : ''}`}
                   style={{
-                    width: layout.w,
-                    height: layout.h,
-                    marginLeft: -layout.w / 2,
-                    marginTop: -layout.h / 2,
+                    width: layout.size,
+                    height: layout.size,
+                    marginLeft: -layout.size / 2,
+                    marginTop: -layout.size / 2,
                     zIndex: count - Math.min(i, count - i),
                     opacity: 0,
                   }}
                 >
-                  <span className="hs-face hs-front">
-                    <img
-                      src={getImageUrl(p.image)}
-                      alt={nameOf(p)}
-                      draggable={false}
-                      decoding="async"
-                    />
-                    {showNames && <span className="hs-card-name">{nameOf(p)}</span>}
-                  </span>
-                  <span className="hs-face hs-back" aria-hidden="true">
+                  <img
+                    className="hs-product"
+                    src={getImageUrl(p.image)}
+                    alt={nameOf(p)}
+                    draggable={false}
+                    decoding="async"
+                  />
+                  <span className="hs-back" aria-hidden="true">
                     <span className="hs-back-mark">L</span>
                   </span>
                 </Link>

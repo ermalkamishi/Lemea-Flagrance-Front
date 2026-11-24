@@ -227,7 +227,6 @@ const resources = {
       "home": {
         "hero_showcase": {
           "title": "Zbuloni Aromën që ju Përfaqëson",
-          "subtitle": "Parfume dhe body mist origjinale, të zgjedhura për ju",
           "view_product": "Shiko produktin"
         },
         "hero_slides": {
