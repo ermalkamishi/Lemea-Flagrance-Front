@@ -260,7 +260,6 @@ const Home = ({ playIntro = false, onIntroDone }) => {
         items={heroItems}
         loading={productsStatus === 'idle' || productsStatus === 'loading'}
         getName={getProductName}
-        getCategoryLabel={getCategoryLabel}
         playIntro={playIntro}
         onIntroDone={onIntroDone}
       />

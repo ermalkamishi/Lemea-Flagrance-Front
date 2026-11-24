@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toNumber } from '../utils/numberUtils';
 import './HeroShowcase.css';
 
 /*
@@ -24,6 +23,7 @@ const REVEAL_EARLY_MS = 300; // the rest of the site starts fading in just befor
 const TILT = 0.3; // 0 = bottles stay upright, 1 = they lean fully along the arc
 const DEPTH_MIN = 0.78; // size at the ends of the arc (1 at the top) → sense of depth
 const CLICK_GUARD_MS = 250; // ignore the click that ends a drag
+const DWELL_MS = 2600; // phones: how long each product stays in the centre before the next one
 const ARC_SAMPLES = 240;
 
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
@@ -35,15 +35,34 @@ const wrap = (v, len) => ((((v + len / 2) % len) + len) % len) - len / 2;
  * Geometry: a half-ellipse whose centre sits on the bottom edge of the stage.
  * phi = 0 is the top of the arc, ±phiMax are just past the left/right ends
  * (slightly below the bottom edge, so products slide out of view there).
+ *
+ * Phones (small) use a "featured carousel" instead: a wide, gentle dome that is
+ * wider than the screen, so one big product sits in the centre with smaller ones
+ * at the sides; it moves one product at a time (see DWELL_MS).
  */
 const getLayout = (width, count) => {
-  const size = Math.round(clamp(width / 9.5, 96, 184)); // square box per product
-  const small = width < 640; // phones: product info goes below the arc instead of inside it
-  const contentH = small ? 64 : 170; // room kept inside the arch
-  const rx = Math.max(size, width / 2 - size * 0.4);
-  const ry = Math.round(Math.max(size / 2 + contentH + 24, Math.min(rx * 0.5, 420)));
+  const small = width < 640;
+  let size; // square box per product
+  let rx;
+  let ry;
+  let spacing; // distance between products along the arc
+  let arcBottom; // lifts the arc a bit off the bottom edge (phones)
+  if (small) {
+    size = Math.round(clamp(width * 0.48, 130, 220));
+    rx = width * 0.95;
+    ry = Math.round(size * 0.5);
+    spacing = size * 0.72;
+    arcBottom = Math.round(size * 0.25);
+  } else {
+    size = Math.round(clamp(width / 8, 110, 220));
+    rx = Math.max(size, width / 2 - size * 0.4);
+    ry = Math.round(Math.max(size / 2 + 140, Math.min(rx * 0.5, 420))); // room for the name + button inside
+    spacing = size * 0.78;
+    arcBottom = 0;
+  }
   const clearance = size * 0.6 + 6; // how far below the edge a product must go to be hidden
-  const phiMax = Math.PI / 2 + Math.asin(Math.min(0.95, clearance / ry));
+  // phones: the dome is wider than the screen, so it can simply end at its sides
+  const phiMax = small ? Math.PI / 2 : Math.PI / 2 + Math.asin(Math.min(0.95, clearance / ry));
 
   // Arc-length lookup table so products move at an even speed along the ellipse.
   const phis = new Float64Array(ARC_SAMPLES + 1);
@@ -60,11 +79,11 @@ const getLayout = (width, count) => {
     prevY = y;
   }
   const pathLen = lens[ARC_SAMPLES];
-  const spacing = size * 0.92;
   const loop = Math.max(pathLen + spacing, Math.max(count, 1) * spacing);
 
   return {
     small,
+    width,
     size,
     rx,
     ry,
@@ -73,7 +92,8 @@ const getLayout = (width, count) => {
     pathLen,
     spacing,
     loop,
-    stageH: Math.round(ry + size / 2 + 20),
+    arcBottom,
+    stageH: Math.round(ry + size / 2 + 20 + arcBottom),
     centerW: Math.round(Math.min(440, Math.max(180, 2 * (rx - size * 0.55) * 0.8))),
     centerBottom: 16,
   };
@@ -104,9 +124,9 @@ const pointOnArc = (layout, dist) => {
  * centre it so it fills ~84% of the box height or ~72% of its width, whichever
  * comes first. Result goes into CSS variables used by .hs-product's transform.
  */
-const FIT_HEIGHT = 0.84;
-const FIT_WIDTH = 0.72;
-const MAX_FIT_SCALE = 1.8;
+const FIT_HEIGHT = 0.9;
+const FIT_WIDTH = 0.8;
+const MAX_FIT_SCALE = 1.9;
 const fitted = new WeakSet();
 const autoFit = (img) => {
   if (!img || fitted.has(img) || !img.complete || !img.naturalWidth) return;
@@ -160,7 +180,6 @@ const HeroShowcase = ({
   items = [],
   loading = false,
   getName,
-  getCategoryLabel,
   playIntro = true,
   onIntroDone,
 }) => {
@@ -171,10 +190,13 @@ const HeroShowcase = ({
   const stageRef = useRef(null);
   const cardRefs = useRef([]);
   const tabState = useRef([]);
+  const zState = useRef([]);
   const onIntroDoneRef = useRef(onIntroDone);
   const motion = useRef({
     offset: 0,
     speed: 0,
+    snapTarget: 0, // phones: offset of the product being moved to the centre
+    nextStepAt: null, // phones: when to move on to the next product
     introStart: null,
     introReported: false,
     hovering: false,
@@ -232,7 +254,8 @@ const HeroShowcase = ({
     if (!count) return undefined;
     const m = motion.current;
     const reduce = prefersReducedMotion();
-    const { loop, pathLen, spacing, size, ry } = layout;
+    const { loop, pathLen, spacing, size, ry, small } = layout;
+    const halfW = layout.width / 2;
     const step = loop / count;
     // item 0 lands on the top of the arc, the others alternate right/left of it
     const offsets = Array.from({ length: count }, (_, i) => wrap(i * step, loop));
@@ -240,6 +263,11 @@ const HeroShowcase = ({
     const startY = size * 0.6; // fly-out point: just below the bottom centre of the stage
     if (m.introStart === null) m.introStart = reduce || !withIntro ? -Infinity : performance.now();
     if (m.activeIdx >= count) m.activeIdx = 0;
+    m.offset = wrap(m.offset, loop);
+    if (small) {
+      m.snapTarget = wrap(Math.round(m.offset / step) * step, loop);
+      m.nextStepAt = null;
+    }
 
     let raf;
     let last = performance.now();
@@ -256,9 +284,20 @@ const HeroShowcase = ({
       if (!m.visible) return;
 
       if (elapsed >= introEnd && !m.dragging) {
-        const target = m.hovering || reduce ? 0 : AUTO_SPEED;
-        m.speed += (target - m.speed) * (1 - Math.exp(-dt * 2.2));
-        m.offset = wrap(m.offset + m.speed * dt, loop);
+        if (small) {
+          // phones: one product at a time, each pausing in the centre
+          if (m.nextStepAt === null || m.hovering) m.nextStepAt = now + DWELL_MS;
+          if (!reduce && now >= m.nextStepAt) {
+            m.snapTarget = wrap(m.snapTarget - step, loop); // next product comes in from the right
+            m.nextStepAt = now + DWELL_MS;
+          }
+          const diff = wrap(m.snapTarget - m.offset, loop);
+          m.offset = wrap(m.offset + diff * (1 - Math.exp(-dt * 5)), loop);
+        } else {
+          const target = m.hovering || reduce ? 0 : AUTO_SPEED;
+          m.speed += (target - m.speed) * (1 - Math.exp(-dt * 2.2));
+          m.offset = wrap(m.offset + m.speed * dt, loop);
+        }
       }
 
       let best = 0;
@@ -274,22 +313,42 @@ const HeroShowcase = ({
         const dist = pathLen / 2 + rel;
         const onPath = dist >= 0 && dist <= pathLen;
 
+        let depth = 1;
         if (onPath && fly > 0) {
           const target = pointOnArc(layout, dist);
           const x = target.x * fly;
           const y = startY + (target.y - startY) * fly;
-          const depth = DEPTH_MIN + (1 - DEPTH_MIN) * clamp01(-target.y / ry);
+          let opacity;
+          if (small) {
+            // featured carousel: big in the centre, smaller and lighter towards the screen edges
+            const nx = Math.abs(target.x) / halfW; // 0 = centre, 1 = screen edge
+            depth = 1 - 0.42 * Math.pow(Math.min(1, nx), 1.2);
+            opacity = (1 - 0.4 * Math.min(1, nx)) * clamp01((1.3 - nx) / 0.3) * clamp01(fly * 3);
+          } else {
+            depth = DEPTH_MIN + (1 - DEPTH_MIN) * clamp01(-target.y / ry);
+            // fades in as it rises, dissolves near the bottom corners instead of being cut off
+            opacity = clamp01((-y - size * 0.45) / (size * 0.55));
+          }
           const scale = (0.55 + 0.45 * fly) * depth;
           const tilt = target.angle * TILT * fly;
           card.style.transform = `translate(${x}px, ${y}px) rotate(${tilt}deg) scale(${scale})`;
-          // fades in as it rises, dissolves near the bottom corners instead of being cut off
-          card.style.opacity = String(clamp01((-y - size * 0.45) / (size * 0.55)));
+          card.style.opacity = String(opacity);
           card.style.visibility = 'visible';
         } else {
           card.style.visibility = 'hidden';
         }
 
-        const reachable = onPath && fly > 0.99 && Math.abs(rel) < pathLen / 2 - spacing * 0.5;
+        // products closer to the viewer (bigger) are drawn on top
+        const z = Math.round(depth * 100);
+        if (zState.current[i] !== z) {
+          zState.current[i] = z;
+          card.style.zIndex = String(z);
+        }
+
+        const reachable =
+          onPath &&
+          fly > 0.99 &&
+          (small ? Math.abs(rel) < halfW : Math.abs(rel) < pathLen / 2 - spacing * 0.5);
         if (tabState.current[i] !== reachable) {
           tabState.current[i] = reachable;
           card.tabIndex = reachable ? 0 : -1;
@@ -343,6 +402,12 @@ const HeroShowcase = ({
     if (!m.dragging) return;
     m.dragging = false;
     m.dragEndedAt = performance.now();
+    if (layout.small && count) {
+      // settle on the nearest product; a quick flick moves on to the next one
+      const step = layout.loop / count;
+      m.snapTarget = wrap(Math.round((m.offset + m.speed * 0.12) / step) * step, layout.loop);
+      m.nextStepAt = m.dragEndedAt + DWELL_MS;
+    }
     setIsDragging(false);
     if (stageRef.current?.hasPointerCapture?.(e.pointerId)) {
       stageRef.current.releasePointerCapture(e.pointerId);
@@ -361,7 +426,6 @@ const HeroShowcase = ({
   if (!shouldRender) return null;
 
   const shown = count ? items[hoverIdx ?? activeIdx] || items[0] : null;
-  const shownProduct = shown?.product;
 
   const centerInfo = shown && (
     <div
@@ -386,7 +450,7 @@ const HeroShowcase = ({
       aria-label={t('home.hero_showcase.title')}
     >
       <div className="hs-header max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-800 leading-tight">
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-800 leading-tight pb-2">
           {t('home.hero_showcase.title')}
         </h1>
       </div>
@@ -412,7 +476,7 @@ const HeroShowcase = ({
           />
         ) : (
           <>
-            <div className="hs-arc">
+            <div className="hs-arc" style={{ bottom: layout.arcBottom }}>
               {items.map((item, i) => (
                 <Link
                   key={item.key}
