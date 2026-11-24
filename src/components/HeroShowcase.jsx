@@ -369,11 +369,7 @@ const HeroShowcase = ({
       style={layout.small ? undefined : { bottom: layout.centerBottom, width: layout.centerW }}
     >
       <div key={shown.key} className="hs-center-inner">
-        {shownProduct && (
-          <span className="hs-center-cat">
-            {getCategoryLabel ? getCategoryLabel(shownProduct.category) : shownProduct.category}
-          </span>
-        )}
+       
         <p className="hs-center-name font-serif">{nameOf(shown)}</p>
         {shownProduct && (
           <p className="hs-center-price">
