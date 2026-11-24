@@ -190,6 +190,30 @@ const Home = ({ playIntro = false, onIntroDone }) => {
     />
   );
 
+  // Besueshmëria: pas hero-s në desktop/tablet; në telefon pas "Zbuloni të Preferuarat e Tua"
+  const trustSection = (
+    <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8${isMobile ? ' pt-12' : ''}`}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { icon: <SafetyCertificateOutlined />, title: t('home.trust.secure_payment'), desc: t('home.trust.secure_desc') },
+          { icon: <SyncOutlined />, title: t('home.trust.customer_protection'), desc: t('home.trust.protection_desc') },
+          { icon: <CarOutlined />, title: t('home.trust.fast_shipping'), desc: t('home.trust.shipping_desc') },
+          { icon: <CustomerServiceOutlined />, title: t('home.trust.support'), desc: t('home.trust.support_desc') }
+        ].map((feature, idx) => (
+          <div key={idx} className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 flex-shrink-0 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-xl">
+              {feature.icon}
+            </div>
+            <div>
+              <h4 className="text-gray-800 font-bold text-sm">{feature.title}</h4>
+              <p className="text-gray-500 text-xs mt-0.5">{feature.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <>
       <Helmet>
@@ -244,27 +268,8 @@ const Home = ({ playIntro = false, onIntroDone }) => {
       {/* HERO (desktop/tablet): seksioni i parë */}
       {!isMobile && heroShowcase}
 
-      {/* SEKSIONI I BESUESHMËRISË — menjëherë pas hero-s */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { icon: <SafetyCertificateOutlined />, title: t('home.trust.secure_payment'), desc: t('home.trust.secure_desc') },
-            { icon: <SyncOutlined />, title: t('home.trust.customer_protection'), desc: t('home.trust.protection_desc') },
-            { icon: <CarOutlined />, title: t('home.trust.fast_shipping'), desc: t('home.trust.shipping_desc') },
-            { icon: <CustomerServiceOutlined />, title: t('home.trust.support'), desc: t('home.trust.support_desc') }
-          ].map((feature, idx) => (
-            <div key={idx} className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 flex-shrink-0 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-xl">
-                {feature.icon}
-              </div>
-              <div>
-                <h4 className="text-gray-800 font-bold text-sm">{feature.title}</h4>
-                <p className="text-gray-500 text-xs mt-0.5">{feature.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* SEKSIONI I BESUESHMËRISË (desktop/tablet) — menjëherë pas hero-s */}
+      {!isMobile && trustSection}
 
       {/* Seksioni i Filtrave dhe Produkteve */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
@@ -355,6 +360,9 @@ const Home = ({ playIntro = false, onIntroDone }) => {
           </button>
         </div>
       </div>
+
+      {/* SEKSIONI I BESUESHMËRISË (telefon) — seksioni i dytë, pas produkteve */}
+      {isMobile && trustSection}
 
       {/* BANERI I RI PROMOCIONAL - Ndërmjet seksionit 1 dhe 2 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
