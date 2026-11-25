@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import ComboPromoBanner from '../components/ComboPromoBanner';
 import PromoBanner from '../components/PromoBanner';
+import GiftBoxBanner from '../components/GiftBoxBanner';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProductLink from '../components/ProductLink';
 import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton, Rate } from 'antd';
@@ -273,6 +274,9 @@ const Products = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-8">
 
+        {/* Gift Box Banner (Mobile) */}
+        <GiftBoxBanner className="lg:hidden" />
+
         {/* Mobile Filter Button */}
         <div className="lg:hidden flex justify-between items-center mb-6">
           <AntButton
@@ -289,7 +293,10 @@ const Products = () => {
 
         {/* Sidebar me Filtra (Desktop) */}
         <div className="hidden lg:block w-full lg:w-1/4">
-          <div className="bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 sticky top-24">
+          <div className="sticky top-24 space-y-4">
+          {/* Gift Box Banner (Desktop) - same width as the filter card */}
+          <GiftBoxBanner />
+          <div className="bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
             <div className="flex items-center gap-2 mb-6 text-gray-800">
               <FilterOutlined className="text-xl text-pink-500" />
               <h3 className="font-bold text-lg">{t('products.filter_title')}</h3>
@@ -367,6 +374,7 @@ const Products = () => {
                 {t('products.stock_only')}
               </Checkbox>
             </div>
+          </div>
           </div>
         </div>
 

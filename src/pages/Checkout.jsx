@@ -33,7 +33,7 @@ const Checkout = () => {
   const { t } = useTranslation();
 
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, totalPromoSavings, total, count } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, totalPromoSavings, total, count, isGiftBoxOnlyOrder } = useSelector(selectCartTotals);
   const { user } = useSelector((state) => state.auth);
   const { status: orderStatus, currentOrder, error: orderError } = useSelector((state) => state.orders);
 
@@ -46,7 +46,10 @@ const Checkout = () => {
   let shippingFee = 0;
   let shippingFeeLabel = null;
 
-  if (selectedCity) {
+  if (selectedCity && isGiftBoxOnlyOrder) {
+    // Gift Box promo: orders containing only gift boxes ship for free
+    shippingFeeLabel = <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-100 px-2.5 py-1 rounded-md">{t('checkout.free')} (Gift Box)</span>;
+  } else if (selectedCity) {
     if (MACEDONIA_CITIES.includes(selectedCity)) {
       shippingFee = 150;
       shippingFeeLabel = <span className="font-bold text-slate-900 text-lg">150 {t('common.currency')}</span>;
@@ -86,7 +89,7 @@ const Checkout = () => {
 
   const onFinish = (values) => {
     let finalShippingFee = 0;
-    if (values.city) {
+    if (values.city && !isGiftBoxOnlyOrder) {
       if (MACEDONIA_CITIES.includes(values.city)) {
         finalShippingFee = 150;
       } else if (KOSOVA_CITIES.includes(values.city)) {
@@ -103,13 +106,24 @@ const Checkout = () => {
       address: values.address,
       paymentMethod: 'cod',
       totalAmount: total + finalShippingFee,
-      items: cartItems.map((item) => ({
-        productId: item.id,
-        name: item.name,
-        price: toNumber(item.price, 0),
-        quantity: item.quantity,
-        image: item.image,
-      })),
+      items: cartItems.map((item) =>
+        item.isGiftBox
+          ? {
+              isGiftBox: true,
+              name: `Gift Box: ${(item.boxItems || []).map((b) => b.name).join(' + ')}`,
+              price: toNumber(item.price, 0),
+              quantity: item.quantity,
+              image: item.image,
+              boxItems: (item.boxItems || []).map((b) => ({ productId: b.productId, name: b.name })),
+            }
+          : {
+              productId: item.id,
+              name: item.name,
+              price: toNumber(item.price, 0),
+              quantity: item.quantity,
+              image: item.image,
+            },
+      ),
     };
     dispatch(submitOrder(orderPayload));
   };
@@ -351,7 +365,10 @@ const Checkout = () => {
                         </div>
                         <div className="flex-1">
                           <span className="text-[10px] font-bold text-pink-500 uppercase tracking-widest">{item.brand || item.category}</span>
-                          <h4 className="font-bold text-base text-slate-900 line-clamp-2 mt-0.5 mb-1 leading-snug">{item.name}</h4>
+                          <h4 className="font-bold text-base text-slate-900 line-clamp-2 mt-0.5 mb-1 leading-snug">{item.isGiftBox ? t('gift_box.line_label') : item.name}</h4>
+                          {item.isGiftBox && (
+                            <p className="text-xs text-gray-500 line-clamp-2 mb-1">{(item.boxItems || []).map((b) => b.name).join(' + ')}</p>
+                          )}
                           <span className="text-pink-600 font-extrabold text-lg">{item.price.toLocaleString()} {t('common.currency')}</span>
                         </div>
                       </div>

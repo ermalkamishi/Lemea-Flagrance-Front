@@ -13,6 +13,7 @@ import Footer from './Header-Footer/Footer';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetailed from './pages/ProductDetailed';
+import GiftBox from './pages/GiftBox';
 import Aboutus from './pages/Aboutus';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
@@ -125,6 +126,7 @@ function AppContent() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/rreth-nesh" element={<Aboutus />} />
           <Route path="/kontakti" element={<Contact />} />
+          <Route path="/produktet/gift-box" element={<GiftBox />} />
           <Route path="/produktet/:id" element={<ProductDetailed />} /> 
           <Route path="/pagesa" element={<Checkout />} />
           <Route path="/login" element={<Login />} />

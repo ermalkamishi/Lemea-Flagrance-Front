@@ -1,4 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { GIFT_BOX } from '../config/giftBoxConfig';
 
 // Helper to load cart from localStorage
 const loadCartFromStorage = () => {
@@ -48,10 +49,31 @@ const cartSlice = createSlice({
       }
       saveCartToStorage(state.items);
     },
+    // Adds a completed gift box as ONE cart line. payload.products = the 4 chosen products.
+    addGiftBox: (state, action) => {
+      const products = Array.isArray(action.payload?.products) ? action.payload.products : [];
+      if (products.length !== GIFT_BOX.size) return;
+      state.items.push({
+        id: `giftbox-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        isGiftBox: true,
+        name: 'Gift Box',
+        brand: 'Lemea',
+        price: GIFT_BOX.price,
+        quantity: 1,
+        image: products[0]?.image,
+        boxItems: products.map((p) => ({
+          productId: p.id,
+          name: p.name,
+          image: p.image,
+          slot: p.slot,
+        })),
+      });
+      saveCartToStorage(state.items);
+    },
     setCartItemQuantity: (state, action) => {
       const { id, quantity } = action.payload;
       const item = state.items.find((i) => i.id === id);
-      if (!item) return;
+      if (!item || item.isGiftBox) return;
       const next = Math.max(1, Math.floor(Number(quantity)) || 1);
       item.quantity = next;
       saveCartToStorage(state.items);
@@ -67,14 +89,21 @@ const cartSlice = createSlice({
   }
 });
 
-export const { addToCart, setCartItemQuantity, removeFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, addGiftBox, setCartItemQuantity, removeFromCart, clearCart } = cartSlice.actions;
 
 // Selector for totals with discount logic
 const selectCartItems = (state) => state.cart.items;
 
 export const selectCartTotals = createSelector(
   [selectCartItems],
-  (items) => {
+  (allItems) => {
+    // Gift boxes have a fixed price and never stack with other offers,
+    // so every promo below only looks at the regular (non-box) items.
+    const giftBoxes = allItems.filter((item) => item.isGiftBox);
+    const items = allItems.filter((item) => !item.isGiftBox);
+    const giftBoxCount = giftBoxes.reduce((acc, item) => acc + (item.quantity || 1), 0);
+    const giftBoxTotal = giftBoxes.reduce((acc, item) => acc + GIFT_BOX.price * (item.quantity || 1), 0);
+
     // Check if the 5-day promotion is active
     // We import the config to check the dates. But since this is Redux, 
     // it's safer to just check here inline to avoid circular dependencies.
@@ -170,7 +199,10 @@ export const selectCartTotals = createSelector(
     const comboBundleDiscount = comboPairs * 199; // 1198 - 999 = 199 Den discount per pair
 
     const discount = perfumeMistDiscount + groupsOf3Discount + comboBundleDiscount;
+    subtotal += giftBoxTotal;
     const total = Math.max(0, subtotal - discount);
+    // Free delivery only when the order contains nothing but gift boxes
+    const isGiftBoxOnlyOrder = giftBoxCount > 0 && items.length === 0;
 
     return {
       subtotal,
@@ -183,7 +215,9 @@ export const selectCartTotals = createSelector(
       sdjQty,
       totalPromoSavings, // We'll display this in the Cart/Checkout
       total,
-      count: items.reduce((acc, item) => acc + item.quantity, 0)
+      giftBoxCount,
+      isGiftBoxOnlyOrder,
+      count: allItems.reduce((acc, item) => acc + item.quantity, 0)
     };
   }
 );

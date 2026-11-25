@@ -11,7 +11,7 @@ import PromoBanner from '../components/PromoBanner';
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, vsQty, sdjQty, totalPromoSavings, total, count } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, vsQty, sdjQty, totalPromoSavings, total, count, giftBoxCount } = useSelector(selectCartTotals);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -57,6 +57,42 @@ const Cart = () => {
           {/* Lista e Produkteve */}
           <div className="lg:col-span-2 space-y-6">
             {cartItems.map((item) => {
+              if (item.isGiftBox) {
+                return (
+                  <div key={item.id} className="flex flex-col sm:flex-row gap-6 bg-white p-6 rounded-[30px] border-2 border-pink-100 shadow-[0_8px_30px_rgba(236,72,153,0.08)]">
+                    <div className="w-full sm:w-32 h-32 flex-shrink-0 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 flex items-center justify-center">
+                      <GiftOutlined className="text-6xl text-white" />
+                    </div>
+                    <div className="flex-grow w-full">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <span className="text-xs font-extrabold text-pink-500 uppercase tracking-widest">Lemea</span>
+                          <h3 className="font-bold text-xl text-slate-900 mt-1">{t('gift_box.line_label')}</h3>
+                        </div>
+                        <button
+                          onClick={() => { dispatch(removeFromCart(item.id)); message.success(t('cart.remove_msg')); }}
+                          className="w-11 h-11 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors flex-shrink-0 ml-4 shadow-sm"
+                          title={t('cart.remove_msg')}
+                        >
+                          <DeleteOutlined className="text-xl" />
+                        </button>
+                      </div>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{t('gift_box.contains')}</p>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                        {(item.boxItems || []).map((b) => (
+                          <li key={b.productId} className="flex items-center gap-2 bg-gray-50 rounded-xl p-2">
+                            <img src={getImageUrl(b.image)} alt={b.name} className="w-9 h-9 rounded-lg object-cover flex-shrink-0" />
+                            <span className="text-sm font-semibold text-slate-800 line-clamp-1">{b.name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="text-slate-900 font-extrabold text-2xl tracking-tight">
+                        {toNumber(item.price, 0).toLocaleString()} <span className="text-base font-bold ml-0.5">{t('common.currency')}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
               return (
                 <div key={item.id} className="flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(236,72,153,0.1)] transition-all duration-300">
 
@@ -131,6 +167,14 @@ const Cart = () => {
           <div className="lg:col-span-1">
             <div className="bg-white p-8 rounded-[30px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sticky top-28">
               <h2 className="text-2xl font-extrabold text-slate-900 mb-8 font-serif">{t('cart.summary')}</h2>
+
+              {/* Gift Box free-delivery note */}
+              {giftBoxCount > 0 && (
+                <div className="mb-6 p-4 bg-pink-50 border border-pink-200 rounded-2xl flex items-center gap-3 text-pink-900 text-xs sm:text-sm font-semibold">
+                  <GiftOutlined className="text-xl text-pink-500 flex-shrink-0" />
+                  <div>{t('gift_box.free_delivery_note')}</div>
+                </div>
+              )}
 
               {/* Combo Promo Nudge Box */}
               {(vsQty > 0 && sdjQty === 0) && (
