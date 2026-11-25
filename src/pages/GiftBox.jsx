@@ -145,7 +145,7 @@ const GiftBox = () => {
             {/* Slots */}
             <div className="w-full lg:w-2/3 space-y-8">
               {/* Group filters */}
-              <div className="flex gap-2 overflow-x-auto pb-4 -mb-4 no-scrollbar">
+              <div className="flex gap-2 overflow-x-auto pb-5 -mb-4 no-scrollbar">
                 <button type="button" onClick={() => setActiveFilter('all')} className={chipClass(activeFilter === 'all')}>
                   {t('products.categories.all')}
                 </button>
