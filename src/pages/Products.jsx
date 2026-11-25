@@ -592,9 +592,9 @@ const Products = () => {
             <button
               type="button"
               onClick={() => navigate(GIFT_BOX_ROUTE)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white font-bold text-sm px-5 py-2.5 rounded-full shadow-md shadow-pink-500/25 hover:shadow-lg hover:shadow-pink-500/40 hover:-translate-y-0.5 transition-all duration-300"
+              className="gb-btn inline-flex items-center gap-2 font-bold text-sm px-5 py-2.5 rounded-full hover:-translate-y-0.5 transition-all duration-300"
             >
-              <GiftOutlined /> {t('gift_box.cta')}
+              <GiftOutlined style={{ color: '#fde68a' }} /> {t('gift_box.cta')}
             </button>
           </div>
 

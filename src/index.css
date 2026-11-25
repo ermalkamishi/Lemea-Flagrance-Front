@@ -17,3 +17,22 @@
 /* Horizontal chip rows (e.g. Gift Box filters): scroll without a visible scrollbar */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ---- Gift Box palette: deep plum → berry, with a soft gold glow ---- */
+.gb-gradient {
+  background:
+    radial-gradient(circle at 88% 12%, rgba(252, 211, 77, 0.22) 0%, transparent 45%),
+    linear-gradient(125deg, #2e0a3a 0%, #5b1748 48%, #9d174d 100%);
+}
+
+.gb-btn {
+  background: linear-gradient(120deg, #3b0d40 0%, #7a1650 55%, #9d174d 100%);
+  border: 1px solid rgba(252, 211, 77, 0.4);
+  color: #ffffff;
+  box-shadow: 0 8px 20px -8px rgba(91, 23, 72, 0.6);
+}
+
+.gb-btn:hover {
+  background: linear-gradient(120deg, #4c1150 0%, #8f1a5e 55%, #b51d58 100%);
+  box-shadow: 0 12px 26px -8px rgba(91, 23, 72, 0.75);
+}

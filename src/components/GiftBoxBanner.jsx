@@ -36,7 +36,7 @@ const GiftBoxBanner = ({ className = '' }) => {
 
   return (
     <div
-      className={`gift-box-banner rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(236,72,153,0.25)] bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 ${className}`}
+      className={`gift-box-banner rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(91,23,72,0.35)] gb-gradient ${className}`}
     >
       <Carousel autoplay autoplaySpeed={4000} dots={{ className: 'gift-box-dots' }}>
         {/* Slide 1: CTA */}
@@ -45,12 +45,12 @@ const GiftBoxBanner = ({ className = '' }) => {
            
             <h3 className="text-lg font-extrabold leading-tight">{t('gift_box.title')}</h3>
             <p className="text-xs text-white/90 mb-2.5">
-              4 = <strong>{price} {t('common.currency')}</strong>
+              4 = <strong className="text-amber-200">{price} {t('common.currency')}</strong>
             </p>
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); go(); }}
-              className="w-fit inline-flex items-center gap-1.5 bg-white text-pink-600 font-bold text-xs px-3.5 py-1.5 rounded-full hover:bg-slate-900 hover:text-white transition-colors"
+              className="w-fit inline-flex items-center gap-1.5 bg-white text-[#7a1650] font-bold text-xs px-3.5 py-1.5 rounded-full hover:bg-amber-200 hover:text-[#4a0f3f] transition-colors"
             >
               {t('gift_box.cta')} <ArrowRightOutlined />
             </button>

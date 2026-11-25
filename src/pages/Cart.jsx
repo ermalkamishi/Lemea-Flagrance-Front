@@ -61,7 +61,7 @@ const Cart = () => {
                 return (
                   <div key={item.id} className="flex flex-col sm:flex-row gap-6 bg-white p-6 rounded-[30px] border-2 border-pink-100 shadow-[0_8px_30px_rgba(236,72,153,0.08)]">
                     {/* 2x2 collage of the products inside, with a gift badge */}
-                    <div className="relative w-32 h-32 mx-auto sm:mx-0 flex-shrink-0 rounded-2xl p-[3px] bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 shadow-md shadow-pink-500/20">
+                    <div className="relative w-32 h-32 mx-auto sm:mx-0 flex-shrink-0 rounded-2xl p-[3px] gb-gradient shadow-md shadow-[#5b1748]/25">
                       <div className="grid grid-cols-2 grid-rows-2 gap-[3px] w-full h-full rounded-[13px] overflow-hidden bg-white">
                         {(item.boxItems || []).slice(0, 4).map((b) => (
                           <div key={b.productId} className="bg-gray-50 overflow-hidden">
@@ -69,8 +69,8 @@ const Cart = () => {
                           </div>
                         ))}
                       </div>
-                      <span className="absolute -top-2.5 -right-2.5 w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-amber-500 border-[3px] border-white flex items-center justify-center shadow-md">
-                        <GiftOutlined style={{ color: '#fff', fontSize: 16 }} />
+                      <span className="absolute -top-2.5 -right-2.5 w-9 h-9 rounded-full gb-gradient border-[3px] border-white flex items-center justify-center shadow-md">
+                        <GiftOutlined style={{ color: '#fde68a', fontSize: 16 }} />
                       </span>
                     </div>
                     <div className="flex-grow w-full">

@@ -359,8 +359,8 @@ const Checkout = () => {
                       <div key={item.id} className="flex gap-5 items-center">
                         <div className="relative">
                           {item.isGiftBox ? (
-                            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 flex items-center justify-center shadow-md shadow-pink-500/20">
-                              <GiftOutlined style={{ color: '#fff', fontSize: 34 }} />
+                            <div className="w-20 h-20 rounded-2xl gb-gradient flex items-center justify-center shadow-md shadow-[#5b1748]/25">
+                              <GiftOutlined style={{ color: '#fde68a', fontSize: 34 }} />
                             </div>
                           ) : (
                             <img src={getImageUrl(item.image)} alt={item.name} className="w-20 h-20 rounded-2xl object-cover border border-gray-100 shadow-sm" />

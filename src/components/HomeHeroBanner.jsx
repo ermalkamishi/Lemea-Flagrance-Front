@@ -7,6 +7,8 @@ import { getImageUrl } from '../utils/imageUtils';
 import { toNumber } from '../utils/numberUtils';
 import { autoFitImage } from '../utils/autoFitImage';
 import { HERO_PRODUCTS, normalizeProductName } from '../config/heroProducts';
+import { GIFT_BOX, GIFT_BOX_ROUTE } from '../config/giftBoxConfig';
+import { GiftOutlined, CarOutlined, AppstoreOutlined } from '@ant-design/icons';
 import './HomeHeroBanner.css';
 
 /*
@@ -38,6 +40,13 @@ const THEMES = {
     glow: 'rgba(253, 186, 116, 0.5)',
     accent: 'text-orange-200',
     btn: 'text-rose-700',
+  },
+  // Gift Box: deep plum → magenta → gold
+  gift: {
+    bg: 'linear-gradient(115deg, #1a0526 0%, #4c1d5e 34%, #be185d 68%, #f59e0b 100%)',
+    glow: 'rgba(252, 211, 77, 0.5)',
+    accent: 'text-amber-300',
+    btn: 'text-fuchsia-800',
   },
 };
 
@@ -85,6 +94,23 @@ const HomeHeroBanner = () => {
       desc: t('home.hero_slides.slide3_desc'),
       btnText: t('home.hero_slides.slide3_btn'),
       products: ['Amber Romance', 'Fakhar'],
+    },
+    {
+      id: 4,
+      theme: 'gift',
+      isGiftBox: true,
+      to: GIFT_BOX_ROUTE,
+      tag: t('gift_box.hero_tag'),
+      title1: t('gift_box.hero_title1'),
+      title2: t('gift_box.hero_title2'),
+      desc: t('gift_box.hero_desc'),
+      btnText: t('gift_box.cta'),
+      perks: [
+        { icon: <AppstoreOutlined />, text: t('gift_box.perk_products') },
+        { icon: <CarOutlined />, text: t('gift_box.perk_delivery') },
+        { icon: <GiftOutlined />, text: t('gift_box.perk_gift') },
+      ],
+      products: ['VS Velvet Petals Noir', 'Cheirosa 68 Beija Flor', 'Sheglam Eyeshadow Primer 1', 'Sheglam Blush Love Cake'],
     },
   ];
 
@@ -145,12 +171,22 @@ const HomeHeroBanner = () => {
                     <p className="hb-desc hb-anim" style={{ '--d': '180ms' }}>
                       {slide.desc}
                     </p>
-                    <div className="hb-anim" style={{ '--d': '270ms' }}>
+                    {slide.perks && (
+                      <ul className="hb-perks hb-anim" style={{ '--d': '230ms' }}>
+                        {slide.perks.map((perk) => (
+                          <li key={perk.text} className="hb-perk">
+                            {perk.icon} {perk.text}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="hb-anim" style={{ '--d': '290ms' }}>
                       <button
                         type="button"
-                        onClick={() => navigate('/produktet')}
-                        className={`hb-btn ${theme.btn}`}
+                        onClick={() => navigate(slide.to || '/produktet')}
+                        className={`hb-btn ${theme.btn} ${slide.isGiftBox ? 'hb-btn-gift' : ''}`}
                       >
+                        {slide.isGiftBox && <GiftOutlined className="mr-2" />}
                         {slide.btnText}
                       </button>
                     </div>
@@ -158,6 +194,22 @@ const HomeHeroBanner = () => {
 
                   {products.length > 0 && (
                     <div className={`hb-stage hb-count-${products.length}`}>
+                      {slide.isGiftBox && (
+                        <>
+                          <span className="hb-sparkle hb-sparkle-a" aria-hidden="true">✦</span>
+                          <span className="hb-sparkle hb-sparkle-b" aria-hidden="true">✦</span>
+                          <span className="hb-sparkle hb-sparkle-c" aria-hidden="true">✦</span>
+                          <span className="hb-sparkle hb-sparkle-d" aria-hidden="true">✦</span>
+                          <div className="hb-seal-wrap">
+                            <div className="hb-seal">
+                              <span className="hb-seal-top">{t('gift_box.seal_top')}</span>
+                              <span className="hb-seal-price">{GIFT_BOX.price.toLocaleString()}</span>
+                              <span className="hb-seal-cur">{t('common.currency')}</span>
+                              <span className="hb-seal-bottom">{t('gift_box.seal_bottom')}</span>
+                            </div>
+                          </div>
+                        </>
+                      )}
                       {products.map(({ product, image, transparent }, k) => (
                         <div key={product.id} className={`hb-item hb-pos-${k}`} style={{ '--i': k }}>
                           <div className="hb-enter">

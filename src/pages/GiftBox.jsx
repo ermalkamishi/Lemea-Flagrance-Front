@@ -124,10 +124,10 @@ const GiftBox = () => {
           </Link>
 
           {/* Header */}
-          <div className="bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 rounded-3xl p-6 sm:p-8 text-white shadow-lg mb-8">
+          <div className="gb-gradient rounded-3xl p-6 sm:p-8 text-white shadow-[0_10px_30px_rgba(91,23,72,0.3)] mb-8">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                <GiftOutlined className="text-2xl sm:text-3xl" />
+                <GiftOutlined className="text-2xl sm:text-3xl" style={{ color: '#fde68a' }} />
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold font-serif mb-2">{t('gift_box.page_title')}</h1>
@@ -145,7 +145,7 @@ const GiftBox = () => {
             {/* Slots */}
             <div className="w-full lg:w-2/3 space-y-8">
               {/* Group filters */}
-              <div className="flex gap-2 overflow-x-auto pb-1 -mb-4 no-scrollbar">
+              <div className="flex gap-2 overflow-x-auto pb-4 -mb-4 no-scrollbar">
                 <button type="button" onClick={() => setActiveFilter('all')} className={chipClass(activeFilter === 'all')}>
                   {t('products.categories.all')}
                 </button>
@@ -249,7 +249,7 @@ const GiftBox = () => {
                 <p className="text-sm text-gray-500 mb-4">{t('gift_box.progress', { count: chosenCount })}</p>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-5">
                   <div
-                    className="h-full bg-gradient-to-r from-pink-500 to-amber-500 transition-all duration-300"
+                    className="h-full bg-gradient-to-r from-[#5b1748] to-amber-400 transition-all duration-300"
                     style={{ width: `${(chosenCount / GIFT_BOX.size) * 100}%` }}
                   />
                 </div>

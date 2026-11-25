@@ -106,7 +106,16 @@ const resources = {
         "contains": "Përmban:",
         "no_products": "Momentalisht nuk ka produkte në stok për këtë kategori.",
         "back": "Kthehu te produktet",
-        "line_label": "Gift Box"
+        "line_label": "Gift Box",
+        "hero_tag": "Ofertë e Re · Gift Box",
+        "hero_title1": "Krijo Gift Box-in tënd",
+        "hero_title2": "4 produkte · 2,499 Den",
+        "hero_desc": "Zgjidh 1 Victoria Secret, 1 Sol de Janeiro, 1 Sheglam Primer dhe 1 Sheglam Blush – dhurata perfekte, e përgatitur nga ti.",
+        "perk_products": "4 produkte",
+        "perk_delivery": "Dërgesa FALAS",
+        "perk_gift": "Kuti dhuratë",
+        "seal_top": "Vetëm",
+        "seal_bottom": "4 produkte"
       },
       "cart": {
         "title": "Shporta juaj",
@@ -630,7 +639,16 @@ const resources = {
         "contains": "Содржи:",
         "no_products": "Моментално нема производи на залиха за оваа категорија.",
         "back": "Назад кон производите",
-        "line_label": "Gift Box"
+        "line_label": "Gift Box",
+        "hero_tag": "Нова понуда · Gift Box",
+        "hero_title1": "Креирај свој Gift Box",
+        "hero_title2": "4 производи · 2.499 ден",
+        "hero_desc": "Избери 1 Victoria Secret, 1 Sol de Janeiro, 1 Sheglam Primer и 1 Sheglam Blush – совршен подарок, составен од тебе.",
+        "perk_products": "4 производи",
+        "perk_delivery": "БЕСПЛАТНА достава",
+        "perk_gift": "Подарочна кутија",
+        "seal_top": "Само",
+        "seal_bottom": "4 производи"
       },
       "cart": {
         "title": "Вашата кошничка",
