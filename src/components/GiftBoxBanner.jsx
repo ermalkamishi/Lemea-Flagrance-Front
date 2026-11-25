@@ -42,9 +42,7 @@ const GiftBoxBanner = ({ className = '' }) => {
         {/* Slide 1: CTA */}
         <div>
           <div className={slideBase} onClick={go}>
-            <span className="inline-flex w-fit items-center gap-1.5 bg-white/20 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest mb-1.5">
-              <GiftOutlined /> {t('gift_box.badge')}
-            </span>
+           
             <h3 className="text-lg font-extrabold leading-tight">{t('gift_box.title')}</h3>
             <p className="text-xs text-white/90 mb-2.5">
               4 = <strong>{price} {t('common.currency')}</strong>

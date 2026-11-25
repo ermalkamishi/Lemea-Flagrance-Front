@@ -30,6 +30,8 @@ const GiftBox = () => {
 
   // slotKey -> chosen product
   const [selection, setSelection] = useState({});
+  // 'all' or a slot key: which step(s) are visible
+  const [activeFilter, setActiveFilter] = useState('all');
 
   // Products grouped by slot, only the ones in stock
   const productsBySlot = useMemo(() => {
@@ -69,9 +71,24 @@ const GiftBox = () => {
   };
 
   const scrollToSlot = (key) => {
-    const el = document.getElementById(`giftbox-slot-${key}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // If a filter hides this step, switch the filter to it first
+    if (activeFilter !== 'all' && activeFilter !== key) setActiveFilter(key);
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`giftbox-slot-${key}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   };
+
+  const visibleSlots = activeFilter === 'all'
+    ? GIFT_BOX_SLOTS
+    : GIFT_BOX_SLOTS.filter((s) => s.key === activeFilter);
+
+  const chipClass = (active) =>
+    `inline-flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold border transition-all ${
+      active
+        ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+        : 'bg-white text-gray-600 border-gray-200 hover:border-pink-300 hover:text-pink-600'
+    }`;
 
   const renderAddButton = (className = '') => (
     <button
@@ -127,11 +144,32 @@ const GiftBox = () => {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Slots */}
             <div className="w-full lg:w-2/3 space-y-8">
+              {/* Group filters */}
+              <div className="flex gap-2 overflow-x-auto pb-1 -mb-4 no-scrollbar">
+                <button type="button" onClick={() => setActiveFilter('all')} className={chipClass(activeFilter === 'all')}>
+                  {t('products.categories.all')}
+                </button>
+                {GIFT_BOX_SLOTS.map((slot) => (
+                  <button
+                    key={slot.key}
+                    type="button"
+                    onClick={() => setActiveFilter(slot.key)}
+                    className={chipClass(activeFilter === slot.key)}
+                  >
+                    {selection[slot.key] && (
+                      <CheckCircleFilled className={activeFilter === slot.key ? 'text-emerald-400' : 'text-emerald-500'} />
+                    )}
+                    {slot.short}
+                  </button>
+                ))}
+              </div>
+
               {productsStatus === 'loading' && allProducts.length === 0 && (
                 <div className="flex justify-center py-20"><Spin size="large" /></div>
               )}
 
-              {GIFT_BOX_SLOTS.map((slot, index) => {
+              {visibleSlots.map((slot) => {
+                const index = GIFT_BOX_SLOTS.indexOf(slot);
                 const chosen = selection[slot.key];
                 const products = productsBySlot[slot.key];
                 return (

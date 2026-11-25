@@ -11,7 +11,7 @@ import PromoBanner from '../components/PromoBanner';
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, vsQty, sdjQty, totalPromoSavings, total, count, giftBoxCount } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, vsQty, sdjQty, totalPromoSavings, total, count, giftBoxCount, isGiftBoxOnlyOrder } = useSelector(selectCartTotals);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -60,8 +60,18 @@ const Cart = () => {
               if (item.isGiftBox) {
                 return (
                   <div key={item.id} className="flex flex-col sm:flex-row gap-6 bg-white p-6 rounded-[30px] border-2 border-pink-100 shadow-[0_8px_30px_rgba(236,72,153,0.08)]">
-                    <div className="w-full sm:w-32 h-32 flex-shrink-0 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 flex items-center justify-center">
-                      <GiftOutlined className="text-6xl text-white" />
+                    {/* 2x2 collage of the products inside, with a gift badge */}
+                    <div className="relative w-32 h-32 mx-auto sm:mx-0 flex-shrink-0 rounded-2xl p-[3px] bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 shadow-md shadow-pink-500/20">
+                      <div className="grid grid-cols-2 grid-rows-2 gap-[3px] w-full h-full rounded-[13px] overflow-hidden bg-white">
+                        {(item.boxItems || []).slice(0, 4).map((b) => (
+                          <div key={b.productId} className="bg-gray-50 overflow-hidden">
+                            <img src={getImageUrl(b.image)} alt={b.name} className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                      <span className="absolute -top-2.5 -right-2.5 w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-amber-500 border-[3px] border-white flex items-center justify-center shadow-md">
+                        <GiftOutlined style={{ color: '#fff', fontSize: 16 }} />
+                      </span>
                     </div>
                     <div className="flex-grow w-full">
                       <div className="flex justify-between items-start mb-3">
@@ -233,7 +243,9 @@ const Cart = () => {
                 )}
                 <div className="flex justify-between text-gray-600 text-lg">
                   <span className="font-medium">{t('cart.shipping')}</span>
-                  <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-50 px-2 py-1 rounded-md">{t('cart.free')}</span>
+                  <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-50 px-2 py-1 rounded-md">
+                    {isGiftBoxOnlyOrder ? t('checkout.free') : t('cart.free')}
+                  </span>
                 </div>
               </div>
 

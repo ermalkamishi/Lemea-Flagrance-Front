@@ -13,3 +13,7 @@
 }
 
 /* Deploy trigger: Mobile responsive anti-zoom and search UX enhancements */
+
+/* Horizontal chip rows (e.g. Gift Box filters): scroll without a visible scrollbar */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

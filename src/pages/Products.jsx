@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import ComboPromoBanner from '../components/ComboPromoBanner';
 import PromoBanner from '../components/PromoBanner';
 import GiftBoxBanner from '../components/GiftBoxBanner';
+import { GIFT_BOX_ROUTE } from '../config/giftBoxConfig';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProductLink from '../components/ProductLink';
 import { Select, Input, Checkbox, Slider, Badge, Drawer, Button as AntButton, Rate } from 'antd';
@@ -584,10 +585,17 @@ const Products = () => {
               </button>
             </div>
           )}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
               {t('products.all_products')} <span className="text-pink-500 text-lg font-medium ml-2 bg-pink-50 px-3 py-1 rounded-full">{filteredProducts.length}</span>
             </h2>
+            <button
+              type="button"
+              onClick={() => navigate(GIFT_BOX_ROUTE)}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white font-bold text-sm px-5 py-2.5 rounded-full shadow-md shadow-pink-500/25 hover:shadow-lg hover:shadow-pink-500/40 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <GiftOutlined /> {t('gift_box.cta')}
+            </button>
           </div>
 
 

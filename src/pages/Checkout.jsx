@@ -46,7 +46,7 @@ const Checkout = () => {
   let shippingFee = 0;
   let shippingFeeLabel = null;
 
-  if (selectedCity && isGiftBoxOnlyOrder) {
+  if (isGiftBoxOnlyOrder) {
     // Gift Box promo: orders containing only gift boxes ship for free
     shippingFeeLabel = <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-100 px-2.5 py-1 rounded-md">{t('checkout.free')} (Gift Box)</span>;
   } else if (selectedCity) {
@@ -358,7 +358,13 @@ const Checkout = () => {
                     return (
                       <div key={item.id} className="flex gap-5 items-center">
                         <div className="relative">
-                          <img src={getImageUrl(item.image)} alt={item.name} className="w-20 h-20 rounded-2xl object-cover border border-gray-100 shadow-sm" />
+                          {item.isGiftBox ? (
+                            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 flex items-center justify-center shadow-md shadow-pink-500/20">
+                              <GiftOutlined style={{ color: '#fff', fontSize: 34 }} />
+                            </div>
+                          ) : (
+                            <img src={getImageUrl(item.image)} alt={item.name} className="w-20 h-20 rounded-2xl object-cover border border-gray-100 shadow-sm" />
+                          )}
                           <span className="absolute -top-2 -right-2 bg-slate-900 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center border-[3px] border-white shadow-sm">
                             {item.quantity}
                           </span>
