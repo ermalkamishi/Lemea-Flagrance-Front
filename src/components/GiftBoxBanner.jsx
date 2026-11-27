@@ -3,7 +3,7 @@ import { Carousel } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { GiftOutlined, ArrowRightOutlined, CarOutlined } from '@ant-design/icons';
+import { GiftOutlined, ArrowRightOutlined, TagOutlined } from '@ant-design/icons';
 import { GIFT_BOX, GIFT_BOX_SLOTS, GIFT_BOX_ROUTE, getGiftBoxSlot } from '../config/giftBoxConfig';
 import { getImageUrl } from '../utils/imageUtils';
 
@@ -81,17 +81,14 @@ const GiftBoxBanner = ({ className = '' }) => {
           </div>
         </div>
 
-        {/* Slide 3: price + free delivery */}
+        {/* Slide 3: price */}
         <div>
           <div className={slideBase} onClick={go}>
             <div className="flex items-center gap-2 mb-1">
-              <CarOutlined className="text-2xl" />
-              <h3 className="text-lg font-extrabold">{t('gift_box.slide_delivery_title')}</h3>
+              <TagOutlined className="text-2xl" />
+              <h3 className="text-lg font-extrabold">{t('gift_box.slide_price_title', { price })}</h3>
             </div>
-            <p className="text-xs text-white/90 mb-1">{t('gift_box.slide_delivery_desc')}</p>
-            <p className="text-sm font-bold">
-              {t('gift_box.slide_price_desc')} – {price} {t('common.currency')}
-            </p>
+            <p className="text-xs text-white/90 mb-1">{t('gift_box.slide_price_desc')}</p>
           </div>
         </div>
       </Carousel>

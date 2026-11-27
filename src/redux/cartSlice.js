@@ -5,7 +5,9 @@ import { GIFT_BOX } from '../config/giftBoxConfig';
 const loadCartFromStorage = () => {
   try {
     const savedCart = localStorage.getItem('lemea_cart');
-    return savedCart ? JSON.parse(savedCart) : [];
+    const items = savedCart ? JSON.parse(savedCart) : [];
+    // Keep saved gift boxes in sync with the current gift box price
+    return items.map((item) => (item.isGiftBox ? { ...item, price: GIFT_BOX.price } : item));
   } catch (e) {
     return [];
   }
@@ -201,8 +203,6 @@ export const selectCartTotals = createSelector(
     const discount = perfumeMistDiscount + groupsOf3Discount + comboBundleDiscount;
     subtotal += giftBoxTotal;
     const total = Math.max(0, subtotal - discount);
-    // Free delivery only when the order contains nothing but gift boxes
-    const isGiftBoxOnlyOrder = giftBoxCount > 0 && items.length === 0;
 
     return {
       subtotal,
@@ -216,7 +216,6 @@ export const selectCartTotals = createSelector(
       totalPromoSavings, // We'll display this in the Cart/Checkout
       total,
       giftBoxCount,
-      isGiftBoxOnlyOrder,
       count: allItems.reduce((acc, item) => acc + item.quantity, 0)
     };
   }

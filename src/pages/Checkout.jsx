@@ -33,7 +33,7 @@ const Checkout = () => {
   const { t } = useTranslation();
 
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, totalPromoSavings, total, count, isGiftBoxOnlyOrder } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, totalPromoSavings, total, count } = useSelector(selectCartTotals);
   const { user } = useSelector((state) => state.auth);
   const { status: orderStatus, currentOrder, error: orderError } = useSelector((state) => state.orders);
 
@@ -46,10 +46,7 @@ const Checkout = () => {
   let shippingFee = 0;
   let shippingFeeLabel = null;
 
-  if (isGiftBoxOnlyOrder) {
-    // Gift Box promo: orders containing only gift boxes ship for free
-    shippingFeeLabel = <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-100 px-2.5 py-1 rounded-md">{t('checkout.free')} (Gift Box)</span>;
-  } else if (selectedCity) {
+  if (selectedCity) {
     if (MACEDONIA_CITIES.includes(selectedCity)) {
       shippingFee = 150;
       shippingFeeLabel = <span className="font-bold text-slate-900 text-lg">150 {t('common.currency')}</span>;
@@ -89,7 +86,7 @@ const Checkout = () => {
 
   const onFinish = (values) => {
     let finalShippingFee = 0;
-    if (values.city && !isGiftBoxOnlyOrder) {
+    if (values.city) {
       if (MACEDONIA_CITIES.includes(values.city)) {
         finalShippingFee = 150;
       } else if (KOSOVA_CITIES.includes(values.city)) {

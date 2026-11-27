@@ -9,7 +9,6 @@ import {
   CheckCircleFilled,
   ArrowLeftOutlined,
   ShoppingCartOutlined,
-  CarOutlined,
 } from '@ant-design/icons';
 import { addGiftBox } from '../redux/cartSlice';
 import { GIFT_BOX, GIFT_BOX_SLOTS, getGiftBoxSlot } from '../config/giftBoxConfig';
@@ -133,9 +132,6 @@ const GiftBox = () => {
                 <h1 className="text-2xl sm:text-3xl font-extrabold font-serif mb-2">{t('gift_box.page_title')}</h1>
                 <p className="text-white/90 text-sm sm:text-base max-w-2xl">
                   {t('gift_box.page_desc', { price: GIFT_BOX.price.toLocaleString() })}
-                </p>
-                <p className="mt-3 inline-flex items-center gap-2 bg-white/20 rounded-full px-3 py-1 text-xs sm:text-sm font-semibold">
-                  <CarOutlined /> {t('gift_box.free_delivery_note')}
                 </p>
               </div>
             </div>

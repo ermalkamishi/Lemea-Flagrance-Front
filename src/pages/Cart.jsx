@@ -11,7 +11,7 @@ import PromoBanner from '../components/PromoBanner';
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
-  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, vsQty, sdjQty, totalPromoSavings, total, count, giftBoxCount, isGiftBoxOnlyOrder } = useSelector(selectCartTotals);
+  const { subtotal, discount, perfumeMistDiscount, groupsOf3Discount, comboBundleDiscount, vsQty, sdjQty, totalPromoSavings, total, count } = useSelector(selectCartTotals);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -178,14 +178,6 @@ const Cart = () => {
             <div className="bg-white p-8 rounded-[30px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sticky top-28">
               <h2 className="text-2xl font-extrabold text-slate-900 mb-8 font-serif">{t('cart.summary')}</h2>
 
-              {/* Gift Box free-delivery note */}
-              {giftBoxCount > 0 && (
-                <div className="mb-6 p-4 bg-pink-50 border border-pink-200 rounded-2xl flex items-center gap-3 text-pink-900 text-xs sm:text-sm font-semibold">
-                  <GiftOutlined className="text-xl text-pink-500 flex-shrink-0" />
-                  <div>{t('gift_box.free_delivery_note')}</div>
-                </div>
-              )}
-
               {/* Combo Promo Nudge Box */}
               {(vsQty > 0 && sdjQty === 0) && (
                 <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-amber-900 text-xs sm:text-sm font-semibold">
@@ -244,7 +236,7 @@ const Cart = () => {
                 <div className="flex justify-between text-gray-600 text-lg">
                   <span className="font-medium">{t('cart.shipping')}</span>
                   <span className="font-bold text-emerald-500 uppercase tracking-wider text-sm bg-emerald-50 px-2 py-1 rounded-md">
-                    {isGiftBoxOnlyOrder ? t('checkout.free') : t('cart.free')}
+                    {t('cart.free')}
                   </span>
                 </div>
               </div>

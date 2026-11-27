@@ -1,12 +1,11 @@
 // ============================================================
 // GIFT BOX PROMO
 // The customer builds a box from exactly one product of each slot below.
-// A completed box costs GIFT_BOX.price, and an order that contains ONLY
-// gift boxes ships for free.
+// A completed box costs GIFT_BOX.price. Delivery is charged like any other order.
 // ============================================================
 
 export const GIFT_BOX = {
-  price: 2499,
+  price: 1850,
   size: 4,
 };
 
